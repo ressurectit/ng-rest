@@ -1,0 +1,7 @@
+{
+    "indent_size": 4,
+    "brace_style": "expand",
+    "newline_between_rules": true,
+    "indent_inner_html": true,
+    "max_preserve_newlines": 2
+}

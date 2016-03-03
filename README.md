@@ -1,3 +1,5 @@
+ORIGINAL SOURCE: [https://github.com/Paldom/angular2-rest](https://github.com/Paldom/angular2-rest)
+
 # angular2-rest
 Angular2 HTTP client to consume RESTful services. Built on angular2/http with TypeScript.  
 **Note:** this solutions is not production ready, it's in a very basic alpha state. Any ideas or contributions are very welcomed :)

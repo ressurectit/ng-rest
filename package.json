@@ -1,47 +1,42 @@
 {
-  "name": "angular2-rest",
-  "version": "0.1.0",
-  "description": "Angular2 HTTP client to consume RESTful services.",
-  "typings": "./angular2-rest.d.ts",
-  "main": "angular2-rest.js",
-  "scripts": {
-    "test": "node_modules/.bin/gulp test",
-    "gulp": "node_modules/.bin/gulp"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Paldom/angular2-rest.git"
-  },
-  "keywords": [
-    "angular2",
-    "angulario",
-    "http",
-    "rest",
-    "client"
-  ],
-  "author": "Domonkos Pal <Paldom>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Paldom/angular2-rest/issues"
-  },
-  "homepage": "https://github.com/Paldom/angular2-rest#readme",
-  "dependencies": {
-    "angular2": "^2.0.0-beta.0",
-    "es6-promise": "^3.0.2",
-    "es6-shim": "^0.33.13",
-    "reflect-metadata": "^0.1.2",
-    "rxjs": "^5.0.0-beta.0",
-    "zone.js": "^0.5.10"
-  },
-  "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-jasmine": "^2.2.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-tsc": "^1.1.4",
-    "gulp-typedoc": "^1.2.1",
-    "gulp-typescript": "^2.10.0",
-    "gulp-uglify": "^1.5.1",
-    "object-merge": "^2.5.1"
-  }
+    "name": "ng2-rest",
+    "version": "1.0.0",
+    "description": "Angular 2 module representing rest services",
+    "scripts":
+    {
+        "prebuild": "typings install",
+        "build": "npm run tsc",
+        "clean": "rimraf ./*.d.ts ./common.js ./*.map ./*.log ./bundle",
+        "clean:deps": "rimraf ./node_modules ./typings",
+        "clean:all": "npm run clean && npm run clean:deps",
+        "tsc": "tsc",
+        "tsc:debug": "tsc --sourceMap",
+        "tsc:w": "tsc -w --sourceMap",
+        "prepublish": "npm run bundle:package",
+        "postpublish": "npm run clean",
+        "bundle": "tsc --outFile bundle/ng2-rest.dev.js",
+        "bundle:update": "nab bundle/ng2-rest.dev.js",
+        "bundle:package": "npm run clean && npm run build && npm run bundle && npm run bundle:update",
+        "deploy-stable": "npp -b",
+        "deploy-next": "npp -b -p -s \"beta\" -t \"next\""
+    },
+    "author": "kukjevov",
+    "license": "MIT",
+    "dependencies":
+    {
+        "angular2": "2.0.0-beta.7",
+        "es6-promise": "^3.0.2",
+        "es6-shim": "^0.33.3",
+        "reflect-metadata": "0.1.2",
+        "zone.js": "0.5.15",
+        "rxjs": "5.0.0-beta.2"
+    },
+    "devDependencies":
+    {
+        "rimraf": "~2.5.1",
+        "typescript": "~1.8.2",
+        "typings":"^0.6.8",
+        "npm-angular2-bundle": "1.0.0",
+        "npm-publish-package": "1.2.0"
+    }
 }
