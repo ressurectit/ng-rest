@@ -1,6 +1,7 @@
 /node_modules
+/bundle
+/typings
 *.d.ts
 *.js
-!gulpfile.js
 *.map
 *.log

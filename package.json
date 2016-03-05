@@ -1,6 +1,6 @@
 {
     "name": "ng2-rest",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Angular 2 module representing rest services",
     "scripts":
     {
@@ -15,7 +15,7 @@
         "prepublish": "npm run bundle:package",
         "postpublish": "npm run clean",
         "bundle": "tsc --outFile bundle/ng2-rest.dev.js",
-        "bundle:update": "nab bundle/ng2-rest.dev.js",
+        "bundle:update": "nab bundle/ng2-rest.dev.js && uglifyjs -o bundle/ng2-rest.min.js -- bundle/ng2-rest.dev.js",
         "bundle:package": "npm run clean && npm run build && npm run bundle && npm run bundle:update",
         "deploy-stable": "npp -b",
         "deploy-next": "npp -b -p -s \"beta\" -t \"next\""
@@ -24,7 +24,7 @@
     "license": "MIT",
     "dependencies":
     {
-        "angular2": "2.0.0-beta.7",
+        "angular2": "2.0.0-beta.8",
         "es6-promise": "^3.0.2",
         "es6-shim": "^0.33.3",
         "reflect-metadata": "0.1.2",
@@ -36,6 +36,7 @@
         "rimraf": "~2.5.1",
         "typescript": "~1.8.2",
         "typings":"^0.6.8",
+        "uglify-js": "~2.6.2",
         "npm-angular2-bundle": "1.0.0",
         "npm-publish-package": "1.2.0"
     }
