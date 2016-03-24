@@ -1,6 +1,6 @@
 {
     "name": "ng2-rest",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Angular 2 module representing rest services",
     "scripts":
     {
@@ -34,8 +34,8 @@
     "devDependencies":
     {
         "rimraf": "~2.5.1",
-        "typescript": "~1.8.2",
-        "typings":"^0.6.8",
+        "typescript": "~1.8.9",
+        "typings":"^0.7.9",
         "uglify-js": "~2.6.2",
         "npm-angular2-bundle": "1.0.0",
         "npm-publish-package": "1.2.0"

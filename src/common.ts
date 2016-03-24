@@ -37,6 +37,7 @@ import {Http,
         URLSearchParams} from "angular2/http";
 import {Observable} from "rxjs/Observable";
 import {isBlank, isPresent, isFunction} from 'angular2/src/facade/lang';
+import $ from 'tsjquery';
 
 /**
  * Angular 2 RESTClient class.
@@ -147,16 +148,24 @@ function paramBuilder(paramName: string)
  * @param {string} key - path key to bind value
  */
 export var Path = paramBuilder("Path");
+
 /**
  * Query value of a method's url, type: string
  * @param {string} key - query key to bind value
  */
 export var Query = paramBuilder("Query");
+
+/**
+ * Query object serialized with dot notation separating hierarchies
+ */
+export var QueryObject = paramBuilder("QueryObject")("QueryObject");
+
 /**
  * Body of a REST method, type: key-value pair object
  * Only one body per method!
  */
 export var Body = paramBuilder("Body")("Body");
+
 /**
  * Custom header of a REST method, type: string
  * @param {string} key - header key to bind value
@@ -228,6 +237,7 @@ function methodBuilder(method: number)
 
             var pPath = target[`${propertyKey}_Path_parameters`];
             var pQuery = target[`${propertyKey}_Query_parameters`];
+            var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
             var pBody = target[`${propertyKey}_Body_parameters`];
             var pHeader = target[`${propertyKey}_Header_parameters`];
 
@@ -269,10 +279,36 @@ function methodBuilder(method: number)
                             {
                                 value = JSON.stringify(value);
                             }
+                            
                             search.set(encodeURIComponent(key), encodeURIComponent(value));
                         });
                 }
-
+                
+                // QueryObject
+                if (pQueryObject)
+                {
+                    pQueryObject
+                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                        .forEach(p =>
+                        {
+                            var value = args[p.parameterIndex];
+                            // if the value is a instance of Object, we stringify it
+                            if (value instanceof Object)
+                            {
+                                $.param(value)
+                                    .replace(/%5B\%5D/g, "")
+                                    .replace(/%5D/g, "")
+                                    .replace(/%5B/g, ".")
+                                    .split("&")
+                                    .forEach(itm =>
+                                    {
+                                        let tmpPair = itm.split("=");
+                                        search.set(tmpPair[0], tmpPair[1]);
+                                    });
+                            }
+                        });
+                }
+                
                 // Headers
                 // set class default headers
                 var headers = new AngularHeaders(this.getDefaultHeaders());
