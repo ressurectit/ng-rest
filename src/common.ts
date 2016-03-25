@@ -285,6 +285,7 @@ function methodBuilder(method: number)
                 }
                 
                 // QueryObject
+                var questyString: string = "";
                 if (pQueryObject)
                 {
                     pQueryObject
@@ -295,16 +296,10 @@ function methodBuilder(method: number)
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
-                                $.param(value)
-                                    .replace(/%5B\%5D/g, "")
-                                    .replace(/%5D/g, "")
-                                    .replace(/%5B/g, ".")
-                                    .split("&")
-                                    .forEach(itm =>
-                                    {
-                                        let tmpPair = itm.split("=");
-                                        search.set(tmpPair[0], tmpPair[1]);
-                                    });
+                                questyString += (resUrl.indexOf("?") >= 0 ? "" : "?") + $.param(value)
+                                                          .replace(/%5B\%5D/g, "")
+                                                          .replace(/%5D/g, "")
+                                                          .replace(/%5B/g, ".");
                             }
                         });
                 }
@@ -336,7 +331,7 @@ function methodBuilder(method: number)
                 var options = new RequestOptions(
                 {
                     method,
-                    url: this.getBaseUrl() + resUrl,
+                    url: this.getBaseUrl() + resUrl + questyString,
                         headers,
                         body,
                         search
