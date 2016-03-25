@@ -1,5 +1,6 @@
 /src
 /typings
+/tsTypings
 .jsbeautifyrc
 tsconfig.json
 typings.json

@@ -5,3 +5,4 @@
 *.js
 *.map
 *.log
+!/tsTypings/tsjquery.d.ts
