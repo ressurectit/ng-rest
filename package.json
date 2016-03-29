@@ -1,6 +1,6 @@
 {
     "name": "ng2-rest",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Angular 2 module representing rest services",
     "scripts":
     {

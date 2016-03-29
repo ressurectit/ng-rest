@@ -296,7 +296,7 @@ function methodBuilder(method: number)
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
-                                questyString += (resUrl.indexOf("?") >= 0 ? "" : "?") + $.param(value)
+                                questyString += (questyString.indexOf("&") >= 0 ? "" : "&") + $.param(value)
                                                           .replace(/%5B\%5D/g, "")
                                                           .replace(/%5D/g, "")
                                                           .replace(/%5B/g, ".");
@@ -331,7 +331,7 @@ function methodBuilder(method: number)
                 var options = new RequestOptions(
                 {
                     method,
-                    url: this.getBaseUrl() + resUrl + questyString,
+                    url: this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 ? "" : "?") + questyString,
                         headers,
                         body,
                         search
