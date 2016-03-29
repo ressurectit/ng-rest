@@ -296,7 +296,7 @@ function methodBuilder(method: number)
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
-                                questyString += (questyString.indexOf("&") >= 0 ? "" : "&") + $.param(value)
+                                questyString += (questyString.length > 0 ? "&" : "") + $.param(value)
                                                           .replace(/%5B\%5D/g, "")
                                                           .replace(/%5D/g, "")
                                                           .replace(/%5B/g, ".");
