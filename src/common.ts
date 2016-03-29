@@ -36,7 +36,7 @@ import {Http,
         Response,
         URLSearchParams} from "angular2/http";
 import {Observable} from "rxjs/Observable";
-import {isBlank, isPresent, isFunction} from 'angular2/src/facade/lang';
+import {isBlank, isPresent, isFunction, isJsObject} from 'angular2/src/facade/lang';
 import $ from 'tsjquery';
 
 /**
@@ -219,6 +219,33 @@ export function ResponseTransform(methodName?: string)
         return descriptor;
     };
 }
+/**
+ * Parameter descriptor that is used for transforming parameter before QueryObject serialization
+ * @param  {string} methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
+ */
+export function ParameterTransform(methodName?: string)
+{
+    return function(target: RESTClient, propertyKey: string | symbol, parameterIndex: number)
+    {
+        if(isBlank(methodName))
+        {
+            methodName = `${propertyKey}ParameterTransform`;
+        }
+        
+        if(isPresent(target[<string>methodName]) && isFunction(target[<string>methodName]))
+        {
+            let func = target[<string>methodName];
+            let metadataKey = `${propertyKey}_ParameterTransforms`;
+            
+            if (!isPresent(target[metadataKey]) || !isJsObject(target[metadataKey]))
+            {
+                target[metadataKey] = {};
+            }
+            
+            target[metadataKey][parameterIndex] = func;
+        }
+    };
+};
 
 /**
  * Supported @Produces media types
@@ -240,6 +267,7 @@ function methodBuilder(method: number)
             var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
             var pBody = target[`${propertyKey}_Body_parameters`];
             var pHeader = target[`${propertyKey}_Header_parameters`];
+            var pTransforms = target[`${propertyKey}_ParameterTransforms`];
 
             descriptor.value = function(...args: any[])
             {
@@ -274,6 +302,7 @@ function methodBuilder(method: number)
                         {
                             var key = p.key;
                             var value = args[p.parameterIndex];
+                            
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
@@ -285,7 +314,7 @@ function methodBuilder(method: number)
                 }
                 
                 // QueryObject
-                var questyString: string = "";
+                var queryString: string = "";
                 if (pQueryObject)
                 {
                     pQueryObject
@@ -293,15 +322,23 @@ function methodBuilder(method: number)
                         .forEach(p =>
                         {
                             var value = args[p.parameterIndex];
+                            
+                            if(pTransforms && pTransforms[p.parameterIndex])
+                            {
+                                value = pTransforms[p.parameterIndex](value);
+                            }
+                            
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
-                                questyString += (questyString.length > 0 ? "&" : "") + $.param(value)
+                                queryString += (queryString.length > 0 ? "&" : "") + $.param(value)
                                                           .replace(/%5B\%5D/g, "")
                                                           .replace(/%5D/g, "")
                                                           .replace(/%5B/g, ".");
                             }
                         });
+                        
+                    queryString = queryString.replace(/\w+=&/g, "");
                 }
                 
                 // Headers
@@ -331,7 +368,7 @@ function methodBuilder(method: number)
                 var options = new RequestOptions(
                 {
                     method,
-                    url: this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 ? "" : "?") + questyString,
+                    url: this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 ? "" : "?") + queryString,
                         headers,
                         body,
                         search
