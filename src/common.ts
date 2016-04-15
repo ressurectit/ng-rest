@@ -1,32 +1,3 @@
-/*
-
-angular2-rest
-(c) Domonkos Pal
-License: MIT
-
-Table of Contents:
-
-- class RESTClient
-
-- Class Decorators:
-    @BaseUrl(String)
-    @DefaultHeaders(Object)
-
-- Method Decorators:
-    @GET(url: String)
-    @POST(url: String)
-    @PUT(url: String)
-    @DELETE(url: String)
-    @Headers(object)
-    @Produces(MediaType)
-
-- Parameter Decorators:
-    @Path(string)
-    @Query(string)
-    @Header(string)
-    @Body
-*/
-
 import {Inject} from "angular2/core";
 import {Http,
         Headers as AngularHeaders,
@@ -37,6 +8,8 @@ import {Http,
         URLSearchParams} from "angular2/http";
 import {Observable} from "rxjs/Observable";
 import {isBlank, isPresent, isFunction, isJsObject} from 'angular2/src/facade/lang';
+import {ResponseType} from './responseType';
+import {Cache} from './cache';
 import $ from 'tsjquery';
 
 /**
@@ -186,14 +159,14 @@ export function Headers(headersDef: any)
 }
 
 /**
- * Defines the media type(s) that the methods can produce
- * @param MediaType producesDef - mediaType to be parsed
+ * Defines the response type(s) that the methods can produce
+ * @param {ResponseType} producesDef - response type to be produced
  */
-export function Produces(producesDef: MediaType)
+export function Produces(producesDef: ResponseType)
 {
     return function(target: RESTClient, propertyKey: string, descriptor: any)
     {
-        descriptor.isJSON = producesDef === MediaType.JSON;
+        descriptor.responseType = producesDef;
         return descriptor;
     };
 }
@@ -247,13 +220,7 @@ export function ParameterTransform(methodName?: string)
     };
 };
 
-/**
- * Supported @Produces media types
- */
-export enum MediaType
-{
-    JSON
-}
+
 
 function methodBuilder(method: number)
 {
@@ -375,16 +342,83 @@ function methodBuilder(method: number)
                 });
 
                 var req = new Request(options);
+                var cached: boolean = false;
+                var observable: Observable<Response>;
+                
+                //tries to get response from cache
+                if(isPresent(descriptor.getCachedResponse))
+                {
+                    var cachedResponse: Response = descriptor.getCachedResponse(options);
+                    
+                    if(isPresent(cachedResponse))
+                    {
+                        cached = true;
+                        observable = Observable.of(cachedResponse);
+                    }
+                }
 
                 // intercept the request
                 this.requestInterceptor(req);
-                // make the request and store the observable for later transformation
-                var observable: Observable<Response> = this.http.request(req);
+                
+                if(!cached)
+                {
+                    // make the request and store the observable for later transformation
+                    observable = this.http.request(req);
+                }
+
+                //tries to set response to cache
+                if(isPresent(descriptor.saveResponseToCache) && !cached)
+                {
+                    observable = observable.map(response => descriptor.saveResponseToCache(options, response));
+                }
 
                 // transform the obserable in accordance to the @Produces decorator
-                if (descriptor.isJSON)
+                if (isPresent(descriptor.responseType))
                 {
-                    observable = observable.map(res => res.json());
+                    switch(descriptor.responseType)
+                    {
+                        case ResponseType.Json:
+                        {
+                            observable = observable.map(res => res.json());
+                            
+                            break;
+                        }
+                        case ResponseType.Text:
+                        {
+                            observable = observable.map(res => <any>res.text());
+                            
+                            break;
+                        }
+                        case ResponseType.LocationHeader:
+                        {
+                            observable = observable.map(res => 
+                            {
+                                let headerValue = res.headers.get("Location");
+                                
+                                return <any>{
+                                    location: headerValue,
+                                    id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null
+                                };
+                            });
+                            
+                            break;
+                        }
+                        case ResponseType.LocationHeaderAndJson:
+                        {
+                            observable = observable.map(res => 
+                            {
+                                let headerValue = res.headers.get("Location");
+                                
+                                return <any>{
+                                    location: headerValue,
+                                    id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null,
+                                    data: res.json()
+                                };
+                            });
+                            
+                            break;
+                        }
+                    }
                 }
 
                 // intercept the response
@@ -433,3 +467,5 @@ export var DELETE = methodBuilder(RequestMethods.Delete);
  * @param {string} url - resource url of the method
  */
 export var HEAD = methodBuilder(RequestMethods.Head);
+
+export {ResponseType, Cache};
