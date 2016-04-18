@@ -34,9 +34,11 @@ export function Cache()
             return null;
         };
         
-        descriptor.saveResponseToCache = (request: RequestOptions, response: Response): void =>
+        descriptor.saveResponseToCache = (request: RequestOptions, response: Response): Response =>
         {
             responseCache[toRequestUrl(request)] = response;
+            
+            return response;
         };
         
         return descriptor;
