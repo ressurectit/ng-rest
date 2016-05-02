@@ -6,10 +6,12 @@ import {Http,
         RequestMethod as RequestMethods,
         Response,
         URLSearchParams} from "angular2/http";
-import {Observable} from "rxjs/Observable";
 import {isBlank, isPresent, isFunction, isJsObject} from 'angular2/src/facade/lang';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
+import {Observable} from "rxjs/Observable";
+import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/map';
 import $ from 'tsjquery';
 
 /**
