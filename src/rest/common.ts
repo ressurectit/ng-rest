@@ -1,12 +1,12 @@
-import {Inject} from "angular2/core";
+import {Inject} from "@angular/core";
 import {Http,
         Headers as AngularHeaders,
         Request,
         RequestOptions,
         RequestMethod as RequestMethods,
         Response,
-        URLSearchParams} from "angular2/http";
-import {isBlank, isPresent, isFunction, isJsObject} from 'angular2/src/facade/lang';
+        URLSearchParams} from "@angular/http";
+import {isBlank, isPresent, isFunction, isJsObject} from '@angular/core/src/facade/lang';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";

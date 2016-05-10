@@ -1,8 +1,8 @@
 /node_modules
-/bundle
 /typings
+/rest
 *.d.ts
 *.js
 *.map
 *.log
-!/tsTypings/tsjquery.d.ts
+!gulpfile.js

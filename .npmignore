@@ -8,4 +8,5 @@ typings.json
 *.ts
 *.log
 !*.d.ts
-/bundle/ng2-rest.dev.d.ts
+gulpfile.js
+index.dev.d.ts
