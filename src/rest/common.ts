@@ -396,6 +396,11 @@ function methodBuilder(method: number)
                             observable = observable.map(res => 
                             {
                                 let headerValue = res.headers.get("Location");
+
+                                if(isBlank(headerValue))
+                                {
+                                    headerValue = res.headers.get("location");
+                                }
                                 
                                 return <any>{
                                     location: headerValue,
@@ -410,6 +415,11 @@ function methodBuilder(method: number)
                             observable = observable.map(res => 
                             {
                                 let headerValue = res.headers.get("Location");
+
+                                if(isBlank(headerValue))
+                                {
+                                    headerValue = res.headers.get("location");
+                                }
                                 
                                 return <any>{
                                     location: headerValue,
