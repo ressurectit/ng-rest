@@ -1,7 +1,9 @@
 {
     "name": "@ng2/rest",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "Angular 2 module representing rest services",
+    "main": "index.js",
+    "typings": "index.d.ts",
     "scripts":
     {
         "prebuild": "typings install && gulp copy-tstypings",
@@ -25,13 +27,12 @@
     "license": "MIT",
     "dependencies":
     {
-        "@angular/common": "2.0.0-rc.2",
-        "@angular/compiler": "2.0.0-rc.2",
-        "@angular/core": "2.0.0-rc.2",
-        "@angular/http": "2.0.0-rc.2",
-        "@angular/platform-browser": "2.0.0-rc.2",
-        "es6-promise": "^3.1.2",
-        "es6-shim": "^0.35.0",
+        "@angular/common": "2.0.0-rc.4",
+        "@angular/compiler": "2.0.0-rc.4",
+        "@angular/core": "2.0.0-rc.4",
+        "@angular/http": "2.0.0-rc.4",
+        "@angular/platform-browser": "2.0.0-rc.4",
+        "core-js": "~2.4.0",
         "reflect-metadata": "0.1.3",
         "zone.js": "0.6.12",
         "rxjs": "5.0.0-beta.6",
