@@ -82,7 +82,7 @@ export function BaseUrl(url: string)
  * Set default headers for every method of the RESTClient
  * @param {Object} headers - deafult headers in a key-value pair
  */
-export function DefaultHeaders(headers: any)
+export function DefaultHeaders(headers: {[key: string]: string})
 {
     return function < TFunction extends Function > (Target: TFunction): TFunction
     {
@@ -151,11 +151,38 @@ export var Header = paramBuilder("Header");
  * Set custom headers for a REST method
  * @param {Object} headersDef - custom headers in a key-value pair
  */
-export function Headers(headersDef: any)
+export function Headers(headersDef: {[key: string]: string})
 {
     return function(target: RESTClient, propertyKey: string, descriptor: any)
     {
-        descriptor.headers = headersDef;
+        descriptor.headers = $.extend({}, headersDef, descriptor.headers);
+
+        return descriptor;
+    };
+}
+
+/**
+ * Add custom header Content-Type "application/json" to headers array
+ */
+export function JsonContentType()
+{
+    return function(target: RESTClient, propertyKey: string, descriptor: any)
+    {
+        descriptor.headers = $.extend(descriptor.headers || {}, {"content-type": "application/json"});
+        
+        return descriptor;
+    };
+}
+
+/**
+ * Add custom header Content-Type "multipart/form-data" to headers array
+ */
+export function FormDataContentType()
+{
+    return function(target: RESTClient, propertyKey: string, descriptor: any)
+    {
+        descriptor.headers = $.extend(descriptor.headers || {}, {"content-type": "multipart/form-data"});
+        
         return descriptor;
     };
 }
@@ -395,13 +422,8 @@ function methodBuilder(method: number)
                         {
                             observable = observable.map(res => 
                             {
-                                let headerValue = res.headers.get("Location");
+                                let headerValue = res.headers.get("location");
 
-                                if(isBlank(headerValue))
-                                {
-                                    headerValue = res.headers.get("location");
-                                }
-                                
                                 return <any>{
                                     location: headerValue,
                                     id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null
@@ -414,13 +436,8 @@ function methodBuilder(method: number)
                         {
                             observable = observable.map(res => 
                             {
-                                let headerValue = res.headers.get("Location");
+                                let headerValue = res.headers.get("location");
 
-                                if(isBlank(headerValue))
-                                {
-                                    headerValue = res.headers.get("location");
-                                }
-                                
                                 return <any>{
                                     location: headerValue,
                                     id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null,
