@@ -136,10 +136,16 @@ export var Query = paramBuilder("Query");
 export var QueryObject = paramBuilder("QueryObject")("QueryObject");
 
 /**
- * Body of a REST method, type: key-value pair object
+ * Body of a REST method, json stringify applied
  * Only one body per method!
  */
 export var Body = paramBuilder("Body")("Body");
+
+/**
+ * Plain body of a REST method, no transformation applied
+ * Only one body per method!
+ */
+export var PlainBody = paramBuilder("PlainBody")("PlainBody");
 
 /**
  * Custom header of a REST method, type: string
@@ -249,30 +255,32 @@ export function ParameterTransform(methodName?: string)
     };
 };
 
-
-
 function methodBuilder(method: number)
 {
     return function(url: string)
     {
         return function(target: RESTClient, propertyKey: string, descriptor: any)
         {
-
             var pPath = target[`${propertyKey}_Path_parameters`];
             var pQuery = target[`${propertyKey}_Query_parameters`];
             var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
             var pBody = target[`${propertyKey}_Body_parameters`];
+            var pPlainBody = target[`${propertyKey}_PlainBody_parameters`];
             var pHeader = target[`${propertyKey}_Header_parameters`];
             var pTransforms = target[`${propertyKey}_ParameterTransforms`];
 
             descriptor.value = function(...args: any[])
             {
-
                 // Body
                 var body = null;
                 if (pBody)
                 {
                     body = JSON.stringify(args[pBody[0].parameterIndex]);
+                }
+
+                if (pPlainBody)
+                {
+                    body = args[pPlainBody[0].parameterIndex];
                 }
 
                 // Path
@@ -364,7 +372,7 @@ function methodBuilder(method: number)
                 var options = new RequestOptions(
                 {
                     method,
-                    url: this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 ? "" : "?") + queryString,
+                    url: this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 || !queryString ? "" : "?") + queryString,
                         headers,
                         body,
                         search
