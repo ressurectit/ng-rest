@@ -2,16 +2,25 @@
     "compilerOptions":
     {
         "target": "es5",
-        "module": "system",
+        "module": "commonjs",
         "sourceMap": false,
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
         "moduleResolution": "node",
-        "outDir": "."
+        "outDir": "dist",
+        "lib": 
+        [
+            "es6", "dom"
+        ],
+        "types": 
+        [
+            "jquery"
+        ]
     },
-    "exclude": [
+    "exclude": 
+    [
         "node_modules"
     ]
 }
