@@ -1,6 +1,6 @@
 {
     "name": "@ng2/rest",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Angular 2 module representing rest services",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -19,22 +19,23 @@
         "bundle": "webpack",
         "bundle:min": "webpack --env.minify",
         "bundle:package": "npm run clean && npm run build && npm run bundle && npm run bundle:min",
-        "deploy-stable": "npp -b",
-        "deploy-next": "npp -p -b -s \"beta\" -t \"next\""
+        "deploy:stable": "npp -b",
+        "deploy:next": "npp -p -b -s \"beta\" -t \"next\""
     },
     "author": "kukjevov",
     "license": "MIT",
     "dependencies":
     {
-        "@angular/core": "~2.0.0",
-        "@angular/common": "~2.0.0",
-        "@angular/compiler": "~2.0.0",
-        "@angular/http": "~2.0.0",
-        "@angular/platform-browser": "~2.0.0",
+        "@angular/core": "~2.2.0",
+        "@angular/common": "~2.2.0",
+        "@angular/compiler": "~2.2.0",
+        "@angular/http": "~2.2.0",
+        "@angular/platform-browser": "~2.2.0",
         "core-js": "~2.4.1",
-        "reflect-metadata": "~0.1.3",
-        "zone.js": "~0.6.23",
-        "rxjs": "5.0.0-beta.12"
+        "reflect-metadata": "~0.1.8",
+        "zone.js": "~0.6.25",
+        "rxjs": "5.0.0-beta.12",
+        "@ng2/common": "~2.1.0"
     },
     "peerDependencies":
     {
@@ -44,7 +45,7 @@
     {
         "@types/jquery": "~2.0.32",
         "rimraf": "~2.5.4",
-        "typescript": "2.0.3",
+        "typescript": "2.0.9",
         "webpack": "2.1.0-beta.25",
         "npm-publish-package": "~1.2.0"
     }
