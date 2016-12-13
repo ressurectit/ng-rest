@@ -314,7 +314,7 @@ function methodBuilder(method: number)
                                 value = JSON.stringify(value);
                             }
                             
-                            search.set(encodeURIComponent(key), encodeURIComponent(value));
+                            search.set(key, value);
                         });
                 }
                 
