@@ -1,5 +1,5 @@
 import {Response, RequestOptions} from '@angular/http';
-import {isPresent} from '@angular/core/src/facade/lang';
+import {isPresent} from '@anglr/common';
 
 //Object storing response cache itself
 //It caches request urls to response data

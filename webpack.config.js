@@ -1,5 +1,5 @@
 var webpack = require('webpack');
-var projectName = require('./package.json').name.replace("@ng2/", "").replace("-", "");
+var projectName = require('./package.json').name.replace("@anglr/", "").replace("-", "");
 
 module.exports = function(options)
 {
@@ -18,6 +18,7 @@ module.exports = function(options)
             "jquery",
             "numeral",
             /^@angular\/.*$/,
+            /^@ng\/.*$/,
             /^rxjs\/.*$/
         ],
         plugins: []
@@ -32,7 +33,7 @@ module.exports = function(options)
             sourceMap: false
         }));
 
-        config.output.filename = "index.dev.min.js";
+        config.output.filename = "index.min.js";
     }
 
     return config;

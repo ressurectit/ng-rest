@@ -6,8 +6,7 @@ import {Http,
         RequestMethod as RequestMethods,
         Response,
         URLSearchParams} from "@angular/http";
-import {isBlank, isPresent, isJsObject} from '@angular/core/src/facade/lang';
-import {isFunction} from '@ng2/common';
+import {isBlank, isPresent, isFunction, isJsObject} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
