@@ -29,7 +29,7 @@ module.exports = function(options)
         config.plugins.push(new webpack.optimize.UglifyJsPlugin(
         {
             compress: true,
-            mangle: false,
+            mangle: true,
             sourceMap: false
         }));
 
