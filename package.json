@@ -6,13 +6,11 @@
     "typings": "dist/index.d.ts",
     "scripts":
     {
-        "build": "npm run tsc",
+        "build": "npm run ngc",
         "clean": "rimraf dist",
         "clean:deps": "rimraf node_modules",
         "clean:all": "npm run clean && npm run clean:deps",
-        "tsc": "tsc",
-        "tsc:w": "tsc -w --sourceMap",
-        "tsc:debug": "tsc --sourceMap",
+        "ngc": "ngc",
         "prepublish": "npm run bundle:package",
         "postpublish": "npm run clean",
         "republish": "npm publish --force",
@@ -26,15 +24,14 @@
     "license": "MIT",
     "dependencies":
     {
-        "@angular/core": ">=4.0.0-beta.7",
-        "@angular/common": ">=4.0.0-beta.7",
-        "@angular/compiler": ">=4.0.0-beta.7",
-        "@angular/http": ">=4.0.0-beta.7",
-        "@angular/platform-browser": ">=4.0.0-beta.7",
+        "@angular/core": ">=4.0.0-beta.8",
+        "@angular/common": ">=4.0.0-beta.8",
+        "@angular/http": ">=4.0.0-beta.8",
+        "@angular/platform-browser": ">=4.0.0-beta.8",
         "core-js": "~2.4.1",
         "zone.js": "~0.7.7",
         "rxjs": "^5.1.1",
-        "@anglr/common": ">=3.0.0-beta.0"
+        "@anglr/common": ">=3.0.0-beta.1"
     },
     "peerDependencies":
     {
@@ -43,6 +40,8 @@
     "devDependencies":
     {
         "@types/jquery": "~2.0.40",
+        "@angular/compiler-cli": ">=4.0.0-beta.8",
+        "@angular/compiler": ">=4.0.0-beta.8",
         "rimraf": "~2.5.4",
         "typescript": "2.1.6",
         "webpack": "2.2.1",

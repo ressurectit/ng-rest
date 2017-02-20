@@ -1,5 +1,7 @@
 /.vscode
 /src
+/dist/src
+/dist/node_modules
 .jsbeautifyrc
 tsconfig.json
 webpack.config.js
