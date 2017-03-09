@@ -12,7 +12,7 @@ import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/map';
-import * as $ from 'jquery';
+import * as $ from 'param';
 
 /**
  * Angular 2 RESTClient class.
