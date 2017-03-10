@@ -38,7 +38,7 @@
     },
     "devDependencies":
     {
-        "@types/jquery-param": "^1.0.1",
+        "@anglr/types": "^1.1.2",
         "@angular/compiler-cli": ">=4.0.0-rc.2",
         "@angular/compiler": ">=4.0.0-rc.2",
         "rimraf": "~2.5.4",

@@ -15,8 +15,8 @@ module.exports = function(options)
         },
         externals:
         [
-            "jquery",
             "numeral",
+            "jquery-param",
             /^@angular\/.*$/,
             /^@ng\/.*$/,
             /^rxjs\/.*$/

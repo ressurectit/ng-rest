@@ -17,6 +17,10 @@
         "types": 
         [
             "jquery-param"
+        ],
+        "typeRoots": 
+        [
+            "node_modules/@anglr/types"
         ]
     },
     "exclude": 

@@ -6,13 +6,13 @@ import {Http,
         RequestMethod as RequestMethods,
         Response,
         URLSearchParams} from "@angular/http";
-import {isBlank, isPresent, isFunction, isJsObject} from '@anglr/common';
+import {isBlank, isPresent, isFunction, isJsObject, Utils} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/map';
-import * as $ from 'param';
+import * as param from 'jquery-param';
 
 /**
  * Angular 2 RESTClient class.
@@ -58,7 +58,6 @@ export class RESTClient
     {
         return res;
     }
-
 }
 
 /**
@@ -161,7 +160,7 @@ export function Headers(headersDef: {[key: string]: string})
 {
     return function(target: RESTClient, propertyKey: string, descriptor: any)
     {
-        descriptor.headers = $.extend({}, headersDef, descriptor.headers);
+        descriptor.headers = Utils.common.extend({}, headersDef, descriptor.headers);
 
         return descriptor;
     };
@@ -174,7 +173,7 @@ export function JsonContentType()
 {
     return function(target: RESTClient, propertyKey: string, descriptor: any)
     {
-        descriptor.headers = $.extend(descriptor.headers || {}, {"content-type": "application/json"});
+        descriptor.headers = Utils.common.extend(descriptor.headers || {}, {"content-type": "application/json"});
         
         return descriptor;
     };
@@ -187,7 +186,7 @@ export function FormDataContentType()
 {
     return function(target: RESTClient, propertyKey: string, descriptor: any)
     {
-        descriptor.headers = $.extend(descriptor.headers || {}, {"content-type": "multipart/form-data"});
+        descriptor.headers = Utils.common.extend(descriptor.headers || {}, {"content-type": "multipart/form-data"});
         
         return descriptor;
     };
@@ -335,7 +334,7 @@ function methodBuilder(method: number)
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
-                                queryString += (queryString.length > 0 ? "&" : "") + $.param(value)
+                                queryString += (queryString.length > 0 ? "&" : "") + param(value)
                                                           .replace(/%5B\%5D/g, "")
                                                           .replace(/%5D/g, "")
                                                           .replace(/%5B/g, ".");
