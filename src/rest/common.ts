@@ -10,8 +10,6 @@ import {isBlank, isPresent, isFunction, isJsObject, Utils} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
 import * as param from 'jquery-param';
 
 /**
@@ -22,9 +20,9 @@ import * as param from 'jquery-param';
  */
 export class RESTClient
 {
-
     public constructor(@Inject(Http) protected http: Http)
-    {}
+    {
+    }
 
     protected getBaseUrl(): string
     {
@@ -44,7 +42,6 @@ export class RESTClient
      */
     protected requestInterceptor(req: Request)
     {
-        //
     }
 
     /**
