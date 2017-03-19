@@ -1,4 +1,3 @@
-import {Inject, Optional} from "@angular/core";
 import {Http,
         Headers as AngularHeaders,
         Request,
@@ -6,7 +5,7 @@ import {Http,
         RequestMethod as RequestMethods,
         Response,
         URLSearchParams} from "@angular/http";
-import {isBlank, isPresent, isFunction, isJsObject, Utils} from '@anglr/common';
+import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
@@ -20,19 +19,24 @@ import * as param from 'jquery-param';
  * @class RESTClient
  * @constructor
  */
-export class RESTClient
+export abstract class RESTClient
 {
-    public constructor(@Inject(Http) public http: Http,
-                       @Optional() public transferState: TransferStateService)
+    public constructor(protected http: Http,
+                       protected baseUrl?: string,
+                       protected transferState?: TransferStateService)
     {
+        if(isBlank(baseUrl))
+        {
+            this.baseUrl = "";
+        }
     }
 
-    public getBaseUrl(): string
+    protected getBaseUrl(): string
     {
         return null;
     };
 
-    public getDefaultHeaders(): Object
+    protected getDefaultHeaders(): Object
     {
         return null;
     };
@@ -43,7 +47,7 @@ export class RESTClient
      * @method requestInterceptor
      * @param {Request} req - request object
      */
-    public requestInterceptor(req: Request)
+    protected requestInterceptor(req: Request)
     {
     }
 
@@ -54,7 +58,7 @@ export class RESTClient
      * @param {Response} res - response object
      * @returns {Response} res - transformed response object
      */
-    public responseInterceptor(res: Observable<any> ): Observable<any>
+    protected responseInterceptor(res: Observable<any> ): Observable<any>
     {
         return res;
     }
@@ -83,7 +87,7 @@ export function BaseUrl(url: string)
  */
 export function DefaultHeaders(headers: {[key: string]: string})
 {
-    return function < TFunction extends Function > (Target: TFunction): TFunction
+    return function<TFunction extends Function> (Target: TFunction): TFunction
     {
         Target.prototype.getDefaultHeaders = function()
         {
@@ -268,7 +272,7 @@ function methodBuilder(method: number)
             var pHeader = target[`${propertyKey}_Header_parameters`];
             var pTransforms = target[`${propertyKey}_ParameterTransforms`];
 
-            descriptor.value = function(this: RESTClient, ...args: any[])
+            descriptor.value = function(...args: any[])
             {
                 // Body
                 var body = null;
@@ -371,7 +375,7 @@ function methodBuilder(method: number)
                 var options = new RequestOptions(
                 {
                     method,
-                    url: this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 || !queryString ? "" : "?") + queryString,
+                    url: this.baseUrl + this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 || !queryString ? "" : "?") + queryString,
                         headers,
                         body,
                         search
@@ -379,7 +383,7 @@ function methodBuilder(method: number)
 
                 var req = new Request(options);
                 var cached: boolean = false;
-                let key;
+                let hashKey : string;
                 let fromState = false;
                 var observable: Observable<Response>;
                 
@@ -403,8 +407,8 @@ function methodBuilder(method: number)
                     //try to retrieve value from transfer state
                     if(isPresent(this.transferState) && !this.transferState.deactivated)
                     {
-                        key = crypto.SHA256(JSON.stringify(req));
-                        const data = this.transferState.get(key);
+                        hashKey = crypto.SHA256(JSON.stringify(req)).toString();
+                        const data = this.transferState.get(hashKey);
 
                         if(data)
                         {
@@ -479,11 +483,11 @@ function methodBuilder(method: number)
                 //Store value to state transfer if has not been retrieved from state or state is active
                 if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated)
                 {
-                    key = key || crypto.SHA256(JSON.stringify(req));
+                    hashKey = hashKey || crypto.SHA256(JSON.stringify(req)).toString();
 
                     observable.do(data =>
                     {
-                        this.transferState.set(key, data);
+                        this.transferState.set(hashKey, data);
                     });
                 }
 

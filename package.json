@@ -1,6 +1,6 @@
 {
     "name": "@anglr/rest",
-    "version": "3.0.0-beta.3",
+    "version": "3.0.0-beta.4",
     "description": "Angular module representing rest services",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -27,8 +27,6 @@
         "@angular/core": ">=4.0.0-rc.5",
         "@angular/common": ">=4.0.0-rc.5",
         "@angular/http": ">=4.0.0-rc.5",
-        "@angular/platform-browser": ">=4.0.0-rc.5",
-        "@angular/platform-server": ">=4.0.0-rc.5",
         "core-js": "~2.4.1",
         "zone.js": "^0.8.4",
         "rxjs": "^5.2.0",

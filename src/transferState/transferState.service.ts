@@ -1,6 +1,11 @@
 import {Injectable} from '@angular/core';
 
 /**
+ * Name of variable stored in html for transfering state
+ */
+export const TRANSFER_STATE_NAME = 'NG_TRANSFER_STATE';
+
+/**
  * Service used for transfering data between server and browser
  */
 @Injectable()

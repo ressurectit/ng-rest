@@ -1,6 +1,6 @@
 import {NgModule, ModuleWithProviders, FactoryProvider} from '@angular/core';
 import {TransferStateService} from "../transferState/transferState.service";
-import {TRANSFER_STATE_NAME} from "../transferState/serverTransferState.service";
+import {TRANSFER_STATE_NAME} from "../transferState/transferState.service";
 
 /**
  * Creates transfer state service for browser
