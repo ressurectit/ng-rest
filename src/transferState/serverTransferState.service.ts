@@ -8,7 +8,7 @@ import {PlatformState} from '@angular/platform-server';
 export const TRANSFER_STATE_NAME = 'NG_TRANSFER_STATE';
 
 @Injectable()
-export class ServerTransferState extends TransferStateService
+export class ServerTransferStateService extends TransferStateService
 {
     //######################### constructors #########################
     constructor(private state: PlatformState, 

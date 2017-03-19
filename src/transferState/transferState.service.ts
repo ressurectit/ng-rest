@@ -13,6 +13,16 @@ export class TransferStateService
      */
     private _map = new Map < string, any > ();
 
+    //######################### public properties #########################
+
+    /**
+     * Gets indication whether state is empty
+     */
+    public get empty(): boolean
+    {
+        return this._map.size == 0;
+    }
+
     //######################### constructor #########################
     constructor()
     {
@@ -61,6 +71,7 @@ export class TransferStateService
     public toJson(): any
     {
         const obj = {};
+
         Array.from(this.keys())
             .forEach(key =>
             {
