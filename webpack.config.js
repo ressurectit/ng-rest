@@ -17,6 +17,7 @@ module.exports = function(options)
         [
             "numeral",
             "jquery-param",
+            "crypto-js",
             /^@angular\/.*$/,
             /^@ng\/.*$/,
             /^rxjs\/.*$/
