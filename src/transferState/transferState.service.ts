@@ -12,6 +12,11 @@ export class TransferStateService
      * Map storing data
      */
     private _map = new Map < string, any > ();
+    
+    /**
+     * Indication that transfer has been deactivated and should not be used anymore
+     */
+    private _deactivated = false;
 
     //######################### public properties #########################
 
@@ -21,6 +26,14 @@ export class TransferStateService
     public get empty(): boolean
     {
         return this._map.size == 0;
+    }
+
+    /**
+     * Gets indication that transfer state has been deactivated
+     */
+    public get deactivated(): boolean
+    {
+        return this._deactivated;
     }
 
     //######################### constructor #########################
@@ -36,6 +49,15 @@ export class TransferStateService
     public keys()
     {
         return this._map.keys();
+    }
+
+    /**
+     * Deactivates transfer state
+     */
+    public deactivate()
+    {
+        this.clear();
+        this._deactivated = true;
     }
 
     /**

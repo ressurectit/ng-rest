@@ -1,4 +1,4 @@
-import {Inject} from "@angular/core";
+import {Inject, Optional} from "@angular/core";
 import {Http,
         Headers as AngularHeaders,
         Request,
@@ -10,6 +10,8 @@ import {isBlank, isPresent, isFunction, isJsObject, Utils} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
+import {TransferStateService} from '../transferState/transferState.service';
+import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
 
 /**
@@ -20,16 +22,17 @@ import * as param from 'jquery-param';
  */
 export class RESTClient
 {
-    public constructor(@Inject(Http) protected http: Http)
+    public constructor(@Inject(Http) public http: Http,
+                       @Optional() public transferState: TransferStateService)
     {
     }
 
-    protected getBaseUrl(): string
+    public getBaseUrl(): string
     {
         return null;
     };
 
-    protected getDefaultHeaders(): Object
+    public getDefaultHeaders(): Object
     {
         return null;
     };
@@ -40,7 +43,7 @@ export class RESTClient
      * @method requestInterceptor
      * @param {Request} req - request object
      */
-    protected requestInterceptor(req: Request)
+    public requestInterceptor(req: Request)
     {
     }
 
@@ -51,7 +54,7 @@ export class RESTClient
      * @param {Response} res - response object
      * @returns {Response} res - transformed response object
      */
-    protected responseInterceptor(res: Observable < any > ): Observable < any >
+    public responseInterceptor(res: Observable<any> ): Observable<any>
     {
         return res;
     }
@@ -63,7 +66,7 @@ export class RESTClient
  */
 export function BaseUrl(url: string)
 {
-    return function < TFunction extends Function > (Target: TFunction): TFunction
+    return function<TFunction extends Function> (Target: TFunction): TFunction
     {
         Target.prototype.getBaseUrl = function()
         {
@@ -265,7 +268,7 @@ function methodBuilder(method: number)
             var pHeader = target[`${propertyKey}_Header_parameters`];
             var pTransforms = target[`${propertyKey}_ParameterTransforms`];
 
-            descriptor.value = function(...args: any[])
+            descriptor.value = function(this: RESTClient, ...args: any[])
             {
                 // Body
                 var body = null;
@@ -376,6 +379,8 @@ function methodBuilder(method: number)
 
                 var req = new Request(options);
                 var cached: boolean = false;
+                let key;
+                let fromState = false;
                 var observable: Observable<Response>;
                 
                 //tries to get response from cache
@@ -395,8 +400,25 @@ function methodBuilder(method: number)
                 
                 if(!cached)
                 {
-                    // make the request and store the observable for later transformation
-                    observable = this.http.request(req);
+                    //try to retrieve value from transfer state
+                    if(isPresent(this.transferState) && !this.transferState.deactivated)
+                    {
+                        key = crypto.SHA256(JSON.stringify(req));
+                        const data = this.transferState.get(key);
+
+                        if(data)
+                        {
+                            fromState = true;
+                            observable = Observable.of(data);
+                        }
+                    }
+
+                    //not cached on server side
+                    if(!fromState)
+                    {
+                        // make the request and store the observable for later transformation
+                        observable = this.http.request(req);
+                    }
                 }
 
                 //tries to set response to cache
@@ -406,7 +428,7 @@ function methodBuilder(method: number)
                 }
 
                 // transform the obserable in accordance to the @Produces decorator
-                if (isPresent(descriptor.responseType))
+                if (isPresent(descriptor.responseType) && !fromState)
                 {
                     switch(descriptor.responseType)
                     {
@@ -452,6 +474,17 @@ function methodBuilder(method: number)
                             break;
                         }
                     }
+                }
+
+                //Store value to state transfer if has not been retrieved from state or state is active
+                if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated)
+                {
+                    key = key || crypto.SHA256(JSON.stringify(req));
+
+                    observable.do(data =>
+                    {
+                        this.transferState.set(key, data);
+                    });
                 }
 
                 // intercept the response
