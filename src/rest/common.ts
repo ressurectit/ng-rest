@@ -258,6 +258,26 @@ export function ParameterTransform(methodName?: string)
     };
 };
 
+/**
+ * Gets hash of request passed to http
+ * @param {string} baseUrl Base url that is used with request
+ * @param {RequestOptions} request Request to be hashed
+ */
+function getRequestHash(baseUrl: string, request: RequestOptions)
+{
+    let hashRequest = request;
+
+    if(baseUrl.length > 0)
+    {
+        hashRequest = <any>Utils.common.extend({}, hashRequest);
+        let regex = new RegExp(`^${baseUrl}`);
+
+        hashRequest.url = hashRequest.url.replace(regex, "");
+    }
+
+    return crypto.SHA256(JSON.stringify(hashRequest)).toString();
+}
+
 function methodBuilder(method: number)
 {
     return function(url: string)
@@ -407,7 +427,7 @@ function methodBuilder(method: number)
                     //try to retrieve value from transfer state
                     if(isPresent(this.transferState) && !this.transferState.deactivated)
                     {
-                        hashKey = crypto.SHA256(JSON.stringify(req)).toString();
+                        hashKey = getRequestHash(this.baseUrl, options);
                         const data = this.transferState.get(hashKey);
 
                         if(data)
@@ -483,7 +503,7 @@ function methodBuilder(method: number)
                 //Store value to state transfer if has not been retrieved from state or state is active
                 if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated)
                 {
-                    hashKey = hashKey || crypto.SHA256(JSON.stringify(req)).toString();
+                    hashKey = hashKey || getRequestHash(this.baseUrl, options);
 
                     observable = observable.do(data =>
                     {
