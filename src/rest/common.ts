@@ -485,7 +485,7 @@ function methodBuilder(method: number)
                 {
                     hashKey = hashKey || crypto.SHA256(JSON.stringify(req)).toString();
 
-                    observable.do(data =>
+                    observable = observable.do(data =>
                     {
                         this.transferState.set(hashKey, data);
                     });
