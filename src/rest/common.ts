@@ -275,7 +275,7 @@ function getRequestHash(baseUrl: string, request: RequestOptions)
         hashRequest.url = hashRequest.url.replace(regex, "");
     }
 
-    return crypto.SHA256(JSON.stringify(hashRequest)).toString();
+    return crypto.SHA256(`${hashRequest.method}-${hashRequest.url}-${JSON.stringify(request.headers)}-${JSON.stringify(request.body)}-${JSON.stringify(request.search)}`).toString();
 }
 
 function methodBuilder(method: number)
