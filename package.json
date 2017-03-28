@@ -1,6 +1,6 @@
 {
     "name": "@anglr/rest",
-    "version": "3.0.0-beta.7",
+    "version": "3.0.0-beta.8",
     "description": "Angular module representing rest services",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -24,13 +24,13 @@
     "license": "MIT",
     "dependencies":
     {
-        "@angular/core": ">=4.0.0-rc.5",
-        "@angular/common": ">=4.0.0-rc.5",
-        "@angular/http": ">=4.0.0-rc.5",
+        "@angular/core": "^4.0.0",
+        "@angular/common": "^4.0.0",
+        "@angular/http": "^4.0.0",
         "core-js": "~2.4.1",
-        "zone.js": "^0.8.4",
+        "zone.js": "^0.8.5",
         "rxjs": "^5.2.0",
-        "@anglr/common": ">=3.0.0-beta.6"
+        "@anglr/common": "^3.0.0"
     },
     "peerDependencies":
     {
@@ -42,11 +42,11 @@
         "@types/crypto-js": "^3.1.33",
         "@types/node": "^7.0.8",
         "@anglr/types": "^1.1.2",
-        "@angular/compiler-cli": ">=4.0.0-rc.5",
-        "@angular/compiler": ">=4.0.0-rc.5",
+        "@angular/compiler-cli": "^4.0.0",
+        "@angular/compiler": "^4.0.0",
         "rimraf": "~2.6.1",
         "typescript": "2.2.1",
-        "webpack": "2.2.1",
+        "webpack": "2.3.2",
         "npm-publish-package": "~1.2.0"
     }
 }

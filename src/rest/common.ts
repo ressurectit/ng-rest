@@ -1,3 +1,4 @@
+import {Inject, Optional, Injectable} from '@angular/core';
 import {Http,
         Headers as AngularHeaders,
         Request,
@@ -5,7 +6,7 @@ import {Http,
         RequestMethod as RequestMethods,
         Response,
         URLSearchParams} from "@angular/http";
-import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL} from '@anglr/common';
+import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
@@ -19,11 +20,15 @@ import * as param from 'jquery-param';
  * @class RESTClient
  * @constructor
  */
+@Injectable()
 export abstract class RESTClient
 {
-    public constructor(protected http: Http,
-                       protected baseUrl?: string,
-                       protected transferState?: TransferStateService)
+    constructor(protected http: Http,
+                @Optional() protected transferState?: TransferStateService,
+                @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
+                
+                @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
+                @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string)
     {
         if(isBlank(baseUrl))
         {
@@ -389,6 +394,16 @@ function methodBuilder(method: number)
                             headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
                         }
                     }
+                }
+
+                if(isPresent(this.serverCookieHeader))
+                {
+                    headers.append('Cookie', this.serverCookieHeader);
+                }
+
+                if(isPresent(this.serverAuthHeader))
+                {
+                    headers.append('Authorization', this.serverAuthHeader);
                 }
 
                 // Request options

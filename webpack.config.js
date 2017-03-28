@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var path = require('path');
 var projectName = require('./package.json').name.replace("@anglr/", "").replace("-", "");
 
 module.exports = function(options)
@@ -8,7 +9,7 @@ module.exports = function(options)
         entry: './dist/index.js',
         output:
         {
-            path: './dist',
+            path: path.join(__dirname, './dist'),
             filename: 'index.dev.js',
             library: projectName,
             libraryTarget: "umd"
