@@ -396,16 +396,6 @@ function methodBuilder(method: number)
                     }
                 }
 
-                if(isPresent(this.serverCookieHeader))
-                {
-                    headers.append('Cookie', this.serverCookieHeader);
-                }
-
-                if(isPresent(this.serverAuthHeader))
-                {
-                    headers.append('Authorization', this.serverAuthHeader);
-                }
-
                 // Request options
                 var options = new RequestOptions(
                 {
@@ -450,6 +440,16 @@ function methodBuilder(method: number)
                             fromState = true;
                             observable = Observable.of(data);
                         }
+                    }
+
+                    if(isPresent(this.serverCookieHeader))
+                    {
+                        req.headers.append('Cookie', this.serverCookieHeader);
+                    }
+
+                    if(isPresent(this.serverAuthHeader))
+                    {
+                        req.headers.append('Authorization', this.serverAuthHeader);
                     }
 
                     //not cached on server side
