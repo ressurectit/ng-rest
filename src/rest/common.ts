@@ -461,7 +461,7 @@ function methodBuilder(method: number)
                 }
 
                 //tries to set response to cache
-                if(isPresent(descriptor.saveResponseToCache) && !cached)
+                if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState)
                 {
                     observable = observable.map(response => descriptor.saveResponseToCache(options, response));
                 }
