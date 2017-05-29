@@ -1,4 +1,4 @@
-import {Inject, Optional, Injectable} from '@angular/core';
+import {Inject, Optional, Injectable, Injector} from '@angular/core';
 import {Http,
         Headers as AngularHeaders,
         Request,
@@ -15,7 +15,7 @@ import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
 
 /**
- * Angular 2 RESTClient class.
+ * Angular RESTClient base class.
  *
  * @class RESTClient
  * @constructor
@@ -28,7 +28,8 @@ export abstract class RESTClient
                 @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
                 
                 @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
-                @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string)
+                @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
+                @Optional() protected injector?: Injector)
     {
         if(isBlank(baseUrl))
         {
@@ -36,34 +37,40 @@ export abstract class RESTClient
         }
     }
 
+    /**
+     * Returns the base url of RESTClient
+     */
     protected getBaseUrl(): string
     {
         return null;
     };
 
+    /**
+     * Returns the default headers of RESTClient in a key-value 
+     */
     protected getDefaultHeaders(): Object
     {
         return null;
     };
 
     /**
-     * Request Interceptor
+     * Request interceptor for all methods
      *
      * @method requestInterceptor
      * @param {Request} req - request object
      */
-    protected requestInterceptor(req: Request)
+    protected requestInterceptor(req: Request): void
     {
     }
 
     /**
-     * Response Interceptor
+     * Allows to intercept all responses for all methods in class
      *
      * @method responseInterceptor
      * @param {Response} res - response object
      * @returns {Response} res - transformed response object
      */
-    protected responseInterceptor(res: Observable<any> ): Observable<any>
+    protected responseInterceptor(res: Observable<any>): Observable<any>
     {
         return res;
     }
@@ -110,10 +117,13 @@ function paramBuilder(paramName: string)
         return function(target: RESTClient, propertyKey: string | symbol, parameterIndex: number)
         {
             var metadataKey = `${propertyKey}_${paramName}_parameters`;
-            var paramObj: any = {
+
+            var paramObj: any = 
+            {
                 key: key,
                 parameterIndex: parameterIndex
             };
+
             if (Array.isArray(target[metadataKey]))
             {
                 target[metadataKey].push(paramObj);
@@ -401,9 +411,9 @@ function methodBuilder(method: number)
                 {
                     method,
                     url: this.baseUrl + this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 || !queryString ? "" : "?") + queryString,
-                        headers,
-                        body,
-                        search
+                    headers,
+                    body,
+                    search
                 });
 
                 var req = new Request(options);

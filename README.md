@@ -1,68 +1,173 @@
-ORIGINAL SOURCE: [https://github.com/Paldom/angular2-rest](https://github.com/Paldom/angular2-rest)
+# Angular Rest Client
 
-# angular2-rest
-Angular2 HTTP client to consume RESTful services. Built on angular2/http with TypeScript.  
-**Note:** this solutions is not production ready, it's in a very basic alpha state. Any ideas or contributions are very welcomed :)
+Angular HTTP client to consume RESTful services. Built on `@angular/http` with TypeScript.  
+
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+
+## Description
+
+- Module with decorators to make class RESTfull
+- TODO - add description
 
 ## Installation
 
 ```sh
-npm install angular2-rest
+npm install @anglr/rest --save
 ```
 
-## Example
+### SystemJs Usage
 
-```ts
+In your **SystemJs** configuration script add following lines to `packages` configuration section:
 
-import {Request, Response} from 'angular2/http';
-import {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query} from 'angular2-rest';
-
-import {Todo} from './models/Todo';
-import {SessionFactory} from './sessionFactory';
-
-@Injectable()
-@BaseUrl("http://localhost:3000/api/")
-@DefaultHeaders({
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-})
-export class TodoRESTClient extends RESTClient {
-
-    protected requestInterceptor(req: Request) {
-        if (SessionFactory.getInstance().isAuthenticated) {
-            req.headers.append('jwt', SessionFactory.getInstance().credentials.jwt);
-        }
+```javascript
+packages:
+{
+    '@anglr/rest': 
+    {
+        main: "dist/index.min.js",
+        defaultExtension: 'js'
     }
-    
-    protected requestInterceptor(req: Response) {
-        // do sg with responses
+}
+```
+
+### Webpack Usage
+
+This depends on your preferences, but you can use it as any other angular module, just use it in code and webpack will automatically add it to result `.js` file.
+
+
+## Usage
+
+*config/global.json*
+```json
+{
+    "apiBaseUrl": "api/",
+    "defaultApiHeaders": 
+    {
+        "Accept": "application/json"
     }
+}
+```
 
-    @GET("todo/")
-    public getTodos( @Query("sort") sort?: string): Observable { return null; };
-
-    @GET("todo/{id}")
-    public getTodoById( @Path("id") id: string): Observable { return null; };
-
-    @POST("todo")
-    public postTodo( @Body todo: Todo): Observable { return null; };
-
-    @PUT("todo/{id}")
-    public putTodoById( @Path("id") id: string, @Body todo: Todo): Observable { return null; };
-
-    @DELETE("todo/{id}")
-    public deleteTodoById( @Path("id") id: string): Observable { return null; };
-
+*user.interface.ts*
+```typescript
+export interface User
+{
+    id?: string;
+    name?: string;
+    surname?: string;
+    birthDate?: moment.Moment;
 }
 
+export interface Paging
+{
+    from?: number;
+    to?: number;
+}
 ```
 
-## API Docs
+*user.service.ts*
+```typescript
+import {Injectable} from '@angular/core';
+import {RESTClient, GET, POST, Path, Body, Query, BaseUrl, DefaultHeaders, Produces, ResponseType, ResponseTransform, LocationHeaderResponse} from '@anglr/rest';
+import {isPresent} from '@anglr/common';
+import {User, Paging} from './user.interface';
+import {Observable} from 'rxjs/Observable';
+import * as global from 'config/global';
+import * as moment from 'moment';
 
-### RESTClient
-#### Methods:
-- `getBaseUrl(): string`: returns the base url of RESTClient
-- `getDefaultHeaders(): Object`: returns the default headers of RESTClient in a key-value pair
+/**
+ * Service used to access User REST resource
+ */
+@Injectable()
+@BaseUrl(global.apiBaseUrl)
+@DefaultHeaders(global.defaultApiHeaders)
+export class UserService extends RESTClient
+{
+    //######################### public methods #########################
+
+    /**
+     * Gets available users by specified criteria
+     */
+    @Produces(ResponseType.Json)
+    @ResponseTransform()
+    @GET("users")
+    public getAll(@Query("surname") surname: string,
+                  @QueryObject paging?: Paging,
+                  @Query("name") name?: string): Observable<User[]>
+    {
+        return null;
+    }
+
+    /**
+     * Gets specified user by id
+     */
+    @Produces(ResponseType.Json)
+    @GET("users/{id}")
+    public get(@Path("id") id: string): Observable<User>
+    {
+        return null;
+    }
+
+    /**
+     * Creates new user
+     */
+    @Produces(ResponseType.LocationHeader)
+    @JsonContentType()
+    @POST("users")
+    public createUser(@Body user: User): Observable<LocationHeaderResponse>
+    {
+        return null;
+    }
+
+    //######################### private methods #########################
+
+    /**
+     * Transform response from getAll method
+     */
+    private getAllResponseTransform(response: Observable<User[]>): Observable<User[]>
+    {
+        return response.map(result =>
+        {
+            if(result && result.length > 0)
+            {
+                result.forEach(user => 
+                {
+                    if(isPresent(user.birthDate))
+                    {
+                        user.birthDate = moment(user.birthDate);
+                    
+                        if(!user.birthDate.isValid)
+                        {
+                            user.birthDate = null;
+                        }
+                    }
+                });
+            }
+
+            return result;
+        });
+    }
+}
+```
+
+## API
+
+### `RESTClient` - Angular RESTClient base class.
+
+#### *Properties*
+ - TODO - constructor properties
+
+#### *Methods*
+- `getBaseUrl(): string` - Returns the base url of RESTClient
+- `getDefaultHeaders(): Object` - Returns the default headers of RESTClient in a key-value pair
+- `requestInterceptor(req: Request): void` - Request interceptor for all methods in class
+  - `req: Request` - Http Request that can be intercepted
+- `responseInterceptor(res: Observable<any>): Observable<any>` - Allows to intercept all responses for all methods in class
+  - `res: Observable<any>` - response that can be intercepted
+  - *return* - returns new response
 
 ### Class decorators:
 - `@BaseUrl(url: string)`
@@ -74,12 +179,20 @@ export class TodoRESTClient extends RESTClient {
 - `@PUT(url: String)`
 - `@DELETE(url: String)`
 - `@Headers(headers: Object)`
+- `@JsonContentType()`
+- `@FormDataContentType()`
+- `@Produces(producesDef: ResponseType)`
+- `@ResponseTransform(methodName?: string)`
+- `@Cache()`
 
 ### Parameter decorators:
 - `@Path(key: string)`
 - `@Query(key: string)`
 - `@Header(key: string)`
 - `@Body`
+- `@QueryObject`
+- `@PlainBody`
+- `@ParameterTransform`
 
 # License
 
