@@ -299,6 +299,11 @@ function methodBuilder(method: number)
     {
         return function(target: RESTClient, propertyKey: string, descriptor: any)
         {
+            if(isFunction(descriptor.value))
+            {
+                descriptor.originalParamsCount = descriptor.value.length;
+            }
+
             var pPath = target[`${propertyKey}_Path_parameters`];
             var pQuery = target[`${propertyKey}_Query_parameters`];
             var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
