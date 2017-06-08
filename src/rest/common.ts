@@ -537,6 +537,12 @@ function methodBuilder(method: number)
 
                     observable = observable.do(data =>
                     {
+                        //do not cache angular http response only transformed data
+                        if(data instanceof Response)
+                        {
+                            return;
+                        }
+
                         this.transferState.set(hashKey, data);
                     });
                 }
