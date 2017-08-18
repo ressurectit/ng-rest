@@ -1,8 +1,15 @@
 /.vscode
 /src
+/tests
 /dist/src
 /dist/node_modules
 .jsbeautifyrc
 tsconfig.json
 webpack.config.js
+
 *.log
+*.spec.js
+*.spec.d.ts
+
+karma-common-shim.d.ts
+karma-test-shim.d.ts

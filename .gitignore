@@ -1,4 +1,8 @@
 /node_modules
 /dist
+/testing
+/tests
 
+package-lock.json
 *.log
+*~

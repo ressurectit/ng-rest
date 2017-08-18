@@ -239,7 +239,7 @@ export function ResponseTransform(methodName?: string)
         
         if(isPresent(target[methodName]) && isFunction(target[methodName]))
         {
-            descriptor.responseTransform = target[methodName];
+            descriptor.responseTransform = target[methodName].bind(target);
         }
         
         return descriptor;

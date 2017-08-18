@@ -27,7 +27,11 @@
     },
     "exclude": 
     [
-        "node_modules"
+        "node_modules",
+        "dist",
+        "testing",
+        "*.spec.ts",
+        "karma-test-shim.ts"
     ],
     "angularCompilerOptions": 
     {
