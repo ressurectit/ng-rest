@@ -2,7 +2,7 @@
     "compilerOptions":
     {
         "target": "es5",
-        "module": "es2015",
+        "module": "esnext",
         "sourceMap": false,
         "declaration": true,
         "emitDecoratorMetadata": true,
@@ -12,9 +12,10 @@
         "outDir": "dist",
         "lib": 
         [
-            "es6", "dom"
+            "es2016", 
+            "dom"
         ],
-        "types": 
+        "types":
         [
             "node",
             "crypto-js",
@@ -23,6 +24,12 @@
         "typeRoots": 
         [
             "node_modules/@anglr/types"
+        ],
+        "plugins": 
+        [
+            {
+                "name": "@angular/language-service"
+            }
         ]
     },
     "exclude": 

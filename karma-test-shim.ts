@@ -3,8 +3,6 @@ import 'core-js/es7/reflect';
 import 'rxjs/Observable';
 import 'rxjs/Subject';
 import 'rxjs/Subscription';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/first';
 
 import 'zone.js/dist/zone';
 import 'zone.js/dist/long-stack-trace-zone';

@@ -1,42 +1,47 @@
-var webpack = require('webpack');
-var path = require('path');
-var projectName = require('./package.json').name.replace("@anglr/", "").replace("-", "");
+var webpack = require('webpack'),
+    path = require('path');
 
-module.exports = function(options)
+module.exports = function()
 {
+    var distPath = "tests";
+
     var config =
     {
-        entry: './dist/index.js',
+        entry:
+        {
+            "dependencies":
+            [
+                "./karma-dependencies-shim"
+            ]
+        },
         output:
         {
-            path: path.join(__dirname, './dist'),
-            filename: 'index.dev.js',
-            library: projectName,
-            libraryTarget: "umd"
+            path: path.join(__dirname, distPath),
+            filename: '[name].js',
+            library: '[name]_[hash]'
         },
-        externals:
-        [
-            "numeral",
-            "jquery-param",
-            "crypto-js",
-            /^@angular\/.*$/,
-            /^@ng\/.*$/,
-            /^rxjs\/.*$/
-        ],
-        plugins: []
-    };
-
-    if(options && options.minify)
-    {
-        config.plugins.push(new webpack.optimize.UglifyJsPlugin(
+        resolve:
         {
-            compress: true,
-            mangle: true,
-            sourceMap: false
-        }));
-
-        config.output.filename = "index.min.js";
-    }
+            extensions: ['.js'],
+            alias:
+            {
+            }
+        },
+        module:
+        {
+            rules:
+            [
+            ]
+        },
+        plugins:
+        [
+            new webpack.DllPlugin(
+            {
+                path: path.join(__dirname, distPath + '/[name]-manifest.json'),
+                name: '[name]_[hash]'
+            })
+        ]
+    };
 
     return config;
 };

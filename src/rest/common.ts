@@ -1,6 +1,6 @@
 import {Inject, Optional, Injectable, Injector} from '@angular/core';
-import {Http,
-        Headers as AngularHeaders,
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Headers as AngularHeaders,
         Request,
         RequestOptions,
         RequestMethod as RequestMethods,
@@ -23,7 +23,7 @@ import * as param from 'jquery-param';
 @Injectable()
 export abstract class RESTClient
 {
-    constructor(protected http: Http,
+    constructor(protected http: HttpClient,
                 @Optional() protected transferState?: TransferStateService,
                 @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
                 
@@ -379,6 +379,7 @@ function methodBuilder(method: number)
                             if (value instanceof Object)
                             {
                                 queryString += (queryString.length > 0 ? "&" : "") + param(value)
+                                                          .replace(/&&/g, "&")
                                                           .replace(/%5B\%5D/g, "")
                                                           .replace(/%5D/g, "")
                                                           .replace(/%5B/g, ".");
