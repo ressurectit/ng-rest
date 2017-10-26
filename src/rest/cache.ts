@@ -1,18 +1,9 @@
-import {Response, RequestOptions} from '@angular/http';
+import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {isPresent} from '@anglr/common';
 
 //Object storing response cache itself
 //It caches request urls to response data
-var responseCache: {[key: string]: Response} = {};
-
-/**
- * Converts request options to request url
- * @param  {RequestOptions} request Request object
- */
-function toRequestUrl(request: RequestOptions)
-{
-    return request.url + request.search.toString();
-}
+var responseCache: {[key: string]: HttpResponse<any>} = {};
 
 /**
  * Defines method name that will be called and modifies response
@@ -22,21 +13,19 @@ export function Cache()
 {
     return function(target: any, propertyKey: string, descriptor: any)
     {
-        descriptor.getCachedResponse = (request: RequestOptions): Response =>
+        descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any> =>
         {
-            let url = toRequestUrl(request);
-            
-            if(isPresent(responseCache[url]))
+            if(isPresent(responseCache[request.urlWithParams]))
             {
-                return responseCache[url];
+                return responseCache[request.urlWithParams];
             }
             
             return null;
         };
         
-        descriptor.saveResponseToCache = (request: RequestOptions, response: Response): Response =>
+        descriptor.saveResponseToCache = (request: HttpRequest<any>, response: HttpResponse<any>): HttpResponse<any> =>
         {
-            responseCache[toRequestUrl(request)] = response;
+            responseCache[request.urlWithParams] = response;
             
             return response;
         };

@@ -1,11 +1,5 @@
 import {Inject, Optional, Injectable, Injector} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Headers as AngularHeaders,
-        Request,
-        RequestOptions,
-        RequestMethod as RequestMethods,
-        Response,
-        URLSearchParams} from "@angular/http";
+import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpEvent} from '@angular/common/http';
 import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
@@ -54,24 +48,26 @@ export abstract class RESTClient
     };
 
     /**
-     * Request interceptor for all methods
+     * Request interceptor for all methods, must return new HttpRequest since object is immutable
      *
      * @method requestInterceptor
-     * @param {Request} req - request object
+     * @param {HttpRequest<any>} req - request object
      */
-    protected requestInterceptor(req: Request): void
+    protected requestInterceptor(req: HttpRequest<any>): HttpRequest<any>
     {
+        return req;
     }
 
     /**
      * Allows to intercept all responses for all methods in class
      *
      * @method responseInterceptor
-     * @param {Response} res - response object
-     * @returns {Response} res - transformed response object
+     * @param {Observable<HttpEvent<any>>} res - response object
+     * @returns {Observable<any>} res - transformed response object
      */
-    protected responseInterceptor(res: Observable<any>): Observable<any>
+    protected responseInterceptor(res: Observable<HttpEvent<any>>): Observable<any>
     {
+        //TODO - think how to do this, temporary disabled
         return res;
     }
 }

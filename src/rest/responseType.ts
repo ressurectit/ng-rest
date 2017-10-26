@@ -32,6 +32,8 @@ export enum ResponseType
 {
     Json,
     Text,
+    Blob,
+    ArrayBuffer,
     LocationHeader,
     LocationHeaderAndJson
 }
