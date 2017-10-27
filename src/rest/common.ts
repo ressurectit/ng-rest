@@ -1,9 +1,10 @@
 import {Inject, Optional, Injectable, Injector} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpEvent} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpEvent, HttpResponse, HttpEventType} from '@angular/common/http';
 import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
+import {Observer} from "rxjs/Observer";
 import {TransferStateService} from '../transferState/transferState.service';
 import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
@@ -62,12 +63,11 @@ export abstract class RESTClient
      * Allows to intercept all responses for all methods in class
      *
      * @method responseInterceptor
-     * @param {Observable<HttpEvent<any>>} res - response object
+     * @param {Observable<any>} res - response object
      * @returns {Observable<any>} res - transformed response object
      */
-    protected responseInterceptor(res: Observable<HttpEvent<any>>): Observable<any>
+    protected responseInterceptor(res: Observable<any>): Observable<any>
     {
-        //TODO - think how to do this, temporary disabled
         return res;
     }
 }
@@ -156,12 +156,6 @@ export var QueryObject = paramBuilder("QueryObject")("QueryObject");
 export var Body = paramBuilder("Body")("Body");
 
 /**
- * Plain body of a REST method, no transformation applied
- * Only one body per method!
- */
-export var PlainBody = paramBuilder("PlainBody")("PlainBody");
-
-/**
  * Custom header of a REST method, type: string
  * @param {string} key - header key to bind value
  */
@@ -195,20 +189,7 @@ export function JsonContentType()
 }
 
 /**
- * Add custom header Content-Type "multipart/form-data" to headers array
- */
-export function FormDataContentType()
-{
-    return function(target: RESTClient, propertyKey: string, descriptor: any)
-    {
-        descriptor.headers = Utils.common.extend(descriptor.headers || {}, {"content-type": "multipart/form-data"});
-        
-        return descriptor;
-    };
-}
-
-/**
- * Defines the response type(s) that the methods can produce
+ * Defines the response type(s) that the methods can produce or tzpe of body id full request or events are requested
  * @param {ResponseType} producesDef - response type to be produced
  */
 export function Produces(producesDef: ResponseType)
@@ -241,9 +222,36 @@ export function ResponseTransform(methodName?: string)
         return descriptor;
     };
 }
+
+/**
+ * Allows method to report full progress events
+ */
+export function ReportProgress()
+{
+    return function(target: any, propertyKey: string, descriptor: any)
+    {
+        descriptor.reportProgress = true;
+        
+        return descriptor;
+    };
+}
+
+/**
+ * Allows method to return full HttpResponse with requested response type body
+ */
+export function FullHttpResponse()
+{
+    return function(target: any, propertyKey: string, descriptor: any)
+    {
+        descriptor.fullHttpResponse = true;
+        
+        return descriptor;
+    };
+}
+
 /**
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization
- * @param  {string} methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
+ * @param {string} methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
  */
 export function ParameterTransform(methodName?: string)
 {
@@ -272,24 +280,26 @@ export function ParameterTransform(methodName?: string)
 /**
  * Gets hash of request passed to http
  * @param {string} baseUrl Base url that is used with request
- * @param {RequestOptions} request Request to be hashed
+ * @param {HttpRequest<any>} request Request to be hashed
  */
-function getRequestHash(baseUrl: string, request: RequestOptions)
+function getRequestHash(baseUrl: string, request: HttpRequest<any>)
 {
     let hashRequest = request;
 
     if(baseUrl.length > 0)
     {
-        hashRequest = <any>Utils.common.extend({}, hashRequest);
         let regex = new RegExp(`^${baseUrl}`);
 
-        hashRequest.url = hashRequest.url.replace(regex, "");
+        hashRequest = hashRequest.clone(
+        {
+            url: hashRequest.url.replace(regex, "")
+        });
     }
 
-    return crypto.SHA256(`${hashRequest.method}-${hashRequest.url}-${JSON.stringify(request.headers)}-${JSON.stringify(request.body)}-${JSON.stringify(request.search)}`).toString();
+    return crypto.SHA256(`${hashRequest.method}-${hashRequest.urlWithParams}-${JSON.stringify(request.headers)}-${JSON.stringify(request.body)}`).toString();
 }
 
-function methodBuilder(method: number)
+function methodBuilder(method: string)
 {
     return function(url: string)
     {
@@ -304,7 +314,6 @@ function methodBuilder(method: number)
             var pQuery = target[`${propertyKey}_Query_parameters`];
             var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
             var pBody = target[`${propertyKey}_Body_parameters`];
-            var pPlainBody = target[`${propertyKey}_PlainBody_parameters`];
             var pHeader = target[`${propertyKey}_Header_parameters`];
             var pTransforms = target[`${propertyKey}_ParameterTransforms`];
 
@@ -314,12 +323,7 @@ function methodBuilder(method: number)
                 var body = null;
                 if (pBody)
                 {
-                    body = JSON.stringify(args[pBody[0].parameterIndex]);
-                }
-
-                if (pPlainBody)
-                {
-                    body = args[pPlainBody[0].parameterIndex];
+                    body = args[pBody[0].parameterIndex];
                 }
 
                 // Path
@@ -335,27 +339,6 @@ function methodBuilder(method: number)
                     }
                 }
 
-                // Query
-                var search = new URLSearchParams();
-                if (pQuery)
-                {
-                    pQuery
-                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                        .forEach(p =>
-                        {
-                            var key = p.key;
-                            var value = args[p.parameterIndex];
-                            
-                            // if the value is a instance of Object, we stringify it
-                            if (value instanceof Object)
-                            {
-                                value = JSON.stringify(value);
-                            }
-                            
-                            search.set(key, value);
-                        });
-                }
-                
                 // QueryObject
                 var queryString: string = "";
                 if (pQueryObject)
@@ -384,10 +367,31 @@ function methodBuilder(method: number)
                         
                     queryString = queryString.replace(/\w+=&/g, "");
                 }
+
+                // Query
+                var params = new HttpParams({fromString: queryString});
+                if (pQuery)
+                {
+                    pQuery
+                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                        .forEach(p =>
+                        {
+                            var key = p.key;
+                            var value = args[p.parameterIndex];
+                            
+                            // if the value is a instance of Object, we stringify it
+                            if (value instanceof Object)
+                            {
+                                value = JSON.stringify(value);
+                            }
+                            
+                            params.append(key, value);
+                        });
+                }
                 
                 // Headers
                 // set class default headers
-                var headers = new AngularHeaders(this.getDefaultHeaders());
+                var headers = new HttpHeaders(this.getDefaultHeaders());
                 // set method specific headers
                 for (var k in descriptor.headers)
                 {
@@ -408,28 +412,74 @@ function methodBuilder(method: number)
                     }
                 }
 
-                // Request options
-                var options = new RequestOptions(
-                {
-                    method,
-                    url: this.baseUrl + this.getBaseUrl() + resUrl + (resUrl.indexOf("?") >= 0 || !queryString ? "" : "?") + queryString,
-                    headers,
-                    body,
-                    search
-                });
+                let responseType: 'arraybuffer' | 'blob' | 'json' | 'text' = 'json';
 
-                var req = new Request(options);
-                var cached: boolean = false;
-                let hashKey : string;
+                switch(descriptor.responseType)
+                {
+                    case ResponseType.Json:
+                    case ResponseType.LocationHeader:
+                    case ResponseType.LocationHeaderAndJson:
+                    {
+                        responseType = 'json';
+
+                        break;
+                    }
+                    case ResponseType.Text:
+                    {
+                        responseType = 'text';
+                        
+                        break;
+                    }
+                    case ResponseType.Blob:
+                    {
+                        responseType = 'blob';
+                        
+                        break;
+                    }
+                    case ResponseType.ArrayBuffer:
+                    {
+                        responseType = 'arraybuffer';
+                        
+                        break;
+                    }
+                }
+
+                var reportProgress = descriptor.reportProgress || false;
+                var fullHttpResponse = descriptor.fullHttpResponse || false;
+
+                //append server headers
+                if(isPresent(this.serverCookieHeader))
+                {
+                    headers.append('Cookie', this.serverCookieHeader);
+                }
+
+                if(isPresent(this.serverAuthHeader))
+                {
+                    headers.append('Authorization', this.serverAuthHeader);
+                }
+
+                // Request options
+                let req = new HttpRequest<any>(method,
+                                               this.baseUrl + this.getBaseUrl() + resUrl,
+                                               body,
+                                               {
+                                                    headers,
+                                                    params,
+                                                    responseType,
+                                                    reportProgress
+                                               });
+
+                let cached: boolean = false;
+                let hashKey: string;
                 let fromState = false;
-                var observable: Observable<Response>;
+                let observable: Observable<any>;
                 
                 //tries to get response from cache
                 if(isPresent(descriptor.getCachedResponse))
                 {
-                    var cachedResponse: Response = descriptor.getCachedResponse(options);
+                    let cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(req);
                     
-                    if(isPresent(cachedResponse))
+                    if (isPresent(cachedResponse))
                     {
                         cached = true;
                         observable = Observable.of(cachedResponse);
@@ -437,14 +487,14 @@ function methodBuilder(method: number)
                 }
 
                 // intercept the request
-                this.requestInterceptor(req);
+                req = this.requestInterceptor(req);
                 
                 if(!cached)
                 {
                     //try to retrieve value from transfer state
                     if(isPresent(this.transferState) && !this.transferState.deactivated)
                     {
-                        hashKey = getRequestHash(this.baseUrl, options);
+                        hashKey = getRequestHash(this.baseUrl, req);
                         const data = this.transferState.get(hashKey);
 
                         if(data)
@@ -453,51 +503,55 @@ function methodBuilder(method: number)
                             observable = Observable.of(data);
                         }
                     }
+                }
 
-                    if(isPresent(this.serverCookieHeader))
+                //not cached on server side
+                if(!fromState && !cached)
+                {
+                    // make the request and store the observable for later transformation
+                    observable = Observable.create((observer: Observer<any>) =>
                     {
-                        req.headers.append('Cookie', this.serverCookieHeader);
-                    }
+                        this.http.request(req)
+                            .subscribe(result =>
+                            {
+                                if(reportProgress)
+                                {
+                                    observer.next(result);
+                                }
 
-                    if(isPresent(this.serverAuthHeader))
-                    {
-                        req.headers.append('Authorization', this.serverAuthHeader);
-                    }
-
-                    //not cached on server side
-                    if(!fromState)
-                    {
-                        // make the request and store the observable for later transformation
-                        observable = this.http.request(req);
-                    }
+                                if(result.type == HttpEventType.Response)
+                                {
+                                    observer.next(result);
+                                    observer.complete();
+                                }
+                            }, error => observer.error(error));
+                    });
                 }
 
                 //tries to set response to cache
-                if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState)
+                if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState && !reportProgress)
                 {
-                    observable = observable.map(response => descriptor.saveResponseToCache(options, response));
+                    observable = observable.map(response => descriptor.saveResponseToCache(req, response));
                 }
 
                 // transform the obserable in accordance to the @Produces decorator
-                if (isPresent(descriptor.responseType) && !fromState)
+                if (isPresent(descriptor.responseType) && !fromState && !reportProgress && !fullHttpResponse)
                 {
                     switch(descriptor.responseType)
                     {
-                        case ResponseType.Json:
-                        {
-                            observable = observable.map(res => res.json());
-                            
-                            break;
-                        }
+                        default:
                         case ResponseType.Text:
+                        case ResponseType.Json:
+                        case ResponseType.Blob:
+                        case ResponseType.ArrayBuffer:
                         {
-                            observable = observable.map(res => <any>res.text());
-                            
+                            observable = observable.map((res: HttpResponse<any>) => res.body);
+
                             break;
                         }
                         case ResponseType.LocationHeader:
                         {
-                            observable = observable.map(res => 
+                            observable = observable.map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
 
@@ -511,14 +565,14 @@ function methodBuilder(method: number)
                         }
                         case ResponseType.LocationHeaderAndJson:
                         {
-                            observable = observable.map(res => 
+                            observable = observable.map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
 
                                 return <any>{
                                     location: headerValue,
                                     id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null,
-                                    data: res.json()
+                                    data: res.body
                                 };
                             });
                             
@@ -528,19 +582,13 @@ function methodBuilder(method: number)
                 }
 
                 //Store value to state transfer if has not been retrieved from state or state is active
-                if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated)
+                if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated && !reportProgress && !fullHttpResponse)
                 {
-                    hashKey = hashKey || getRequestHash(this.baseUrl, options);
+                    hashKey = hashKey || getRequestHash(this.baseUrl, req);
 
-                    observable = observable.do(data =>
+                    observable = observable.do((res) =>
                     {
-                        //do not cache angular http response only transformed data
-                        if(data instanceof Response)
-                        {
-                            return;
-                        }
-
-                        this.transferState.set(hashKey, data);
+                        this.transferState.set(hashKey, res);
                     });
                 }
 
@@ -565,30 +613,28 @@ function methodBuilder(method: number)
  * GET method
  * @param {string} url - resource url of the method
  */
-export var GET = methodBuilder(RequestMethods.Get);
+export var GET = methodBuilder("GET");
 
 /**
  * POST method
  * @param {string} url - resource url of the method
  */
-export var POST = methodBuilder(RequestMethods.Post);
+export var POST = methodBuilder("POST");
 
 /**
  * PUT method
  * @param {string} url - resource url of the method
  */
-export var PUT = methodBuilder(RequestMethods.Put);
+export var PUT = methodBuilder("PUT");
 
 /**
  * DELETE method
  * @param {string} url - resource url of the method
  */
-export var DELETE = methodBuilder(RequestMethods.Delete);
+export var DELETE = methodBuilder("DELETE");
 
 /**
  * HEAD method
  * @param {string} url - resource url of the method
  */
-export var HEAD = methodBuilder(RequestMethods.Head);
-
-export {ResponseType, Cache};
+export var HEAD = methodBuilder("HEAD");
