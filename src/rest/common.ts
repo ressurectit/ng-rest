@@ -1,10 +1,11 @@
 import {Inject, Optional, Injectable, Injector} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpEvent, HttpResponse, HttpEventType} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
 import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER} from '@anglr/common';
 import {ResponseType} from './responseType';
-import {Cache} from './cache';
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
+import {of} from "rxjs/observable/of";
+import {map, tap} from "rxjs/operators";
 import {TransferStateService} from '../transferState/transferState.service';
 import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
@@ -482,7 +483,7 @@ function methodBuilder(method: string)
                     if (isPresent(cachedResponse))
                     {
                         cached = true;
-                        observable = Observable.of(cachedResponse);
+                        observable = of(cachedResponse);
                     }
                 }
 
@@ -500,7 +501,7 @@ function methodBuilder(method: string)
                         if(data)
                         {
                             fromState = true;
-                            observable = Observable.of(data);
+                            observable = of(data);
                         }
                     }
                 }
@@ -531,7 +532,7 @@ function methodBuilder(method: string)
                 //tries to set response to cache
                 if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState && !reportProgress)
                 {
-                    observable = observable.map(response => descriptor.saveResponseToCache(req, response));
+                    observable = observable.pipe(map(response => descriptor.saveResponseToCache(req, response)));
                 }
 
                 // transform the obserable in accordance to the @Produces decorator
@@ -545,13 +546,13 @@ function methodBuilder(method: string)
                         case ResponseType.Blob:
                         case ResponseType.ArrayBuffer:
                         {
-                            observable = observable.map((res: HttpResponse<any>) => res.body);
+                            observable = observable.pipe(map((res: HttpResponse<any>) => res.body));
 
                             break;
                         }
                         case ResponseType.LocationHeader:
                         {
-                            observable = observable.map((res: HttpResponse<any>) => 
+                            observable = observable.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
 
@@ -559,13 +560,13 @@ function methodBuilder(method: string)
                                     location: headerValue,
                                     id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null
                                 };
-                            });
+                            }));
                             
                             break;
                         }
                         case ResponseType.LocationHeaderAndJson:
                         {
-                            observable = observable.map((res: HttpResponse<any>) => 
+                            observable = observable.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
 
@@ -574,7 +575,7 @@ function methodBuilder(method: string)
                                     id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null,
                                     data: res.body
                                 };
-                            });
+                            }));
                             
                             break;
                         }
@@ -586,10 +587,10 @@ function methodBuilder(method: string)
                 {
                     hashKey = hashKey || getRequestHash(this.baseUrl, req);
 
-                    observable = observable.do((res) =>
+                    observable = observable.pipe(tap((res) =>
                     {
                         this.transferState.set(hashKey, res);
-                    });
+                    }));
                 }
 
                 // intercept the response

@@ -1,7 +1,3 @@
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
-
 export {ResponseType, LocationHeaderAndJsonResponse, LocationHeaderResponse} from './rest/responseType';
 export {Cache} from './rest/cache';
 export {Body,BaseUrl,DefaultHeaders,DELETE,GET,HEAD,Header,Headers,JsonContentType,ParameterTransform,Path,POST,Produces,PUT,Query,QueryObject,ResponseTransform,RESTClient,FullHttpResponse,ReportProgress} from './rest/common';
