@@ -2,6 +2,7 @@
 /dist
 /tests
 /testing
+/distJit
 
 package-lock.json
 *.log
