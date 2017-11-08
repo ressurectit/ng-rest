@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.2
+ - returned typescript version back to 2.4.2 and removed distJit
+
 ## Version 4.0.1
  - added compiled outputs for Angular JIT
 
