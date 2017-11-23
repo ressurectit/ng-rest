@@ -386,7 +386,7 @@ function methodBuilder(method: string)
                                 value = JSON.stringify(value);
                             }
                             
-                            params.append(key, value);
+                            params = params.append(key, value);
                         });
                 }
                 
@@ -398,7 +398,7 @@ function methodBuilder(method: string)
                 {
                     if (descriptor.headers.hasOwnProperty(k))
                     {
-                        headers.append(k, descriptor.headers[k]);
+                        headers = headers.append(k, descriptor.headers[k]);
                     }
                 }
                 // set parameter specific headers
@@ -408,7 +408,7 @@ function methodBuilder(method: string)
                     {
                         if (pHeader.hasOwnProperty(k))
                         {
-                            headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                            headers = headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
                         }
                     }
                 }
@@ -451,12 +451,12 @@ function methodBuilder(method: string)
                 //append server headers
                 if(isPresent(this.serverCookieHeader))
                 {
-                    headers.append('Cookie', this.serverCookieHeader);
+                    headers = headers.append('Cookie', this.serverCookieHeader);
                 }
 
                 if(isPresent(this.serverAuthHeader))
                 {
-                    headers.append('Authorization', this.serverAuthHeader);
+                    headers = headers.append('Authorization', this.serverAuthHeader);
                 }
 
                 // Request options
