@@ -12,7 +12,7 @@
         "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
-        "strictNullChecks": false,
+        "strictNullChecks": true,
         "outDir": "dist",
         "lib": 
         [

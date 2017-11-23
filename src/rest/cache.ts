@@ -13,7 +13,7 @@ export function Cache()
 {
     return function(target: any, propertyKey: string, descriptor: any)
     {
-        descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any> =>
+        descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any>|null =>
         {
             if(isPresent(responseCache[request.urlWithParams]))
             {

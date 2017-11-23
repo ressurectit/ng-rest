@@ -22,7 +22,6 @@ export abstract class RESTClient
     constructor(protected http: HttpClient,
                 @Optional() protected transferState?: TransferStateService,
                 @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
-                
                 @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
                 @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
                 @Optional() protected injector?: Injector)
@@ -38,7 +37,7 @@ export abstract class RESTClient
      */
     protected getBaseUrl(): string
     {
-        return null;
+        return "";
     };
 
     /**
@@ -46,7 +45,7 @@ export abstract class RESTClient
      */
     protected getDefaultHeaders(): Object
     {
-        return null;
+        return {};
     };
 
     /**
@@ -215,9 +214,9 @@ export function ResponseTransform(methodName?: string)
             methodName = `${propertyKey}ResponseTransform`;
         }
         
-        if(isPresent(target[methodName]) && isFunction(target[methodName]))
+        if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
         {
-            descriptor.responseTransform = target[methodName].bind(target);
+            descriptor.responseTransform = target[methodName!].bind(target);
         }
         
         return descriptor;
@@ -263,9 +262,9 @@ export function ParameterTransform(methodName?: string)
             methodName = `${propertyKey}ParameterTransform`;
         }
         
-        if(isPresent(target[<string>methodName]) && isFunction(target[<string>methodName]))
+        if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
         {
-            let func = target[<string>methodName];
+            let func = target[methodName!];
             let metadataKey = `${propertyKey}_ParameterTransforms`;
             
             if (!isPresent(target[metadataKey]) || !isJsObject(target[metadataKey]))
@@ -413,6 +412,11 @@ function methodBuilder(method: string)
                     }
                 }
 
+                if(isBlank(descriptor.responseType))
+                {
+                    descriptor.responseType = ResponseType.Json;
+                }
+                
                 let responseType: 'arraybuffer' | 'blob' | 'json' | 'text' = 'json';
 
                 switch(descriptor.responseType)
@@ -532,7 +536,7 @@ function methodBuilder(method: string)
                 //tries to set response to cache
                 if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState && !reportProgress)
                 {
-                    observable = observable.pipe(map(response => descriptor.saveResponseToCache(req, response)));
+                    observable = observable!.pipe(map(response => descriptor.saveResponseToCache(req, response)));
                 }
 
                 // transform the obserable in accordance to the @Produces decorator
@@ -546,19 +550,20 @@ function methodBuilder(method: string)
                         case ResponseType.Blob:
                         case ResponseType.ArrayBuffer:
                         {
-                            observable = observable.pipe(map((res: HttpResponse<any>) => res.body));
+                            observable = observable!.pipe(map((res: HttpResponse<any>) => res.body));
 
                             break;
                         }
                         case ResponseType.LocationHeader:
                         {
-                            observable = observable.pipe(map((res: HttpResponse<any>) => 
+                            observable = observable!.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
+                                let url = res.url!.endsWith('/') ? res.url!.replace(/\/$/, '') : res.url!;
 
                                 return <any>{
                                     location: headerValue,
-                                    id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null
+                                    id: isPresent(headerValue) ? headerValue!.replace(url, "") : null
                                 };
                             }));
                             
@@ -566,13 +571,14 @@ function methodBuilder(method: string)
                         }
                         case ResponseType.LocationHeaderAndJson:
                         {
-                            observable = observable.pipe(map((res: HttpResponse<any>) => 
+                            observable = observable!.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
+                                let url = res.url!.endsWith('/') ? res.url!.replace(/\/$/, '') : res.url!;
 
                                 return <any>{
                                     location: headerValue,
-                                    id: isPresent(headerValue) ? headerValue.replace(res.url, "") : null,
+                                    id: isPresent(headerValue) ? headerValue!.replace(url, "") : null,
                                     data: res.body
                                 };
                             }));
@@ -585,16 +591,16 @@ function methodBuilder(method: string)
                 //Store value to state transfer if has not been retrieved from state or state is active
                 if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated && !reportProgress && !fullHttpResponse)
                 {
-                    hashKey = hashKey || getRequestHash(this.baseUrl, req);
+                    hashKey = hashKey! || getRequestHash(this.baseUrl, req);
 
-                    observable = observable.pipe(tap((res) =>
+                    observable = observable!.pipe(tap((res) =>
                     {
                         this.transferState.set(hashKey, res);
                     }));
                 }
 
                 // intercept the response
-                observable = this.responseInterceptor(observable);
+                observable = this.responseInterceptor(observable!);
                 
                 // transforms response
                 if(isPresent(descriptor.responseTransform))

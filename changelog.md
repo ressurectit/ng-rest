@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.4
+ - fixed default response type to 'json'
+
 ## Version 4.0.3
  - fixed processing of headers and http params
 
