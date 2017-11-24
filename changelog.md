@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.5
+ - fixed obtaining `LocationHeader` response type
+
 ## Version 4.0.4
  - fixed default response type to 'json'
 

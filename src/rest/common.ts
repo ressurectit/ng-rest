@@ -422,13 +422,13 @@ function methodBuilder(method: string)
                 switch(descriptor.responseType)
                 {
                     case ResponseType.Json:
-                    case ResponseType.LocationHeader:
                     case ResponseType.LocationHeaderAndJson:
                     {
                         responseType = 'json';
 
                         break;
                     }
+                    case ResponseType.LocationHeader:
                     case ResponseType.Text:
                     {
                         responseType = 'text';
@@ -559,7 +559,8 @@ function methodBuilder(method: string)
                             observable = observable!.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
-                                let url = res.url!.endsWith('/') ? res.url!.replace(/\/$/, '') : res.url!;
+                                let baseUrl = res.url!.replace(/^http(?:s)?\/\/.*?\//, '/');
+                                let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
                                 return <any>{
                                     location: headerValue,
@@ -574,7 +575,8 @@ function methodBuilder(method: string)
                             observable = observable!.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
-                                let url = res.url!.endsWith('/') ? res.url!.replace(/\/$/, '') : res.url!;
+                                let baseUrl = res.url!.replace(/^http(?:s)?\/\/.*?\//, '/');
+                                let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
                                 return <any>{
                                     location: headerValue,
