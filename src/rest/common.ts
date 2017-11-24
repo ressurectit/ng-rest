@@ -559,7 +559,7 @@ function methodBuilder(method: string)
                             observable = observable!.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
-                                let baseUrl = res.url!.replace(/^http(?:s)?\/\/.*?\//, '/');
+                                let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
                                 let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
                                 return <any>{
@@ -575,7 +575,7 @@ function methodBuilder(method: string)
                             observable = observable!.pipe(map((res: HttpResponse<any>) => 
                             {
                                 let headerValue = res.headers.get("location");
-                                let baseUrl = res.url!.replace(/^http(?:s)?\/\/.*?\//, '/');
+                                let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
                                 let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
                                 return <any>{

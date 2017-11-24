@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.6
+ - fixed obtaining `id` from `LocationHeader` response type
+
 ## Version 4.0.5
  - fixed obtaining `LocationHeader` response type
 
