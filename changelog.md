@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 4.0.7
+ - removed `TransferStateService`
+ - added wrapper `RestTransferStateService` for angulars `TransferState`
+ - now using angulars `TransferState` for SSR
+
 ## Version 4.0.6
  - fixed obtaining `id` from `LocationHeader` response type
 
