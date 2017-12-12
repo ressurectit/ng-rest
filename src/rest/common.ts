@@ -6,7 +6,7 @@ import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
 import {of} from "rxjs/observable/of";
 import {map, tap} from "rxjs/operators";
-import {TransferStateService} from '../transferState/transferState.service';
+import {RestTransferStateService} from '../transferState/restTransferState.service';
 import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
 
@@ -20,7 +20,7 @@ import * as param from 'jquery-param';
 export abstract class RESTClient
 {
     constructor(protected http: HttpClient,
-                @Optional() protected transferState?: TransferStateService,
+                @Optional() protected transferState?: RestTransferStateService,
                 @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
                 @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
                 @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
@@ -296,7 +296,7 @@ function getRequestHash(baseUrl: string, request: HttpRequest<any>)
         });
     }
 
-    return crypto.SHA256(`${hashRequest.method}-${hashRequest.urlWithParams}-${JSON.stringify(request.headers)}-${JSON.stringify(request.body)}`).toString();
+    return crypto.SHA256(`${hashRequest.method}-${hashRequest.urlWithParams}-${JSON.stringify(request.body)}`).toString();
 }
 
 function methodBuilder(method: string)

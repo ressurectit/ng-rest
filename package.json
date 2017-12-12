@@ -1,6 +1,6 @@
 {
     "name": "@anglr/rest",
-    "version": "4.0.6",
+    "version": "4.0.7",
     "description": "Angular module representing rest services",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -24,9 +24,10 @@
     },
     "author": "kukjevov",
     "license": "MIT",
-    "dependencies": {
+    "peerDependencies": {
         "@angular/core": ">=5.0.0",
         "@angular/common": ">=5.0.0",
+        "@angular/platform-browser": "^5.0.0",
         "rxjs": ">=5.5.0",
         "@anglr/common": ">=4.0.0",
         "jquery-param": "^0.2.0",
@@ -35,8 +36,6 @@
     "devDependencies": {
         "@angular/core": "^5.0.0",
         "@angular/common": "^5.0.0",
-        "@angular/forms": "^5.0.0",
-        "@angular/router": "^5.0.0",
         "rxjs": "^5.5.0",
         "@anglr/common": "^4.0.0",
         "@types/jasmine": "~2.6.0",
