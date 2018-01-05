@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.8
+- `QueryObject` decorator for parameters now correctly supports array of objects as property value
+
 ## Version 4.0.7
  - removed `TransferStateService`
  - added wrapper `RestTransferStateService` for angulars `TransferState`

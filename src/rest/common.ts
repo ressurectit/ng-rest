@@ -359,9 +359,10 @@ function methodBuilder(method: string)
                             {
                                 queryString += (queryString.length > 0 ? "&" : "") + param(value)
                                                           .replace(/&&/g, "&")
-                                                          .replace(/%5B\%5D/g, "")
+                                                          .replace(/%5B%5D/g, "")
                                                           .replace(/%5D/g, "")
-                                                          .replace(/%5B/g, ".");
+                                                          .replace(/%5B/g, ".")
+                                                          .replace(/\.(\d+)\./g, "%5B$1%5D.");
                             }
                         });
                         
