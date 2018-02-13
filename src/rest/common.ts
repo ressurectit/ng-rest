@@ -366,7 +366,8 @@ function methodBuilder(method: string)
                             }
                         });
                         
-                    queryString = queryString.replace(/\w+=&/g, "");
+                    queryString = queryString.replace(/\w+=(&|$)/g, "")
+                                             .replace(/(&|\?)$/g, "");
                 }
 
                 // Query
@@ -437,6 +438,7 @@ function methodBuilder(method: string)
                         break;
                     }
                     case ResponseType.Blob:
+                    case ResponseType.BlobAndFilename:
                     {
                         responseType = 'blob';
                         
@@ -552,6 +554,21 @@ function methodBuilder(method: string)
                         case ResponseType.ArrayBuffer:
                         {
                             observable = observable!.pipe(map((res: HttpResponse<any>) => res.body));
+
+                            break;
+                        }
+                        case ResponseType.BlobAndFilename:
+                        {
+                            observable = observable!.pipe(map((res: HttpResponse<any>) => 
+                            {
+                                let contentDisposition = res.headers.get("content-disposition");
+                                let filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
+
+                                return <any>{
+                                    filename: filename,
+                                    blob: res.body
+                                };
+                            }));
 
                             break;
                         }

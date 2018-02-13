@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 4.0.9
+- added new response type `BlobAndFilename`
+- fixed @angular dependencies
+- fixed `Query` decorator for parameters with empty value
+
 ## Version 4.0.8
 - `QueryObject` decorator for parameters now correctly supports array of objects as property value
 

@@ -26,6 +26,22 @@ export interface LocationHeaderAndJsonResponse<TData> extends LocationHeaderResp
 }
 
 /**
+ * Type describing response for ResponseType.BlobAndFilename
+ */
+export interface BlobAndFilenameResponse
+{
+    /**
+     * Content of the downloaded file
+     */
+    blob: Blob,
+
+    /**
+     * Name of the file that is being downloaded
+     */
+    filename: string
+}
+
+/**
  * Supported @Produces response types
  */
 export enum ResponseType
@@ -33,6 +49,7 @@ export enum ResponseType
     Json,
     Text,
     Blob,
+    BlobAndFilename,
     ArrayBuffer,
     LocationHeader,
     LocationHeaderAndJson
