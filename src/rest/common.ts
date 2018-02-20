@@ -324,6 +324,11 @@ function methodBuilder(method: string)
                 if (pBody)
                 {
                     body = args[pBody[0].parameterIndex];
+
+                    if(pTransforms && pTransforms[pBody[0].parameterIndex])
+                    {
+                        body = pTransforms[pBody[0].parameterIndex](body);
+                    }
                 }
 
                 // Path

@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.10
+- added support for `ParameterTransform` for `@Body` parameter
+
 ## Version 4.0.9
 - added new response type `BlobAndFilename`
 - fixed @angular dependencies
