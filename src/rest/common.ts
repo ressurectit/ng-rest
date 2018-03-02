@@ -1,14 +1,15 @@
-import {Inject, Optional, Injectable, Injector} from '@angular/core';
+import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER} from '@anglr/common';
+import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, HTTP_CLIENT_IGNORE_INTERCEPTOR, IgnoredInterceptorsService} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
 import {of} from "rxjs/observable/of";
 import {map, tap} from "rxjs/operators";
-import {RestTransferStateService} from '../transferState/restTransferState.service';
 import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
+
+import {RestTransferStateService} from '../transferState/restTransferState.service';
 
 /**
  * Angular RESTClient base class.
@@ -24,6 +25,7 @@ export abstract class RESTClient
                 @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
                 @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
                 @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
+                @Optional() @Inject(HTTP_CLIENT_IGNORE_INTERCEPTOR) protected ignoredInterceptorsService?: IgnoredInterceptorsService,
                 @Optional() protected injector?: Injector)
     {
         if(isBlank(baseUrl))
@@ -219,6 +221,30 @@ export function ResponseTransform(methodName?: string)
             descriptor.responseTransform = target[methodName!].bind(target);
         }
         
+        return descriptor;
+    };
+}
+
+/**
+ * Disables specified type of http client interceptor for all calls of applied method
+ * @param {Type<TType>} interceptorType Type of interceptor that will be disabled for method to which is this attached
+ */
+export function DisableInterceptor<TType>(interceptorType: Type<TType>)
+{
+    return function(target: any, propertyKey: string, descriptor: any)
+    {
+        if(isBlank(interceptorType))
+        {
+            return descriptor;
+        }
+        
+        if(!descriptor.disabledInterceptors || !Array.isArray(descriptor.disabledInterceptors))
+        {
+            descriptor.disabledInterceptors = [];
+        }
+
+        descriptor.disabledInterceptors.push(interceptorType);
+
         return descriptor;
     };
 }
@@ -460,6 +486,15 @@ function methodBuilder(method: string)
                 var reportProgress = descriptor.reportProgress || false;
                 var fullHttpResponse = descriptor.fullHttpResponse || false;
 
+                //disable http client interceptors
+                if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
+                {
+                    descriptor.disabledInterceptors.forEach(interceptorType =>
+                    {
+                        this.ignoredInterceptorsService.addInterceptor(interceptorType);
+                    });
+                }
+
                 //append server headers
                 if(isPresent(this.serverCookieHeader))
                 {
@@ -539,6 +574,17 @@ function methodBuilder(method: string)
                                 }
                             }, error => observer.error(error));
                     });
+                }
+
+                //if ignoredInterceptorsService is present clear ignored interceptors
+                if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
+                {
+                    observable = observable!.pipe(map(response =>
+                    {
+                        this.ignoredInterceptorsService.clear();
+
+                        return response;
+                    }));
                 }
 
                 //tries to set response to cache

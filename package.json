@@ -1,6 +1,6 @@
 {
     "name": "@anglr/rest",
-    "version": "4.0.10",
+    "version": "4.0.11",
     "description": "Angular module representing rest services",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -36,8 +36,8 @@
     "devDependencies": {
         "@angular/core": "^5.0.0",
         "@angular/common": "^5.0.0",
-        "@angular/forms": "^5.0.0",
         "@angular/router": "^5.0.0",
+        "@angular/forms": "^5.0.0",
         "rxjs": "^5.5.0",
         "@anglr/common": "^4.0.0",
         "@types/jasmine": "~2.6.0",
@@ -58,7 +58,7 @@
         "karma-webpack": "~2.0.5",
         "karma-jasmine-html-reporter": "~0.2.2",
         "jasmine": "~2.8.0",
-        "awesome-typescript-loader": "~3.3.0",
+        "awesome-typescript-loader": "~3.4.1",
         "angular2-template-loader": "~0.6.2",
         "raw-loader": "~0.5.1",
         "sass-loader": "~6.0.6",
@@ -67,7 +67,7 @@
         "style-loader": "~0.19.0",
         "rimraf": "~2.6.2",
         "copyfiles": "~1.2.0",
-        "typescript": "2.4.2",
+        "typescript": "2.6.2",
         "webpack": "3.8.1",
         "npm-publish-package": "~1.2.0"
     }

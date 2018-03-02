@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.11
+- added support for `DisableInterceptor` decorator, which allows for specified method disable specified type of http client interceptor
+
 ## Version 4.0.10
 - added support for `ParameterTransform` for `@Body` parameter
 
