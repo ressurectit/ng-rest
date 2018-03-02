@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.12
+- now setting ignore interceptor also with `urlWithParams`
+
 ## Version 4.0.11
 - added support for `DisableInterceptor` decorator, which allows for specified method disable specified type of http client interceptor
 

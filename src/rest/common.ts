@@ -1,6 +1,6 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, HTTP_CLIENT_IGNORE_INTERCEPTOR, IgnoredInterceptorsService} from '@anglr/common';
+import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
@@ -25,7 +25,7 @@ export abstract class RESTClient
                 @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
                 @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
                 @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
-                @Optional() @Inject(HTTP_CLIENT_IGNORE_INTERCEPTOR) protected ignoredInterceptorsService?: IgnoredInterceptorsService,
+                @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
                 @Optional() protected injector?: Injector)
     {
         if(isBlank(baseUrl))
@@ -486,15 +486,6 @@ function methodBuilder(method: string)
                 var reportProgress = descriptor.reportProgress || false;
                 var fullHttpResponse = descriptor.fullHttpResponse || false;
 
-                //disable http client interceptors
-                if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
-                {
-                    descriptor.disabledInterceptors.forEach(interceptorType =>
-                    {
-                        this.ignoredInterceptorsService.addInterceptor(interceptorType);
-                    });
-                }
-
                 //append server headers
                 if(isPresent(this.serverCookieHeader))
                 {
@@ -551,6 +542,15 @@ function methodBuilder(method: string)
                             observable = of(data);
                         }
                     }
+                }
+
+                //disable http client interceptors
+                if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
+                {
+                    descriptor.disabledInterceptors.forEach(interceptorType =>
+                    {
+                        this.ignoredInterceptorsService.addInterceptor(interceptorType, req.urlWithParams);
+                    });
                 }
 
                 //not cached on server side
