@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.13
+- updated usage of `IgnoredInterceptorsService`, now using correctly `requestId`
+
 ## Version 4.0.12
 - now setting ignore interceptor also with `urlWithParams`
 

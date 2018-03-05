@@ -1,6 +1,6 @@
 {
     "name": "@anglr/rest",
-    "version": "4.0.12",
+    "version": "4.0.13",
     "description": "Angular module representing rest services",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",

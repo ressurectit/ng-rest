@@ -1,6 +1,6 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService} from '@anglr/common';
+import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, HttpRequestIgnoredInterceptorId} from '@anglr/common';
 import {ResponseType} from './responseType';
 import {Observable} from "rxjs/Observable";
 import {Observer} from "rxjs/Observer";
@@ -336,6 +336,7 @@ function methodBuilder(method: string)
                 descriptor.originalParamsCount = descriptor.value.length;
             }
 
+            let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
             var pPath = target[`${propertyKey}_Path_parameters`];
             var pQuery = target[`${propertyKey}_Query_parameters`];
             var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
@@ -498,15 +499,15 @@ function methodBuilder(method: string)
                 }
 
                 // Request options
-                let req = new HttpRequest<any>(method,
-                                               this.baseUrl + this.getBaseUrl() + resUrl,
-                                               body,
-                                               {
-                                                    headers,
-                                                    params,
-                                                    responseType,
-                                                    reportProgress
-                                               });
+                let req: HttpRequestIgnoredInterceptorId<any> = new HttpRequest<any>(method,
+                                                                                     this.baseUrl + this.getBaseUrl() + resUrl,
+                                                                                     body,
+                                                                                     {
+                                                                                          headers,
+                                                                                          params,
+                                                                                          responseType,
+                                                                                          reportProgress
+                                                                                     });
 
                 let cached: boolean = false;
                 let hashKey: string;
@@ -547,9 +548,11 @@ function methodBuilder(method: string)
                 //disable http client interceptors
                 if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
                 {
+                    req.requestId = id;
+
                     descriptor.disabledInterceptors.forEach(interceptorType =>
                     {
-                        this.ignoredInterceptorsService.addInterceptor(interceptorType, req.urlWithParams);
+                        this.ignoredInterceptorsService.addInterceptor(interceptorType, req);
                     });
                 }
 
