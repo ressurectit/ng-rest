@@ -218,7 +218,7 @@ export function ResponseTransform(methodName?: string)
         
         if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
         {
-            descriptor.responseTransform = target[methodName!].bind(target);
+            descriptor.responseTransform = target[methodName!];
         }
         
         return descriptor;
@@ -679,7 +679,7 @@ function methodBuilder(method: string)
                 // transforms response
                 if(isPresent(descriptor.responseTransform))
                 {
-                    observable = descriptor.responseTransform(observable);
+                    observable = descriptor.responseTransform.call(this, observable);
                 }
 
                 return observable;

@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.0.14
+- updated `ResponseTransform` now should correctly set `this` to transform method
+
 ## Version 4.0.13
 - updated usage of `IgnoredInterceptorsService`, now using correctly `requestId`
 
