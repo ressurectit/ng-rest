@@ -4,24 +4,23 @@
         "target": "es5",
         "module": "esnext",
         "moduleResolution": "node",
-        "sourceMap": false,
+        "sourceMap": true,
         "declaration": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": false,
-        "strictNullChecks": true,
+        "noUnusedParameters": true,
+        "strictNullChecks": false,
         "outDir": "dist",
         "lib": 
         [
-            "es2015", 
+            "es2016", 
             "dom"
         ],
         "types":
         [
-            "node",
             "crypto-js",
             "jquery-param"
         ],
@@ -40,14 +39,10 @@
     [
         "node_modules",
         "dist",
-        "testing",
-        "*.spec.ts",
-        "karma-test-shim.ts"
+        "testing"
     ],
     "angularCompilerOptions": 
     {
-        "skipMetadataEmit": false,
-        "strictMetadataEmit": true,
         "fullTemplateTypeCheck": true,
         "preserveWhitespaces": false
     }

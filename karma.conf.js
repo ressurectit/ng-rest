@@ -19,7 +19,7 @@ module.exports = function(config)
         [
             path.join(__dirname, distPath + '/dependencies.js'),
             'karma-test-shim.ts',
-            '**/*.spec.ts'
+            'src/**/*.spec.ts'
         ],
 
         // list of files to exclude
@@ -34,7 +34,7 @@ module.exports = function(config)
 
         mime: 
         {
-            'text/x-typescript': ['ts','tsx']
+            'text/x-typescript': ['ts']
         },
 
         // test results reporter to use
@@ -60,7 +60,7 @@ module.exports = function(config)
                     //file processing
                     {
                         test: /\.ts$/,
-                        use: ['awesome-typescript-loader?sourceMap=true', 'angular2-template-loader']
+                        use: ['awesome-typescript-loader', 'angular2-template-loader']
                     },
                     {
                         test: /\.html$/,
@@ -75,7 +75,7 @@ module.exports = function(config)
                         use: ['style-loader', 'css-loader', 'sass-loader']
                     },
                     {
-                        test: /\.(ttf|eot|svg)$/,
+                        test: /\.(ttf|woff|woff2|eot|svg|png|jpeg|jpg|bmp|gif|icon|ico)$/,
                         loader: "file-loader"
                     }
                 ]

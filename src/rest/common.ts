@@ -2,9 +2,7 @@ import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
 import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, HttpRequestIgnoredInterceptorId} from '@anglr/common';
 import {ResponseType} from './responseType';
-import {Observable} from "rxjs/Observable";
-import {Observer} from "rxjs/Observer";
-import {of} from "rxjs/observable/of";
+import {Observable, Observer, of} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
@@ -169,7 +167,7 @@ export var Header = paramBuilder("Header");
  */
 export function Headers(headersDef: {[key: string]: string})
 {
-    return function(target: RESTClient, propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
         descriptor.headers = Utils.common.extend({}, headersDef, descriptor.headers);
 
@@ -182,7 +180,7 @@ export function Headers(headersDef: {[key: string]: string})
  */
 export function JsonContentType()
 {
-    return function(target: RESTClient, propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
         descriptor.headers = Utils.common.extend(descriptor.headers || {}, {"content-type": "application/json"});
         
@@ -196,7 +194,7 @@ export function JsonContentType()
  */
 export function Produces(producesDef: ResponseType)
 {
-    return function(target: RESTClient, propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
         descriptor.responseType = producesDef;
         return descriptor;
@@ -231,7 +229,7 @@ export function ResponseTransform(methodName?: string)
  */
 export function DisableInterceptor<TType>(interceptorType: Type<TType>)
 {
-    return function(target: any, propertyKey: string, descriptor: any)
+    return function(_target: any, _propertyKey: string, descriptor: any)
     {
         if(isBlank(interceptorType))
         {
@@ -254,7 +252,7 @@ export function DisableInterceptor<TType>(interceptorType: Type<TType>)
  */
 export function ReportProgress()
 {
-    return function(target: any, propertyKey: string, descriptor: any)
+    return function(_target: any, _propertyKey: string, descriptor: any)
     {
         descriptor.reportProgress = true;
         
@@ -267,7 +265,7 @@ export function ReportProgress()
  */
 export function FullHttpResponse()
 {
-    return function(target: any, propertyKey: string, descriptor: any)
+    return function(_target: any, _propertyKey: string, descriptor: any)
     {
         descriptor.fullHttpResponse = true;
         

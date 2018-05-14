@@ -11,7 +11,7 @@ var responseCache: {[key: string]: HttpResponse<any>} = {};
  */
 export function Cache()
 {
-    return function(target: any, propertyKey: string, descriptor: any)
+    return function(_target: any, _propertyKey: string, descriptor: any)
     {
         descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any>|null =>
         {

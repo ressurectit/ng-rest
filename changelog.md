@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 5.0.0-beta.1
+ - aktualizácia balíčkov `Angular` na `6`
+ - aktualizácia `Webpack` na verziu `4`
+ - aktualizácia `rxjs` na verziu `6`
+ - automatické generovanie dokumentácie
+
 ## Version 4.0.14
 - updated `ResponseTransform` now should correctly set `this` to transform method
 

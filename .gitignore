@@ -2,7 +2,10 @@
 /dist
 /tests
 /testing
+/docs
 
 package-lock.json
 *.log
+*.bak
+*.orig
 *~
