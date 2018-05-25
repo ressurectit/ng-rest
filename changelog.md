@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 5.0.0-beta.2
+ - removed `RestTransferStateModule`, `RestTransferStateService` is injected using `Injectable`
+ - `RestTransferStateService` is now *tree-shakeable*
+ - `@anglr/rest` is now marked as *sideEffects* free
+
 ## Version 5.0.0-beta.1
  - aktualizácia balíčkov `Angular` na `6`
  - aktualizácia `Webpack` na verziu `4`

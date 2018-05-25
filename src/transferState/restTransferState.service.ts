@@ -9,7 +9,7 @@ const REST_TRANSFER_KEYS = 'REST_TRANSFER_KEYS';
 /**
  * Service used for transfering data between server and browser for RESTClient
  */
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class RestTransferStateService
 {
     //######################### private fields #########################
