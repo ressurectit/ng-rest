@@ -1,7 +1,9 @@
 # Changelog
 
-## Version 5.0.0-beta.2
+## Version 5.0.0-beta.3
  - removed `RestTransferStateModule`, `RestTransferStateService` is injected using `Injectable`
+
+## Version 5.0.0-beta.2
  - `RestTransferStateService` is now *tree-shakeable*
  - `@anglr/rest` is now marked as *sideEffects* free
 
