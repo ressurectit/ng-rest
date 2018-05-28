@@ -1,6 +1,6 @@
 {
     "name": "@anglr/rest",
-    "version": "5.0.0-beta.3",
+    "version": "5.0.0",
     "description": "Angular module representing rest services",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -31,7 +31,7 @@
         "@angular/core": ">=6.0.0",
         "@angular/common": ">=6.0.0",
         "rxjs": ">=6.0.0",
-        "@anglr/common": ">=5.0.0-beta.1",
+        "@anglr/common": ">=5.0.0",
         "jquery-param": "^1.0.1",
         "crypto-js": "^3.1.9-1"
     },
@@ -39,7 +39,7 @@
         "@angular/core": "^6.0.0",
         "@angular/common": "^6.0.0",
         "rxjs": "^6.0.0",
-        "@anglr/common": "^5.0.0-beta.1",
+        "@anglr/common": "^5.0.0",
         "@anglr/types": "1.1.12",
         "@types/jasmine": "~2.8.7",
         "@types/crypto-js": "^3.1.39",

@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 5.0.0
+ - stabilized for angular v6
+
 ## Version 5.0.0-beta.3
  - removed `RestTransferStateModule`, `RestTransferStateService` is injected using `Injectable`
 
