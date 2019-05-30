@@ -72,7 +72,7 @@ export interface Paging
 ```typescript
 import {Injectable} from '@angular/core';
 import {RESTClient, GET, POST, Path, Body, Query, BaseUrl, DefaultHeaders, Produces, ResponseType, ResponseTransform, LocationHeaderResponse} from '@anglr/rest';
-import {isPresent} from '@anglr/common';
+import {isPresent} from '@jscrpt/common';
 import {User, Paging} from './user.interface';
 import {Observable} from 'rxjs';
 import * as global from 'config/global';

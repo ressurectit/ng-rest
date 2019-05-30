@@ -1,5 +1,5 @@
 import {HttpRequest, HttpResponse} from '@angular/common/http';
-import {isPresent} from '@anglr/common';
+import {isPresent} from '@jscrpt/common';
 
 //Object storing response cache itself
 //It caches request urls to response data
@@ -7,7 +7,7 @@ var responseCache: {[key: string]: HttpResponse<any>} = {};
 
 /**
  * Defines method name that will be called and modifies response
- * @param  {string} methodName Name of method that will be called to modify response, method takes Observable and returns required type
+ * @param methodName Name of method that will be called to modify response, method takes Observable and returns required type
  */
 export function Cache()
 {

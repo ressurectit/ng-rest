@@ -47,7 +47,7 @@ export class RestTransferStateService
 
     /**
      * Gets indication whether requested key exist in stored transfer key data
-     * @param {string} key 
+     * @param key 
      */
     public hasKey(key: string): boolean
     {
@@ -56,7 +56,7 @@ export class RestTransferStateService
 
     /**
      * Gets value stored identified by key
-     * @param {string} key Key identifying value
+     * @param key Key identifying value
      */
     public get(key: string): any
     {
@@ -65,8 +65,8 @@ export class RestTransferStateService
 
     /**
      * Sets value to be stored with specified key, and returns self
-     * @param {string} key Key for storing value
-     * @param {any} value Value that is going to be stored
+     * @param key Key for storing value
+     * @param value Value that is going to be stored
      */
     public set(key: string, value: any): RestTransferStateService
     {

@@ -4,8 +4,7 @@
         "target": "es5",
         "module": "esnext",
         "moduleResolution": "node",
-        "sourceMap": true,
-        "declaration": true,
+        "declaration": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
@@ -13,7 +12,6 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "strictNullChecks": false,
-        "outDir": "dist",
         "lib": 
         [
             "es2016", 
@@ -39,11 +37,10 @@
     [
         "node_modules",
         "dist",
-        "testing"
+        "karma-test-shim.ts"
     ],
     "angularCompilerOptions": 
     {
-        "fullTemplateTypeCheck": true,
-        "preserveWhitespaces": false
+        "fullTemplateTypeCheck": true
     }
 }

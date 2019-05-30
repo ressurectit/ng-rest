@@ -1,19 +1,17 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {isBlank, isPresent, isFunction, isJsObject, Utils, SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, HttpRequestIgnoredInterceptorId} from '@anglr/common';
-import {ResponseType} from './responseType';
+import {extend, isBlank, isPresent, isFunction, isJsObject} from '@jscrpt/common';
+import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, HttpRequestIgnoredInterceptorId} from '@anglr/common';
 import {Observable, Observer, of} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import * as crypto from 'crypto-js';
 import * as param from 'jquery-param';
 
+import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
 
 /**
  * Angular RESTClient base class.
- *
- * @class RESTClient
- * @constructor
  */
 @Injectable()
 export abstract class RESTClient
@@ -52,7 +50,7 @@ export abstract class RESTClient
      * Request interceptor for all methods, must return new HttpRequest since object is immutable
      *
      * @method requestInterceptor
-     * @param {HttpRequest<any>} req - request object
+     * @param req - request object
      */
     protected requestInterceptor(req: HttpRequest<any>): HttpRequest<any>
     {
@@ -63,8 +61,8 @@ export abstract class RESTClient
      * Allows to intercept all responses for all methods in class
      *
      * @method responseInterceptor
-     * @param {Observable<any>} res - response object
-     * @returns {Observable<any>} res - transformed response object
+     * @param res - response object
+     * @returns res - transformed response object
      */
     protected responseInterceptor(res: Observable<any>): Observable<any>
     {
@@ -74,7 +72,7 @@ export abstract class RESTClient
 
 /**
  * Set the base URL of REST resource
- * @param {String} url - base URL
+ * @param url - base URL
  */
 export function BaseUrl(url: string)
 {
@@ -91,7 +89,7 @@ export function BaseUrl(url: string)
 
 /**
  * Set default headers for every method of the RESTClient
- * @param {Object} headers - deafult headers in a key-value pair
+ * @param headers - deafult headers in a key-value pair
  */
 export function DefaultHeaders(headers: {[key: string]: string})
 {
@@ -110,7 +108,7 @@ function paramBuilder(paramName: string)
 {
     return function(key: string)
     {
-        return function(target: RESTClient, propertyKey: string | symbol, parameterIndex: number)
+        return function(target: RESTClient, propertyKey: string, parameterIndex: number)
         {
             var metadataKey = `${propertyKey}_${paramName}_parameters`;
 
@@ -134,13 +132,13 @@ function paramBuilder(paramName: string)
 
 /**
  * Path variable of a method's url, type: string
- * @param {string} key - path key to bind value
+ * @param key - path key to bind value
  */
 export var Path = paramBuilder("Path");
 
 /**
  * Query value of a method's url, type: string
- * @param {string} key - query key to bind value
+ * @param key - query key to bind value
  */
 export var Query = paramBuilder("Query");
 
@@ -157,19 +155,19 @@ export var Body = paramBuilder("Body")("Body");
 
 /**
  * Custom header of a REST method, type: string
- * @param {string} key - header key to bind value
+ * @param key - header key to bind value
  */
 export var Header = paramBuilder("Header");
 
 /**
  * Set custom headers for a REST method
- * @param {Object} headersDef - custom headers in a key-value pair
+ * @param headersDef - custom headers in a key-value pair
  */
 export function Headers(headersDef: {[key: string]: string})
 {
     return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
-        descriptor.headers = Utils.common.extend({}, headersDef, descriptor.headers);
+        descriptor.headers = extend({}, headersDef, descriptor.headers);
 
         return descriptor;
     };
@@ -182,7 +180,7 @@ export function JsonContentType()
 {
     return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
-        descriptor.headers = Utils.common.extend(descriptor.headers || {}, {"content-type": "application/json"});
+        descriptor.headers = extend(descriptor.headers || {}, {"content-type": "application/json"});
         
         return descriptor;
     };
@@ -190,7 +188,7 @@ export function JsonContentType()
 
 /**
  * Defines the response type(s) that the methods can produce or tzpe of body id full request or events are requested
- * @param {ResponseType} producesDef - response type to be produced
+ * @param producesDef - response type to be produced
  */
 export function Produces(producesDef: ResponseType)
 {
@@ -203,7 +201,7 @@ export function Produces(producesDef: ResponseType)
 
 /**
  * Defines method name that will be called and modifies response
- * @param  {string} methodName Name of method that will be called to modify response, method takes Observable and returns required type
+ * @param methodName Name of method that will be called to modify response, method takes Observable and returns required type
  */
 export function ResponseTransform(methodName?: string)
 {
@@ -225,7 +223,7 @@ export function ResponseTransform(methodName?: string)
 
 /**
  * Disables specified type of http client interceptor for all calls of applied method
- * @param {Type<TType>} interceptorType Type of interceptor that will be disabled for method to which is this attached
+ * @param interceptorType Type of interceptor that will be disabled for method to which is this attached
  */
 export function DisableInterceptor<TType>(interceptorType: Type<TType>)
 {
@@ -275,11 +273,11 @@ export function FullHttpResponse()
 
 /**
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization
- * @param {string} methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
+ * @param methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
  */
 export function ParameterTransform(methodName?: string)
 {
-    return function(target: RESTClient, propertyKey: string | symbol, parameterIndex: number)
+    return function(target: RESTClient, propertyKey: string, parameterIndex: number)
     {
         if(isBlank(methodName))
         {
@@ -303,8 +301,8 @@ export function ParameterTransform(methodName?: string)
 
 /**
  * Gets hash of request passed to http
- * @param {string} baseUrl Base url that is used with request
- * @param {HttpRequest<any>} request Request to be hashed
+ * @param baseUrl Base url that is used with request
+ * @param request Request to be hashed
  */
 function getRequestHash(baseUrl: string, request: HttpRequest<any>)
 {
@@ -690,30 +688,30 @@ function methodBuilder(method: string)
 
 /**
  * GET method
- * @param {string} url - resource url of the method
+ * @param url - resource url of the method
  */
 export var GET = methodBuilder("GET");
 
 /**
  * POST method
- * @param {string} url - resource url of the method
+ * @param url - resource url of the method
  */
 export var POST = methodBuilder("POST");
 
 /**
  * PUT method
- * @param {string} url - resource url of the method
+ * @param url - resource url of the method
  */
 export var PUT = methodBuilder("PUT");
 
 /**
  * DELETE method
- * @param {string} url - resource url of the method
+ * @param url - resource url of the method
  */
 export var DELETE = methodBuilder("DELETE");
 
 /**
  * HEAD method
- * @param {string} url - resource url of the method
+ * @param url - resource url of the method
  */
 export var HEAD = methodBuilder("HEAD");

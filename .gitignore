@@ -1,8 +1,11 @@
 /node_modules
 /dist
-/tests
-/testing
 /docs
+/tests
+/src/**/*.d.ts
+/src/**/*.json
+/*.d.ts
+/*.metadata.json
 
 package-lock.json
 *.log
