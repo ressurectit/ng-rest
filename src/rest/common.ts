@@ -1,6 +1,6 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {extend, isBlank, isPresent, isFunction, isJsObject} from '@jscrpt/common';
+import {extend, isBlank, isPresent, isFunction, isJsObject, generateId} from '@jscrpt/common';
 import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, HttpRequestIgnoredInterceptorId} from '@anglr/common';
 import {Observable, Observer, of} from "rxjs";
 import {map, tap} from "rxjs/operators";
@@ -332,7 +332,7 @@ function methodBuilder(method: string)
                 descriptor.originalParamsCount = descriptor.value.length;
             }
 
-            let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
+            let id = `${method}-${url}-${target.constructor.name}-${propertyKey}-${generateId(6)}`;
             var pPath = target[`${propertyKey}_Path_parameters`];
             var pQuery = target[`${propertyKey}_Query_parameters`];
             var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
