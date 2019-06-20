@@ -332,7 +332,7 @@ function methodBuilder(method: string)
                 descriptor.originalParamsCount = descriptor.value.length;
             }
 
-            let id = `${method}-${url}-${target.constructor.name}-${propertyKey}-${generateId(6)}`;
+            let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
             var pPath = target[`${propertyKey}_Path_parameters`];
             var pQuery = target[`${propertyKey}_Query_parameters`];
             var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
@@ -342,6 +342,8 @@ function methodBuilder(method: string)
 
             descriptor.value = function(...args: any[])
             {
+                let reqId = `${id}-${generateId(6)}`;
+
                 // Body
                 var body = null;
                 if (pBody)
@@ -544,7 +546,7 @@ function methodBuilder(method: string)
                 //disable http client interceptors
                 if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
                 {
-                    req.requestId = id;
+                    req.requestId = reqId;
 
                     descriptor.disabledInterceptors.forEach(interceptorType =>
                     {

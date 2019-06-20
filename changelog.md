@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 6.0.2
+
+ - correctly fixed ignored interceptors with same request at same time multiple times
+
 ## Version 6.0.1
 
  - fixed ignored interceptors with same request at same time multiple times
