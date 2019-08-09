@@ -1,0 +1,18 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions":
+    {
+        "baseUrl": ".",
+        "paths":
+        {
+        }
+    },
+    "files":
+    [
+        "public_api.ts"
+    ],
+    "angularCompilerOptions":
+    {
+        "fullTemplateTypeCheck": true
+    }
+}

@@ -1,0 +1,327 @@
+import {StompConfig} from "@stomp/stompjs";
+import {isBlank, isPresent, isFunction} from "@jscrpt/common";
+
+import {WebSocketClient} from "./webSocketClient";
+import {WebSocketClientPublic, SubscribeMetadata, WebSocketClientOptions} from "./webSocketClient.interface.internal";
+import {ResponseType, RequestType} from "./webSocketClient.types";
+import {ParameterTransform as ParameterTransformRest} from '../rest';
+import {WebSocketClientResponse, SubscribeQueueOptions, PublishQueueOptions} from "./webSocketClient.interface";
+import {WebSocketClientResponseContext} from "./webSocketClient.context";
+
+/**
+ * Sets StompJs to use WebSocket instead of SockJS
+ */
+export function UseWebSocket(): ClassDecorator
+{
+    return function<TFunction extends Function> (target: TFunction): TFunction
+    {
+        target.prototype.getConnection = function(this: WebSocketClient): StompConfig
+        {
+            return {
+                brokerURL: this.getBaseUrl()
+            };
+        };
+
+        return target;
+    };
+}
+
+/**
+ * Sets prefix for publish queue
+ * @param prefix Prefix that is used for each publish to queue
+ */
+export function PublishQueuePrefix(prefix: string): ClassDecorator
+{
+    return function<TFunction extends Function> (target: TFunction): TFunction
+    {
+        target.prototype.getPublishQueuePrefix = function(this: WebSocketClient): string
+        {
+            return prefix;
+        };
+
+        return target;
+    };
+}
+
+/**
+ * All requests will now use correlation id as part of body
+ * @param property Name of property holding correlation id
+ */
+export function CorrelationBodyProperty(property: string): ClassDecorator
+{
+    return function<TFunction extends Function> (target: TFunction): TFunction
+    {
+        target.prototype.getCorrelationBodyProperty = function(this: WebSocketClient): string
+        {
+            return property;
+        };
+
+        return target;
+    };
+}
+
+/**
+ * All requests and responses will now use correlation id as part of requet or response queue name
+ */
+export function QueueCorrelation(): ClassDecorator
+{
+    return function<TFunction extends Function> (target: TFunction): TFunction
+    {
+        target.prototype.useQueueCorrelation = function(this: WebSocketClient): boolean
+        {
+            return true;
+        };
+
+        return target;
+    };
+}
+
+/**
+ * All requests and responses will now use session id suffix for all requests and responses
+ */
+export function UseSessionIdSuffix(): ClassDecorator
+{
+    return function<TFunction extends Function> (target: TFunction): TFunction
+    {
+        target.prototype.useSessionIdSuffix = function(this: WebSocketClient): boolean
+        {
+            return true;
+        };
+
+        return target;
+    };
+}
+
+/**
+ * Sets prefix for subscribe queue
+ * @param prefix Prefix that is used for each subscribe from queue
+ */
+export function SubscribeQueuePrefix(prefix: string): ClassDecorator
+{
+    return function<TFunction extends Function> (target: TFunction): TFunction
+    {
+        target.prototype.getSubscribeQueuePrefix = function(this: WebSocketClient): string
+        {
+            return prefix;
+        };
+
+        return target;
+    };
+}
+
+/**
+ * Registers observable to specified queue, this observable is added to WebSocketClientResponse.output
+ * @param name Name of subscription to be subscribed to
+ * @param options Options for subscribe queue
+ */
+export function SubscribeQueue(name: string, options?: SubscribeQueueOptions)
+{
+    return function(target: WebSocketClient, _propertyKey: string, descriptor: any)
+    {
+        if(isBlank(descriptor.subscribeQueue))
+        {
+            descriptor.subscribeQueue = {};
+        }
+
+        let func = null;
+
+        if(options && isPresent(options.responseTransform) && isPresent(target[options.responseTransform]) && isFunction(target[options.responseTransform]))
+        {
+            func = target[options.responseTransform];
+        }
+
+        descriptor.subscribeQueue[name] =
+        {
+            queueName: (options && isPresent(options.queueName)) ? options.queueName : name,
+            producesType: (options && isPresent(options.producesType)) ? options.producesType : ResponseType.Json,
+            responseTransformFunc: func,
+            options: options
+        };
+
+        return descriptor;
+    };
+}
+
+/**
+ * Assigns this method input to publish queue
+ * Only one publish per method!
+ * @param name Name of queue to be published to
+ * @param options Options for publish queue
+ */
+export function PublishQueue(name: string, options?: PublishQueueOptions)
+{
+    return function(target: WebSocketClient, propertyKey: string, descriptor: any)
+    {
+        let pPath = target[`${propertyKey}_Path_parameters`];
+        let pBody = target[`${propertyKey}_Body_parameters`];
+        let pBodyProperty = target[`${propertyKey}_BodyProperty_parameters`];
+        let pTransforms: Function[] = target[`${propertyKey}_ParameterTransforms`];
+
+        if(isBlank(options))
+        {
+            options = 
+            {
+                type: RequestType.Json
+            };
+        }
+
+        function publishMethod(this: WebSocketClientPublic, ...args: any[]): WebSocketClientResponse<any>
+        {
+            // build default class options
+            let clientBaseOptions: WebSocketClientOptions =
+            {
+                correlationBodyProperty: this.getCorrelationBodyProperty(),
+                publishQueuePrefix: this.getPublishQueuePrefix(),
+                queueCorrelation: this.useQueueCorrelation(),
+                sessionIdSuffix: this.useSessionIdSuffix(),
+                subscribeQueuePrefix: this.getSubscribeQueuePrefix()
+            };
+
+            // Body
+            let body = null;
+
+            if (pBody)
+            {
+                body = args[pBody[0].parameterIndex];
+
+                if(pTransforms && pTransforms[pBody[0].parameterIndex])
+                {
+                    body = pTransforms[pBody[0].parameterIndex].bind(this)(body);
+                }
+            }
+
+            // Body properties
+            if(pBodyProperty)
+            {
+                if(isBlank(body))
+                {
+                    body = {};
+                }
+
+                for(let x in pBodyProperty)
+                {
+                    if(pBodyProperty.hasOwnProperty(x))
+                    {
+                        let bodyProp = args[pBodyProperty[x].parameterIndex];
+
+                        if(pTransforms && pTransforms[pBodyProperty[x].parameterIndex])
+                        {
+                            bodyProp = pTransforms[pBodyProperty[x].parameterIndex].bind(this)(bodyProp);
+                        }
+
+                        body[pBodyProperty[x].key] = bodyProp;
+                    }
+                }
+            }
+
+            // Path
+            if (pPath)
+            {
+                for (let x in pPath)
+                {
+                    if (pPath.hasOwnProperty(x))
+                    {
+                        let param = args[pPath[x].parameterIndex];
+
+                        if(pTransforms && pTransforms[pPath[x].parameterIndex])
+                        {
+                            param = pTransforms[pPath[x].parameterIndex].bind(this)(param);
+                        }
+
+                        name = name.replace("{" + pPath[x].key + "}", param);
+                    }
+                }
+            }
+
+            if(isBlank(descriptor.subscribeQueue))
+            {
+                throw new Error('Missing at least one SubscribeQueue');
+            }
+
+            //bind response transform to this
+            Object.keys(descriptor.subscribeQueue).forEach(name =>
+            {
+                let subscribe: SubscribeMetadata = descriptor.subscribeQueue;
+
+                if(isPresent(subscribe[name].responseTransformFunc))
+                {
+                    subscribe[name].responseTransformFunc = subscribe[name].responseTransformFunc.bind(this);
+                }
+            });
+
+            return new WebSocketClientResponseContext(this.wsClient,
+                                                      this.active,
+                                                      this._sessionId,
+                                                      {
+                                                          subscribe: descriptor.subscribeQueue,
+                                                          publish: name,
+                                                          body: body,
+                                                          options: options,
+                                                          webSocketOptions: clientBaseOptions
+                                                      });
+        }
+
+        descriptor.value = publishMethod;
+
+        return descriptor;
+    };
+}
+
+/**
+ * Parameter descriptor that is used for transforming parameter before serialization
+ * @param methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
+ */
+export function ParameterTransform(methodName?: string)
+{
+    return function(target: WebSocketClient, propertyKey: string, parameterIndex: number)
+    {
+        return ParameterTransformRest(methodName)(target as any, propertyKey, parameterIndex);
+    };
+};
+
+/**
+ * Creates param decorator using name of parameter to be created
+ */
+function paramBuilder(paramName: string)
+{
+    return function(key: string)
+    {
+        return function(target: WebSocketClient, propertyKey: string, parameterIndex: number)
+        {
+            let metadataKey = `${propertyKey}_${paramName}_parameters`;
+
+            let paramObj: any =
+            {
+                key: key,
+                parameterIndex: parameterIndex
+            };
+
+            if (Array.isArray(target[metadataKey]))
+            {
+                target[metadataKey].push(paramObj);
+            }
+            else
+            {
+                target[metadataKey] = [paramObj];
+            }
+        };
+    };
+}
+
+/**
+ * Path variable of a method's url, type: string
+ * @param key Path key to bind value
+ */
+export const Path = paramBuilder("Path");
+
+/**
+ * Body of a REST method, json stringify applied
+ * Only one body per method!
+ */
+export const Body = paramBuilder("Body")("Body");
+
+/**
+ * Value of parameter is assigned to body property with specified name
+ * @param key Name of property for this value
+ */
+export const BodyProperty = paramBuilder("BodyProperty");

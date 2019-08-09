@@ -14,6 +14,7 @@ ngv.config.json
 *.ts
 !*.d.ts
 !/src/**/*.d.ts
+!/stompjs/**/*.d.ts
 
 *.log
 *.spec.js

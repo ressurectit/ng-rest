@@ -22,7 +22,7 @@ export abstract class RESTClient
                 @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
                 @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
                 @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
-                @Optional() protected injector?: Injector)
+                protected injector?: Injector)
     {
         if(isBlank(baseUrl))
         {
@@ -74,7 +74,7 @@ export abstract class RESTClient
  * Set the base URL of REST resource
  * @param url - base URL
  */
-export function BaseUrl(url: string)
+export function BaseUrl(url: string): ClassDecorator
 {
     return function<TFunction extends Function> (Target: TFunction): TFunction
     {
@@ -91,7 +91,7 @@ export function BaseUrl(url: string)
  * Set default headers for every method of the RESTClient
  * @param headers - deafult headers in a key-value pair
  */
-export function DefaultHeaders(headers: {[key: string]: string})
+export function DefaultHeaders(headers: {[key: string]: string}): ClassDecorator
 {
     return function<TFunction extends Function> (Target: TFunction): TFunction
     {
@@ -205,7 +205,7 @@ export function Produces(producesDef: ResponseType)
  */
 export function ResponseTransform(methodName?: string)
 {
-    return function(target: any, propertyKey: string, descriptor: any)
+    return function(target: RESTClient, propertyKey: string, descriptor: any)
     {
         if(isBlank(methodName))
         {
@@ -227,7 +227,7 @@ export function ResponseTransform(methodName?: string)
  */
 export function DisableInterceptor<TType>(interceptorType: Type<TType>)
 {
-    return function(_target: any, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
         if(isBlank(interceptorType))
         {
@@ -250,7 +250,7 @@ export function DisableInterceptor<TType>(interceptorType: Type<TType>)
  */
 export function ReportProgress()
 {
-    return function(_target: any, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
         descriptor.reportProgress = true;
         
@@ -263,7 +263,7 @@ export function ReportProgress()
  */
 export function FullHttpResponse()
 {
-    return function(_target: any, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
     {
         descriptor.fullHttpResponse = true;
         

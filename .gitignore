@@ -4,6 +4,9 @@
 /tests
 /src/**/*.d.ts
 /src/**/*.json
+/stompjs/**/*.d.ts
+/stompjs/**/*.json
+/*/dist
 /*.d.ts
 /*.metadata.json
 
