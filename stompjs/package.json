@@ -1,8 +1,8 @@
 {
-    "name": "@anglr/common/hotkeys",
-    "module": "./dist/es5/hotkeys/hotkeys.js",
-    "esm2015": "./dist/es2015/hotkeys/hotkeys.js",
-    "esm5": "./dist/es5/hotkeys/hotkeys.js",
-    "typings": "./hotkeys.d.ts",
+    "name": "@anglr/rest/stompjs",
+    "module": "./dist/es5/stompjs/stompjs.js",
+    "esm2015": "./dist/es2015/stompjs/stompjs.js",
+    "esm5": "./dist/es5/stompjs/stompjs.js",
+    "typings": "./stompjs.d.ts",
     "sideEffects": false
 }

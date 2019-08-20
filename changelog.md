@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 6.1.0
+
+ - added support for WebSockets using *StompJs* using `@anglr/rest/stompjs`
+
 ## Version 6.0.2
 
  - correctly fixed ignored interceptors with same request at same time multiple times

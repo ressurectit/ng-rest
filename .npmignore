@@ -1,6 +1,7 @@
 /.vscode
 /src
 /tests
+/.deploy
 .jsbeautifyrc
 tsconfig.json
 tsconfig.es5.json

@@ -1,1 +1,1 @@
-export * from './src/hotkeys';
+export * from './src/stompjs';

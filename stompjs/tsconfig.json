@@ -5,6 +5,7 @@
         "baseUrl": ".",
         "paths":
         {
+            "@anglr/rest": ["../src/rest"]
         }
     },
     "files":

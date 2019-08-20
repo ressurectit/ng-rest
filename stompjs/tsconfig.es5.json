@@ -17,7 +17,7 @@
         "annotateForClosureCompiler": true,
         "strictMetadataEmit": false,
         "skipTemplateCodegen": true,
-        "flatModuleOutFile": "hotkeys.js",
-        "flatModuleId": "@anglr/common/hotkeys"
+        "flatModuleOutFile": "stompjs.js",
+        "flatModuleId": "@anglr/common/stompjs"
     }
 }

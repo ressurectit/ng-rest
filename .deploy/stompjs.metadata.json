@@ -1,0 +1,13 @@
+{
+  "__symbolic": "module",
+  "version": 3,
+  "metadata": {},
+  "exports": 
+  [
+    {
+      "from": "./stompjs/index"
+    }
+  ],
+  "flatModuleIndexRedirect": true,
+  "importAs": "@anglr/rest/stompjs"
+}

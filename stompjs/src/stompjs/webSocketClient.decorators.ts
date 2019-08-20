@@ -1,10 +1,10 @@
 import {StompConfig} from "@stomp/stompjs";
 import {isBlank, isPresent, isFunction} from "@jscrpt/common";
+import {ParameterTransform as ParameterTransformRest} from '@anglr/rest';
 
 import {WebSocketClient} from "./webSocketClient";
 import {WebSocketClientPublic, SubscribeMetadata, WebSocketClientOptions} from "./webSocketClient.interface.internal";
 import {ResponseType, RequestType} from "./webSocketClient.types";
-import {ParameterTransform as ParameterTransformRest} from '../rest';
 import {WebSocketClientResponse, SubscribeQueueOptions, PublishQueueOptions} from "./webSocketClient.interface";
 import {WebSocketClientResponseContext} from "./webSocketClient.context";
 
