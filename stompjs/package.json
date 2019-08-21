@@ -1,8 +1,8 @@
 {
     "name": "@anglr/rest/stompjs",
-    "module": "./dist/es5/stompjs/stompjs.js",
-    "esm2015": "./dist/es2015/stompjs/stompjs.js",
-    "esm5": "./dist/es5/stompjs/stompjs.js",
-    "typings": "./stompjs.d.ts",
+    "module": "./dist/es5/stompjs/index.js",
+    "esm2015": "./dist/es2015/stompjs/index.js",
+    "esm5": "./dist/es5/stompjs/index.js",
+    "typings": "./index.d.ts",
     "sideEffects": false
 }
