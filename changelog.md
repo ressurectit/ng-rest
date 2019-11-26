@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 6.1.1
+
+ - fixed compilation `aot` error
+
 ## Version 6.1.0
 
  - added support for WebSockets using *StompJs* using `@anglr/rest/stompjs`
