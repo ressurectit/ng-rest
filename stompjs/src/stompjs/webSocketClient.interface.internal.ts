@@ -1,9 +1,10 @@
 import {Injector} from "@angular/core";
+import {Logger} from "@anglr/common";
 import {Client, StompConfig, StompSubscription} from "@stomp/stompjs";
 import {Observable, Subject} from "rxjs";
 
 import {ResponseType} from './webSocketClient.types';
-import {PublishQueueOptions} from "./webSocketClient.interface";
+import {PublishQueueOptions, QueueCorrelationOptions, SubscribeQueueOptions} from "./webSocketClient.interface";
 
 /**
  * Interface that is used for accessing private, protected and public members of WebSocketClient
@@ -21,6 +22,11 @@ export interface WebSocketClientPublic
      * Instance of angular injector
      */
     readonly injector: Injector;
+
+    /**
+     * Logger instance used for logging
+     */
+    readonly logger: Logger;
 
     /**
      * Session id used for identification of web socket session
@@ -70,9 +76,9 @@ export interface WebSocketClientPublic
     useSessionIdSuffix(): boolean;
 
     /**
-     * Returns indication whether use correlation id as queue suffix 
+     * Returns object describing how to use correlation id
      */
-    useQueueCorrelation(): boolean;
+    useQueueCorrelation(): QueueCorrelationOptions;
 }
 
 /**
@@ -110,7 +116,7 @@ export interface WebSocketClientOptionsBase
     /**
      * Indication whether use correlation id as part of queue suffix
      */
-    queueCorrelation?: boolean;
+    queueCorrelation?: QueueCorrelationOptions;
 
     /**
      * Indication whether use session id suffix in queue suffix
@@ -172,28 +178,49 @@ export interface SubscribeMetadata
     /**
      * Name of subscription that will be created in output
      */
-    [queue: string]:
-    {
-        /**
-         * Function that will be used as response transform
-         */
-        responseTransformFunc?: (response: Observable<any>) => Observable<any>;
+    [queue: string]: SubscribeMetadataData;
+}
 
-        /**
-         * Name of queue to be subscribed to, if not specified it equals to name
-         */
-        queueName?: string;
+/**
+ * Data for single subscribe
+ */
+export interface SubscribeMetadataData
+{
+    /**
+     * Function that will be used as response transform
+     */
+    responseTransformFunc?: (response: Observable<any>) => Observable<any>;
 
-        /**
-         * Type that is produced by this queue
-         */
-        producesType?: ResponseType;
+    /**
+     * Name of queue to be subscribed to, if not specified it equals to name
+     */
+    queueName?: string;
 
-        /**
-         * Options for subscribe queue
-         */
-        options?: SubscribeQueueOptionsInternal;
-    };
+    /**
+     * Type that is produced by this queue
+     */
+    producesType?: ResponseType;
+
+    /**
+     * Options for subscribe queue
+     */
+    options?: SubscribeQueueOptions;
+}
+
+/**
+ * Data for single subscription
+ */
+export interface SubscriptionMetadataData
+{
+    /**
+     * Subscription to queue
+     */
+    subscription?: StompSubscription;
+
+    /**
+     * Subject used for emitting to output
+     */
+    subject: Subject<any>;
 }
 
 /**
@@ -204,16 +231,5 @@ export interface SubscriptionMetadata
     /**
      * Name of subscription queue
      */
-    [queue: string]:
-    {
-        /**
-         * Subscription to queue
-         */
-        subscription?: StompSubscription;
-
-        /**
-         * Subject used for emitting to output
-         */
-        subject: Subject<any>;
-    };
+    [queue: string]: SubscriptionMetadataData;
 }

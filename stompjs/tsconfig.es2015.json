@@ -5,6 +5,6 @@
         "target": "es2015",
         "outDir": "./dist/es2015",
         "declaration": true,
-        "declarationDir": "..",
+        "declarationDir": ".."
     }
 }

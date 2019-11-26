@@ -1,11 +1,11 @@
 import {StompConfig} from "@stomp/stompjs";
-import {isBlank, isPresent, isFunction} from "@jscrpt/common";
+import {isBlank, isPresent, isFunction, extend} from "@jscrpt/common";
 import {ParameterTransform as ParameterTransformRest} from '@anglr/rest';
 
 import {WebSocketClient} from "./webSocketClient";
 import {WebSocketClientPublic, SubscribeMetadata, WebSocketClientOptions} from "./webSocketClient.interface.internal";
-import {ResponseType, RequestType} from "./webSocketClient.types";
-import {WebSocketClientResponse, SubscribeQueueOptions, PublishQueueOptions} from "./webSocketClient.interface";
+import {ResponseType, RequestType, QueueCorrelationPosition, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from "./webSocketClient.types";
+import {WebSocketClientResponse, SubscribeQueueOptions, PublishQueueOptions, QueueCorrelationOptions} from "./webSocketClient.interface";
 import {WebSocketClientResponseContext} from "./webSocketClient.context";
 
 /**
@@ -63,13 +63,15 @@ export function CorrelationBodyProperty(property: string): ClassDecorator
 /**
  * All requests and responses will now use correlation id as part of requet or response queue name
  */
-export function QueueCorrelation(): ClassDecorator
+export function QueueCorrelation(options?: QueueCorrelationOptions): ClassDecorator
 {
+    options = extend(true, <QueueCorrelationOptions>{position: QueueCorrelationPosition.Suffix, replacementKey: 'corrId'}, options);
+
     return function<TFunction extends Function> (target: TFunction): TFunction
     {
-        target.prototype.useQueueCorrelation = function(this: WebSocketClient): boolean
+        target.prototype.useQueueCorrelation = function(this: WebSocketClient): QueueCorrelationOptions
         {
-            return true;
+            return options;
         };
 
         return target;
@@ -157,13 +159,7 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
         let pBodyProperty = target[`${propertyKey}_BodyProperty_parameters`];
         let pTransforms: Function[] = target[`${propertyKey}_ParameterTransforms`];
 
-        if(isBlank(options))
-        {
-            options = 
-            {
-                type: RequestType.Json
-            };
-        }
+        options = extend(true, {type: RequestType.Json}, options);
 
         function publishMethod(this: WebSocketClientPublic, ...args: any[]): WebSocketClientResponse<any>
         {
@@ -258,7 +254,11 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
                                                           body: body,
                                                           options: options,
                                                           webSocketOptions: clientBaseOptions
-                                                      });
+                                                      },
+                                                      this.injector,
+                                                      this.logger,
+                                                      this.injector.get(WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE),
+                                                      this.injector.get(WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE));
         }
 
         descriptor.value = publishMethod;

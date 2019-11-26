@@ -1,5 +1,30 @@
-import {SubscribeQueueOptionsInternal, PublishQueueOptionsInternal} from "./webSocketClient.interface.internal";
-import {ResponseType, RequestType} from "./webSocketClient.types";
+import {Injector} from "@angular/core";
+import {IFrame} from "@stomp/stompjs";
+import {Observable} from "rxjs";
+
+import {SubscribeQueueOptionsInternal, PublishQueueOptionsInternal, SubscribeMetadataData, SubscriptionMetadataData} from "./webSocketClient.interface.internal";
+import {ResponseType, RequestType, QueueCorrelationPosition} from "./webSocketClient.types";
+
+/**
+ * Types of errors that can occurs in WebSocket StompJs connection
+ */
+export type WebSocketErrorType = 'STOMP_ERROR'|'WEB_SOCKET_ERROR';
+
+/**
+ * Object storing information about websocket error
+ */
+export interface WebSocketError
+{
+    /**
+     * Type of error
+     */
+    type: WebSocketErrorType;
+
+    /**
+     * Data passed with information about error
+     */
+    data: IFrame|Event;
+}
 
 /**
  * Represents response for websocket request
@@ -41,6 +66,31 @@ export interface SubscribeQueueDecoratorOptions
      * Type that is produced by this queue
      */
     producesType?: ResponseType;
+
+    /**
+     * Indication whether is this queue used as status queue
+     */
+    statusQueue?: boolean;
+
+    /**
+     * Code that indicates that no more messages are coming from queue
+     */
+    completeCode?: string;
+
+    /**
+     * Function used for mapping of status queue result to known status queue
+     */
+    statusQueueMapping?: (response: any) => StatusQueueResponse;
+
+    /**
+     * Indication whether automatically complete observable after single response from web socket
+     */
+    singleResponse?: boolean;
+
+    /**
+     * Additional data that is possible to send to subscribe options, can be used in custom middlewares
+     */
+    additionalData?: Object;
 }
 
 /**
@@ -57,6 +107,71 @@ export interface PublishQueueDecoratorOptions
      * Indication whether publish to queue should be delayed and manually run
      */
     delayed?: boolean;
+
+    /**
+     * If set, response caching will be enabled, obtains unique identification of request
+     */
+    cacheResponse?: (body: any) => string;
+}
+
+/**
+ * Options used for queue correlation
+ */
+export interface QueueCorrelationOptions
+{
+    /**
+     * Position where should be correlation id positioned, defaults to 'Suffix'
+     */
+    position: QueueCorrelationPosition;
+
+    /**
+     * If position is replace, use this as name that should be looked for and replaced, defaults to 'corrId'
+     */
+    replacementKey?: string;
+}
+
+/**
+ * Status queue
+ */
+export interface StatusQueueResponse
+{
+    queue?: string;
+    done?: number;
+    todo?: number;
+    code?: string;
+    description?: string;
+    httpStatus?: number;
+    original?: any;
+}
+
+/**
+ * Middleware that is used to processing result of subscribe
+ */
+export interface WebSocketHandleResultMiddleware
+{
+    /**
+     * Function represents middleware logic
+     */
+    (source: Observable<any>, metadata: SubscribeMetadataData, options: SubscribeQueueOptions, publishOptions: PublishQueueOptions, injector: Injector, correlationId: string, name: string): Observable<any>;
+}
+
+/**
+ * Middleware that is used for processing status queue subscribe result
+ */
+export interface WebSocketHandleStatusSubscribeMiddleware
+{
+    /**
+     * Function represents middleware logic
+     */
+    (status: StatusQueueResponse, metadata: SubscribeMetadataData, options: SubscribeQueueOptions, publishOptions: PublishQueueOptions, subscriptionMetadata: SubscriptionMetadataData, injector: Injector, correlationId: string, name: string): void;
+}
+
+/**
+ * Status queue generic
+ */
+export interface StatusQueueResponseGeneric<TOriginal> extends StatusQueueResponse
+{
+    original?: TOriginal;
 }
 
 /**

@@ -1,11 +1,27 @@
+import {Injector} from "@angular/core";
 import {generateId, extend, isPresent} from "@jscrpt/common";
-import {Client, IMessage} from "@stomp/stompjs";
-import {BehaviorSubject, MonoTypeOperatorFunction, Observable} from "rxjs";
-import {map, filter} from "rxjs/operators";
+import {Logger} from "@anglr/common";
+import {Client} from "@stomp/stompjs";
+import {ReplaySubject, MonoTypeOperatorFunction, Observable} from "rxjs";
+import {tap} from "rxjs/operators";
 
-import {WebSocketClientResponse} from "./webSocketClient.interface";
+import {WebSocketClientResponse, StatusQueueResponse, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware} from "./webSocketClient.interface";
 import {WebSocketClientResponseOptions, SubscriptionMetadata, WebSocketClientOptions} from "./webSocketClient.interface.internal";
-import {RequestType, ResponseType} from "./webSocketClient.types";
+import {RequestType, QueueCorrelationPosition} from "./webSocketClient.types";
+import {getCache, storeToCache} from "./webSocketClinet.cache";
+
+const DEFAULT_STATUS_MAPPING = (value: any) => value;
+
+//TODO - skipSubscription think if it is possible
+//TODO - test properly ngDevMode
+
+const WS_DEBUG_OPTIONS =
+{
+    request: false,
+    responseSubscribe: false,
+    responseRaw: false,
+    response: false
+};
 
 /**
  * Represents response for websocket request
@@ -34,6 +50,11 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
      */
     private _published: boolean = false;
 
+    /**
+     * Key used to identifying cache
+     */
+    private _cacheKey: string;
+
     //######################### public properties - implementation of WebSocketClientResponse<any> #########################
 
     /**
@@ -48,8 +69,14 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
     constructor(private _wsClient: Client,
                 private _active: Promise<void>,
                 private _sessionId: string,
-                private _options: WebSocketClientResponseOptions)
+                private _options: WebSocketClientResponseOptions,
+                private _injector: Injector,
+                private _logger: Logger,
+                private _handleResultMiddlewares: WebSocketHandleResultMiddleware[],
+                private _handleStatusMiddlewares: WebSocketHandleStatusSubscribeMiddleware[])
     {
+        this._logger.verbose(`WebSocket: socket context "{sessionId}" correlationId "${this._correlationId}"`, this._sessionId);
+
         this._initialize();
     }
 
@@ -69,6 +96,11 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
         let options = this._getOptions(this._options.options);
         let body = this._options.body;
 
+        if(options.cacheResponse)
+        {
+            this._cacheKey = this._buildCacheKey(options.publishQueuePrefix, this._options.publish, options.cacheResponse(body));
+        }
+
         if(isPresent(body) && options.type == RequestType.Json)
         {
             if(isPresent(options.correlationBodyProperty))
@@ -79,9 +111,25 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
             body = JSON.stringify(body);
         }
 
+        if(options.cacheResponse)
+        {
+            let cache = getCache(this._cacheKey);
+
+            if(cache)
+            {
+                cache.replayResponses(this._outputMetadata);
+
+                return;
+            }
+        }
+
+        this._logger.debug(`WebSocket: sending request to '${this._options.publish}' with '${body}'`);
+
+        jsDevMode && WS_DEBUG_OPTIONS.request && console.log(`DEBUG REQUEST ${this._generateQueuePublishUrl(options.publishQueuePrefix, this._options.publish, options)} => ${body}`);
+
         this._wsClient.publish(
         {
-            destination: `${options.publishQueuePrefix}/${this._options.publish}${this._generateSuffix(options)}`,
+            destination: this._generateQueuePublishUrl(options.publishQueuePrefix, this._options.publish, options),
             body: body as string
         });
     }
@@ -93,6 +141,8 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
     {
         if(this._outputMetadata)
         {
+            this._logger.verbose(`WebSocket: context is being destroyed "{sessionId}" correlationId "${this._correlationId}"`, this._sessionId);
+
             Object.keys(this._outputMetadata).forEach(name =>
             {
                 let metadata = this._outputMetadata[name];
@@ -120,7 +170,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
     {
         Object.keys(this._options.subscribe).forEach(name =>
         {
-            let subject = new BehaviorSubject<any>(null);
+            let subject = new ReplaySubject<any>();
 
             this.output[name] = subject
                 .asObservable()
@@ -132,6 +182,8 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
             };
         });
 
+        let publishOptions = this._getOptions(this._options.options);
+
         await this._active;
 
         Object.keys(this._options.subscribe).forEach(name =>
@@ -139,10 +191,47 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
             let metadata = this._options.subscribe[name];
             let outputMetadata = this._outputMetadata[name];
             let options = this._getOptions(metadata.options);
-            
-            outputMetadata.subscription = this._wsClient.subscribe(`${options.subscribeQueuePrefix}/${metadata.queueName}${this._generateSuffix(options)}`, data =>
+
+            outputMetadata.subscription = this._wsClient.subscribe(this._generateQueuePublishUrl(options.subscribeQueuePrefix, metadata.queueName, options), data =>
             {
+                this._logger.debug(`WebSocket: subscription "${this._sessionId}", queue "${name}", data "${data.body}"`);
+                jsDevMode && WS_DEBUG_OPTIONS.responseSubscribe && console.log(`DEBUG SUBSCRIBE RAW ${this._generateQueuePublishUrl(publishOptions.publishQueuePrefix, this._options.publish, publishOptions)} => ${name}`, data.body);
+
+                if(publishOptions.cacheResponse)
+                {
+                    storeToCache(this._cacheKey, name, data);
+                }
+
+                //handle status queue
+                if(options.statusQueue)
+                {
+                    let statusData: any = data.body;
+
+                    try
+                    {
+                        statusData = JSON.parse(data.body)
+                    }
+                    catch(e)
+                    {
+                        console.warn(`Failed to deserialize status response, ${e}`);
+                        statusData = {};
+                    }
+
+                    let status: StatusQueueResponse = options.statusQueueMapping ? options.statusQueueMapping(statusData) : DEFAULT_STATUS_MAPPING(statusData);
+                    // status.original = data;
+
+                    this._handleStatusMiddlewares.forEach(middleware =>
+                    {
+                        middleware(status, metadata, options, publishOptions, this._outputMetadata[status.queue], this._injector, this._correlationId, name);
+                    });
+                }
+
                 outputMetadata.subject.next(data);
+
+                if(options.singleResponse)
+                {
+                    outputMetadata.subject.complete();
+                }
             });
         });
 
@@ -150,6 +239,37 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
         {
             this.publish();
         }
+    }
+
+    /**
+     * Builds cache key
+     */
+    private _buildCacheKey(prefix: string, name: string, id: string)
+    {
+        return `${prefix}/${name}-${id}`;
+    }
+
+    /**
+     *
+     * @param prefix Fixed prefix for publish/subscribe url
+     * @param name Name of publish/subscribe
+     * @param options Options for publish/subscribe
+     */
+    private _generateQueuePublishUrl(prefix?: string, name?: string, options?: WebSocketClientOptions)
+    {
+        if(options.queueCorrelation && options.queueCorrelation.position == QueueCorrelationPosition.Prefix)
+        {
+            prefix = `${prefix}/${this._correlationId}`;
+        }
+
+        let url = `${prefix}/${name}${this._generateSuffix(options)}`;
+
+        if(options.queueCorrelation && options.queueCorrelation.position == QueueCorrelationPosition.Replace)
+        {
+            url = url.replace(`{${options.queueCorrelation.replacementKey}}`, this._correlationId);
+        }
+
+        return url;
     }
 
     /**
@@ -165,7 +285,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
             suffix += `/${this._sessionId}`;
         }
 
-        if(options.queueCorrelation)
+        if(options.queueCorrelation && options.queueCorrelation.position == QueueCorrelationPosition.Suffix)
         {
             suffix += `/${this._correlationId}`;
         }
@@ -190,40 +310,29 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
     {
         let metadata = this._options.subscribe[name];
         let options = this._getOptions(metadata.options);
+        let publishOptions = jsDevMode && this._getOptions(this._options.options);
 
         return (source: Observable<any>) =>
         {
-            //filter out result if value was not received using NULL for now
-            source = source.pipe(filter(itm => isPresent(itm)));
-
-            //map response type
-            switch(metadata.producesType)
+            if(jsDevMode && WS_DEBUG_OPTIONS.responseRaw)
             {
-                default:
-                //case ResponseType.Json:
+                source = source.pipe(tap(data =>
                 {
-                    source = source.pipe(map((itm: IMessage) => JSON.parse(itm.body)));
-
-                    break;
-                }
-                case ResponseType.Text:
-                {
-                    source = source.pipe(map((itm: IMessage) => itm.body));
-
-                    break;
-                }
+                    console.log(`DEBUG RAW ${this._generateQueuePublishUrl(publishOptions.publishQueuePrefix, this._options.publish, publishOptions)} => ${name}`, data.body);
+                }));
             }
 
-            //filter out non matching results
-            if(isPresent(options.correlationBodyProperty) && metadata.producesType == ResponseType.Json)
+            this._handleResultMiddlewares.forEach(middleware =>
             {
-                source = source.pipe(filter(itm => itm[options.correlationBodyProperty] == this._correlationId));
-            }
+                source = middleware(source, metadata, options, publishOptions, this._injector, this._correlationId, name);
+            });
 
-            //apply response transform
-            if(isPresent(metadata.responseTransformFunc))
+            if(jsDevMode && WS_DEBUG_OPTIONS.response)
             {
-                source = metadata.responseTransformFunc(source);
+                source = source.pipe(tap(data =>
+                {
+                    console.log(`DEBUG ${this._generateQueuePublishUrl(publishOptions.publishQueuePrefix, this._options.publish, publishOptions)} => ${name}`, data);
+                }));
             }
 
             return source;
