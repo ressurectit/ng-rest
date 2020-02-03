@@ -42,7 +42,7 @@ export interface BlobAndFilenameResponse
 }
 
 /**
- * Supported @Produces response types
+ * Supported Produces response types
  */
 export enum ResponseType
 {

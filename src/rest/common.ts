@@ -48,8 +48,6 @@ export abstract class RESTClient
 
     /**
      * Request interceptor for all methods, must return new HttpRequest since object is immutable
-     *
-     * @method requestInterceptor
      * @param req - request object
      */
     protected requestInterceptor(req: HttpRequest<any>): HttpRequest<any>
@@ -59,8 +57,6 @@ export abstract class RESTClient
 
     /**
      * Allows to intercept all responses for all methods in class
-     *
-     * @method responseInterceptor
      * @param res - response object
      * @returns res - transformed response object
      */
@@ -201,7 +197,7 @@ export function Produces(producesDef: ResponseType)
 
 /**
  * Defines method name that will be called and modifies response
- * @param methodName Name of method that will be called to modify response, method takes Observable and returns required type
+ * @param methodName - Name of method that will be called to modify response, method takes Observable and returns required type
  */
 export function ResponseTransform(methodName?: string)
 {
@@ -223,7 +219,7 @@ export function ResponseTransform(methodName?: string)
 
 /**
  * Disables specified type of http client interceptor for all calls of applied method
- * @param interceptorType Type of interceptor that will be disabled for method to which is this attached
+ * @param interceptorType - Type of interceptor that will be disabled for method to which is this attached
  */
 export function DisableInterceptor<TType>(interceptorType: Type<TType>)
 {
@@ -273,7 +269,7 @@ export function FullHttpResponse()
 
 /**
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization
- * @param methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
+ * @param methodName - Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
  */
 export function ParameterTransform(methodName?: string)
 {
@@ -301,8 +297,8 @@ export function ParameterTransform(methodName?: string)
 
 /**
  * Gets hash of request passed to http
- * @param baseUrl Base url that is used with request
- * @param request Request to be hashed
+ * @param baseUrl - Base url that is used with request
+ * @param request - Request to be hashed
  */
 function getRequestHash(baseUrl: string, request: HttpRequest<any>)
 {

@@ -23,7 +23,9 @@
         "deploy": "npm publish",
         "deploy:next": "npm publish --tag next",
         "pretest": "webpack",
-        "test": "karma start karma.conf.js"
+        "test": "karma start karma.conf.js",
+        "doc": "api-extractor run --local --verbose",
+        "doc:md": "api-documenter markdown -i temp -o docs"
     },
     "repository": {
         "type": "git",
@@ -62,6 +64,8 @@
         "@angular/language-service": "^8.0.0",
         "@angular/platform-browser-dynamic": "^8.0.0",
         "@angular/platform-browser": "^8.0.0",
+        "@microsoft/api-extractor": "7.7.8",
+        "@microsoft/api-documenter": "7.7.12",
         "tsickle": "0.35.0",
         "karma-cli": "1.0.1",
         "karma": "3.1.1",

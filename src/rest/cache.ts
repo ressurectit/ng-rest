@@ -8,8 +8,7 @@ import {RESTClient} from '../rest/common';
 var responseCache: {[key: string]: HttpResponse<any>} = {};
 
 /**
- * Defines method name that will be called and modifies response
- * @param methodName Name of method that will be called to modify response, method takes Observable and returns required type
+ * Results of requests are cached in javascript memory
  */
 export function Cache()
 {
