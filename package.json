@@ -10,7 +10,7 @@
         "build": "npm run build:rest && npm run build:stompjs",
         "build:rest": "ngc -p tsconfig.es5.json && ngc -p tsconfig.es2015.json",
         "build:stompjs": "ngc -p stompjs/tsconfig.es5.json && ngc -p stompjs/tsconfig.es2015.json",
-        "clean": "rimraf dist tests docs src/**/*.d.ts stompjs/**/*.d.ts */*.d.ts */*.metadata.json ./*.metadata.json ./*.d.ts */dist",
+        "clean": "rimraf dist tests tsdoc-metadata.json src/**/*.d.ts src/**/*.d.ts.map stompjs/**/*.d.ts stompjs/**/*.d.ts.map */*.d.ts */*.metadata.json ./*.metadata.json ./*.d.ts ./*d.ts.map */dist",
         "clean:duplicates": "rimraf */dist/*/src",
         "clean:deps": "rimraf package-lock.json node_modules",
         "clean:all": "npm run clean && npm run clean:deps",
@@ -18,14 +18,17 @@
         "version:placeholder": "replace-in-file /\\\"version\\\":\\s\\\".*?\\\"/g \"\\\"version\\\": \\\"0.0.0-placeholder\\\"\" package.json --isRegex",
         "version:git": "ngv -e \"replace-in-file 0.0.0-placeholder $GIT_VERSION package.json\"",
         "prepublishOnly": "npm run bundle && npm run version:placeholder && npm run version:git",
-        "postpublish": "npm run version:placeholder && npm run clean",
+        "postpublish": "npm run doc && npm run version:placeholder && npm run clean",
         "bundle": "npm run clean && npm run build && npm run clean:duplicates",
         "deploy": "npm publish",
         "deploy:next": "npm publish --tag next",
         "pretest": "webpack",
         "test": "karma start karma.conf.js",
-        "doc": "api-extractor run --local --verbose",
-        "doc:md": "api-documenter markdown -i temp -o docs"
+        "doc": "path-exists docs && npm run doc:generate || echo \"No docs generated!\"",
+        "doc:generate": "npm run doc:generate:rest",
+        "doc:generate:rest": "rimraf docs/content/api/ng-rest && npm run doc:json:rest && npm run doc:md:rest && cd docs && git add . && git commit -m \"INT: updated API docs ng-rest\" && git push && cd ..",
+        "doc:json:rest": "api-extractor run --local --verbose",
+        "doc:md:rest": "api-documenter markdown -i temp -o docs/content/api/ng-rest && rimraf temp"
     },
     "repository": {
         "type": "git",
@@ -86,6 +89,7 @@
         "rimraf": "2.6.3",
         "copyfiles": "2.1.0",
         "replace-in-file": "4.1.0",
+        "path-exists-cli": "1.0.0",
         "typescript": "3.4.5",
         "webpack": "4.32.2",
         "npm-git-version": "1.1.1"

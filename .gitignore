@@ -2,6 +2,7 @@
 /dist
 /docs
 /tests
+/temp
 /src/**/*.d.ts
 /src/**/*.json
 /stompjs/**/*.d.ts
@@ -11,7 +12,9 @@
 /*.metadata.json
 
 package-lock.json
+tsdoc-metadata.json
 *.log
 *.bak
 *.orig
+*.map
 *~

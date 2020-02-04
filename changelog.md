@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 7.0.0
+
+
 ## Version 6.1.1
 
  - fixed compilation `aot` error
