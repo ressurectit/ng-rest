@@ -28,7 +28,7 @@ export function UseWebSocket(): ClassDecorator
 
 /**
  * Sets prefix for publish queue
- * @param prefix Prefix that is used for each publish to queue
+ * @param prefix - Prefix that is used for each publish to queue
  */
 export function PublishQueuePrefix(prefix: string): ClassDecorator
 {
@@ -45,7 +45,7 @@ export function PublishQueuePrefix(prefix: string): ClassDecorator
 
 /**
  * All requests will now use correlation id as part of body
- * @param property Name of property holding correlation id
+ * @param property - Name of property holding correlation id
  */
 export function CorrelationBodyProperty(property: string): ClassDecorator
 {
@@ -96,7 +96,7 @@ export function UseSessionIdSuffix(): ClassDecorator
 
 /**
  * Sets prefix for subscribe queue
- * @param prefix Prefix that is used for each subscribe from queue
+ * @param prefix - Prefix that is used for each subscribe from queue
  */
 export function SubscribeQueuePrefix(prefix: string): ClassDecorator
 {
@@ -113,8 +113,8 @@ export function SubscribeQueuePrefix(prefix: string): ClassDecorator
 
 /**
  * Registers observable to specified queue, this observable is added to WebSocketClientResponse.output
- * @param name Name of subscription to be subscribed to
- * @param options Options for subscribe queue
+ * @param name - Name of subscription to be subscribed to
+ * @param options - Options for subscribe queue
  */
 export function SubscribeQueue(name: string, options?: SubscribeQueueOptions)
 {
@@ -147,8 +147,8 @@ export function SubscribeQueue(name: string, options?: SubscribeQueueOptions)
 /**
  * Assigns this method input to publish queue
  * Only one publish per method!
- * @param name Name of queue to be published to
- * @param options Options for publish queue
+ * @param name - Name of queue to be published to
+ * @param options - Options for publish queue
  */
 export function PublishQueue(name: string, options?: PublishQueueOptions)
 {
@@ -269,7 +269,7 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
 
 /**
  * Parameter descriptor that is used for transforming parameter before serialization
- * @param methodName? Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
+ * @param methodName - Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
  */
 export function ParameterTransform(methodName?: string)
 {
@@ -310,7 +310,7 @@ function paramBuilder(paramName: string)
 
 /**
  * Path variable of a method's url, type: string
- * @param key Path key to bind value
+ * @param key - Path key to bind value
  */
 export const Path = paramBuilder("Path");
 
@@ -322,6 +322,6 @@ export const Body = paramBuilder("Body")("Body");
 
 /**
  * Value of parameter is assigned to body property with specified name
- * @param key Name of property for this value
+ * @param key - Name of property for this value
  */
 export const BodyProperty = paramBuilder("BodyProperty");

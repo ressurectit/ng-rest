@@ -23,8 +23,8 @@ export class WebSocketClientPublishCache
 
     /**
      * Adds response to cache for specified queue
-     * @param queue Name of queue for which is response stored
-     * @param response Response to be stored
+     * @param queue - Name of queue for which is response stored
+     * @param response - Response to be stored
      */
     public addToCache(queue: string, response: IMessage)
     {
@@ -41,7 +41,7 @@ export class WebSocketClientPublishCache
 
     /**
      * Replays all responses into output queues
-     * @param metadata Metadata containing subjects
+     * @param metadata - Metadata containing subjects
      */
     public replayResponses(metadata: SubscriptionMetadata)
     {
@@ -63,7 +63,7 @@ export class WebSocketClientPublishCache
 
 /**
  * Gets cached data if exists
- * @param key Key used to identifying cache data
+ * @param key - Key used to identifying cache data
  */
 export function getCache(key: string): WebSocketClientPublishCache
 {
@@ -72,9 +72,9 @@ export function getCache(key: string): WebSocketClientPublishCache
 
 /**
  * Stores response to cache
- * @param key Key used to identifying cache data
- * @param queue Name of queue which response is stored
- * @param response Response to be cached
+ * @param key - Key used to identifying cache data
+ * @param queue - Name of queue which response is stored
+ * @param response - Response to be cached
  */
 export function storeToCache(key: string, queue: string, response: IMessage): void
 {

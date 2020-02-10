@@ -1,5 +1,5 @@
 {
-    "name": "@anglr/rest/stompjs",
+    "name": "@anglr/rest-stompjs",
     "module": "./dist/es5/stompjs/index.js",
     "esm2015": "./dist/es2015/stompjs/index.js",
     "esm5": "./dist/es5/stompjs/index.js",

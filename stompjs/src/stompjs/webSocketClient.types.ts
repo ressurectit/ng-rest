@@ -2,7 +2,7 @@ import {InjectionToken} from "@angular/core";
 import {WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware} from "./webSocketClient.interface";
 
 /**
- * Supported @Produces response types
+ * Supported Produces response types
  */
 export enum ResponseType
 {
@@ -11,7 +11,7 @@ export enum ResponseType
 }
 
 /**
- * Supported @PublishQueue request types
+ * Supported PublishQueue request types
  */
 export enum RequestType
 {

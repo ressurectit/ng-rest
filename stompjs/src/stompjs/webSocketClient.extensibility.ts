@@ -59,6 +59,9 @@ export const WEB_SOCKET_HANDLE_PRODUCES_TYPE_PROVIDER: ValueProvider =
     useValue: WebSocketHandleProducesType
 };
 
+/**
+ * @internal
+ */
 export function WebSocketHandleFilterNonMatching(source: Observable<any>, metadata: SubscribeMetadataData, options: SubscribeQueueOptions, _publishOptions: PublishQueueOptions, _injector: Injector, correlationId: string)
 {
     //filter out non matching results
@@ -80,6 +83,9 @@ export const WEB_SOCKET_HANDLE_FILTER_NON_MATCHING_PROVIDER: ValueProvider =
     useValue: WebSocketHandleFilterNonMatching
 };
 
+/**
+ * @internal
+ */
 export function WebSocketHandleResponseTransform(source: Observable<any>, metadata: SubscribeMetadataData)
 {
     //apply response transform
@@ -101,6 +107,9 @@ export const WEB_SOCKET_HANDLE_RESPONSE_TRANSFORM_PROVIDER: ValueProvider =
     useValue: WebSocketHandleResponseTransform
 };
 
+/**
+ * @internal
+ */
 export function WebSocketHandleStatusProgressIndicator(status: StatusQueueResponse, _metadata: SubscribeMetadataData, _options: SubscribeQueueOptions, _publishOptions: PublishQueueOptions, _subscriptionMetadata: SubscriptionMetadataData, injector: Injector, _correlationId: string, name: string): void
 {
     let logger: Logger = injector.get(LOGGER);
@@ -135,6 +144,9 @@ export const WEB_SOCKET_HANDLE_STATUS_PROGRESS_INDICATOR_PROVIDER: ValueProvider
     useValue: WebSocketHandleStatusProgressIndicator
 };
 
+/**
+ * @internal
+ */
 export function WebSocketHandleStatusErrorComplete(status: StatusQueueResponse, _metadata: SubscribeMetadataData, options: SubscribeQueueOptions, _publishOptions: PublishQueueOptions, subscriptionMetadata: SubscriptionMetadataData, injector: Injector): void
 {
     let logger: Logger = injector.get(LOGGER);

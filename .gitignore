@@ -2,7 +2,7 @@
 /dist
 /docs
 /tests
-/temp
+temp/
 /src/**/*.d.ts
 /src/**/*.json
 /stompjs/**/*.d.ts

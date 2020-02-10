@@ -251,9 +251,9 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
 
     /**
      *
-     * @param prefix Fixed prefix for publish/subscribe url
-     * @param name Name of publish/subscribe
-     * @param options Options for publish/subscribe
+     * @param prefix - Fixed prefix for publish/subscribe url
+     * @param name - Name of publish/subscribe
+     * @param options - Options for publish/subscribe
      */
     private _generateQueuePublishUrl(prefix?: string, name?: string, options?: WebSocketClientOptions)
     {
@@ -274,7 +274,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
 
     /**
      * Generates suffix according provided options
-     * @param options Options to be used for generating suffix
+     * @param options - Options to be used for generating suffix
      */
     private _generateSuffix(options: WebSocketClientOptions): string
     {
@@ -295,7 +295,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
 
     /**
      * Gets options for current publish or subscribe
-     * @param options Options for current publish or subscribe to queue
+     * @param options - Options for current publish or subscribe to queue
      */
     private _getOptions<TOptions>(options: TOptions): TOptions
     {
@@ -304,7 +304,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
 
     /**
      * Pipe that is used for handling result
-     * @param name Name of subscribe
+     * @param name - Name of subscribe
      */
     private _handleResult: (name: string) => MonoTypeOperatorFunction<any> = name =>
     {
