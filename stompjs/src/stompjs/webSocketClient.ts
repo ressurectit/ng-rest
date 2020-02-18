@@ -234,11 +234,14 @@ export abstract class WebSocketClient implements OnDestroy
                 this.logger.verbose(`WebSocket: new connection created`);
 
                 return new SockJS(this.getBaseUrl(), [],
+                <any>
                 {
                     sessionId: () =>
                     {
                         return this._sessionId
-                    }
+                    },
+                    transports: 'websocket',
+                    timeout: 30000
                 });
             }
         };

@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 7.0.1
+
+- package `@anglr/rest/stompjs`
+    - fixed problem with missing default timeout, now 30 seconds
+    - set transport layer only to *websocket*
+
 ## Version 7.0.0
 
 - updated to latest stable *Angular* 9
