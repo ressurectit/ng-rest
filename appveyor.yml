@@ -1,0 +1,45 @@
+image: Visual Studio 2019
+
+environment:
+  nodejs_version: "11"
+
+init:
+  - ps: |
+      Install-Product node $env:nodejs_version
+      "//registry.npmjs.org/:_authToken=$env:npm_auth_token`n" | out-file "$env:userprofile\.npmrc" -Encoding ASCII
+
+cache:
+  - node_modules
+
+install:
+  - cmd: npm install --loglevel error
+
+build: off
+
+deploy_script:
+  - ps: |
+      $env:NGV_BUILD_NUMBER = $env:APPVEYOR_BUILD_NUMBER
+      
+      if($env:APPVEYOR_REPO_TAG -eq "true")
+      {
+        $env:APPVEYOR_REPO_TAG_NAME -match "^v(\d+\.\d+)\.\d+"
+        git checkout "$($Matches[1])" -q
+
+        npm run version:build
+        Update-AppveyorBuild -Version "$(cat version.bak)"
+
+        $env:NGV_BUILD_NUMBER = -1
+        npm run deploy
+      }
+      else
+      {
+        git checkout $env:APPVEYOR_REPO_BRANCH -q
+
+        npm run version:build
+        Update-AppveyorBuild -Version "$(cat version.bak)"
+
+        $env:NGV_BUILD_NUMBER = -1
+        npm run deploy:next
+      }
+      
+  - ps: Update-AppveyorBuild -Version "$(cat version.bak)"

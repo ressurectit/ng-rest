@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/%40anglr%2Frest.svg)](https://badge.fury.io/js/%40anglr%2Frest)
+[![Build status](https://ci.appveyor.com/api/projects/status/92d634q2sky7gvkx?svg=true)](https://ci.appveyor.com/project/kukjevov/ng-rest)
+
 # Angular Rest Client
 
 Angular HTTP client to consume RESTful services. Built on `@angular/http` with TypeScript.  
