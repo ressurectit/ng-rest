@@ -1,7 +1,12 @@
 image: Visual Studio 2019
 
 environment:
-  nodejs_version: "11"
+  nodejs_version: "10"
+
+branches:
+  only:
+    - /^\d+\.\d+/
+    - /^v\d+\.\d+\.\d+/
 
 init:
   - ps: |
@@ -13,13 +18,15 @@ cache:
 
 install:
   - cmd: npm install --loglevel error
+  - cmd: npm run clean
 
 build: off
 
-deploy_script:
+build_script:
   - ps: |
       $env:NGV_BUILD_NUMBER = $env:APPVEYOR_BUILD_NUMBER
       
+      #stable version build
       if($env:APPVEYOR_REPO_TAG -eq "true")
       {
         $env:APPVEYOR_REPO_TAG_NAME -match "^v(\d+\.\d+)\.\d+"
@@ -30,6 +37,12 @@ deploy_script:
 
         $env:NGV_BUILD_NUMBER = -1
         npm run deploy
+
+        #release on github
+        $match = [System.Text.RegularExpressions.Regex]::Match((Get-Content "./changelog.md" -Encoding UTF8 | Out-String).TrimEnd(), "## Version \d+\.\d+\.\d+ (?<date>\(\d+-\d+-\d+\))(?<content>.*?)(?:## Version|`$)", [System.Text.RegularExpressions.RegexOptions]::Singleline)
+
+        Set-AppveyorBuildVariable 'Changelog' $match.Groups["content"].Value
+        Set-AppveyorBuildVariable 'ChangeDate' $match.Groups["date"].Value
       }
       else
       {
@@ -43,3 +56,12 @@ deploy_script:
       }
       
   - ps: Update-AppveyorBuild -Version "$(cat version.bak)"
+
+deploy:
+  - provider: GitHub
+    description: '$(Changelog)'
+    auth_token:
+      secure: FOD7P4H4NF3p30wWrc/CUbtuP1YDUtMGeJgiHGo9P8uwpf+fBcKLxLZ/CLCjTsx1
+    force_update: true
+    on:
+      APPVEYOR_REPO_TAG: true

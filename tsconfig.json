@@ -12,6 +12,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "strictNullChecks": false,
+        "esModuleInterop": true,
         "lib": 
         [
             "es2016", 

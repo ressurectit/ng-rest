@@ -78,8 +78,8 @@ import {RESTClient, GET, POST, Path, Body, Query, BaseUrl, DefaultHeaders, Produ
 import {isPresent} from '@jscrpt/common';
 import {User, Paging} from './user.interface';
 import {Observable} from 'rxjs';
-import * as global from 'config/global';
-import * as moment from 'moment';
+import global from 'config/global';
+import moment from 'moment';
 
 /**
  * Service used to access User REST resource

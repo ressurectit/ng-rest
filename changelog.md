@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 8.0.0 (2020-08-10)
+
+### BREAKING CHANGES
+
+- minimal supported version of *Angular* is `10.0.0`
+- minimal supported version of `@jscrpt/common` is `1.2.0`
+- minimal supported version of `crypt-js` is `4.0.0`
+
 ## Version 7.0.1
 
 - package `@anglr/rest/stompjs`

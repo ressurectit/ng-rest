@@ -3,7 +3,7 @@ import {Logger, LOGGER} from '@anglr/common';
 import {generateId, extend} from '@jscrpt/common';
 import {Client, StompConfig} from '@stomp/stompjs';
 import {ReplaySubject, Observable} from 'rxjs';
-import * as SockJS from 'sockjs-client';
+import SockJS from 'sockjs-client';
 
 import {QueueCorrelationOptions, WebSocketError} from './webSocketClient.interface';
 import {QueueCorrelationPosition} from './webSocketClient.types';

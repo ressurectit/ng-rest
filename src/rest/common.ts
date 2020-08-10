@@ -4,8 +4,8 @@ import {extend, isBlank, isPresent, isFunction, isJsObject, generateId} from '@j
 import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, HttpRequestIgnoredInterceptorId} from '@anglr/common';
 import {Observable, Observer, of} from "rxjs";
 import {map, tap} from "rxjs/operators";
-import * as crypto from 'crypto-js';
-import * as param from 'jquery-param';
+import sha256 from 'crypto-js/sha256';
+import param from 'jquery-param';
 
 import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
@@ -314,7 +314,7 @@ function getRequestHash(baseUrl: string, request: HttpRequest<any>)
         });
     }
 
-    return crypto.SHA256(`${hashRequest.method}-${hashRequest.urlWithParams}-${JSON.stringify(request.body)}`).toString();
+    return sha256(`${hashRequest.method}-${hashRequest.urlWithParams}-${JSON.stringify(request.body)}`).toString();
 }
 
 function methodBuilder(method: string)
