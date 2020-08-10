@@ -2,11 +2,17 @@
 
 ## Version 8.0.0 (2020-08-10)
 
+### Features
+
+- added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
+- added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
+
 ### BREAKING CHANGES
 
 - minimal supported version of *Angular* is `10.0.0`
 - minimal supported version of `@jscrpt/common` is `1.2.0`
-- minimal supported version of `crypt-js` is `4.0.0`
+- minimal supported version of `@anglr/common` is `8.0.0`
+- minimal supported version of `crypto-js` is `4.0.0`
 
 ## Version 7.0.1
 

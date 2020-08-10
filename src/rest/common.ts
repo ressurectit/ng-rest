@@ -1,7 +1,7 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
 import {extend, isBlank, isPresent, isFunction, isJsObject, generateId} from '@jscrpt/common';
-import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, HttpRequestIgnoredInterceptorId} from '@anglr/common';
+import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId, LocalProgressIndicatorName} from '@anglr/common';
 import {Observable, Observer, of} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import sha256 from 'crypto-js/sha256';
@@ -9,6 +9,7 @@ import param from 'jquery-param';
 
 import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
+import {AdditionalInfoPropertyDescriptor} from './additionalInfoPropertyDescriptor';
 
 /**
  * Angular RESTClient base class.
@@ -268,6 +269,25 @@ export function FullHttpResponse()
 }
 
 /**
+ * Allows to specify progress indicator group for displaying local progress indicator
+ * @param name - Name of progress indicator group to be displayed
+ */
+export function ProgressIndicatorGroup(name: string)
+{
+    return function(_target: RESTClient, _propertyKey: string, descriptor: AdditionalInfoPropertyDescriptor<LocalProgressIndicatorName>)
+    {
+        if(!descriptor.additionalInfo)
+        {
+            descriptor.additionalInfo = {};
+        }
+
+        descriptor.additionalInfo.progressGroupName = name;
+        
+        return descriptor;
+    };
+}
+
+/**
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization
  * @param methodName - Name of method that will be called to modify parameter, method takes any type of object and returns transformed object
  */
@@ -493,15 +513,15 @@ function methodBuilder(method: string)
                 }
 
                 // Request options
-                let req: HttpRequestIgnoredInterceptorId<any> = new HttpRequest<any>(method,
-                                                                                     this.baseUrl + this.getBaseUrl() + resUrl,
-                                                                                     body,
-                                                                                     {
-                                                                                          headers,
-                                                                                          params,
-                                                                                          responseType,
-                                                                                          reportProgress
-                                                                                     });
+                let req: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId> = new HttpRequest<any>(method,
+                                                                                                        this.baseUrl + this.getBaseUrl() + resUrl,
+                                                                                                        body,
+                                                                                                        {
+                                                                                                             headers,
+                                                                                                             params,
+                                                                                                             responseType,
+                                                                                                             reportProgress
+                                                                                                        });
 
                 let cached: boolean = false;
                 let hashKey: string;
@@ -542,11 +562,16 @@ function methodBuilder(method: string)
                 //disable http client interceptors
                 if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
                 {
-                    req.requestId = reqId;
+                    if(!req.additionalInfo)
+                    {
+                        req.additionalInfo = {};
+                    }
+
+                    req.additionalInfo.requestId = reqId;
 
                     descriptor.disabledInterceptors.forEach(interceptorType =>
                     {
-                        this.ignoredInterceptorsService.addInterceptor(interceptorType, req);
+                        this.ignoredInterceptorsService.addInterceptor(interceptorType, req.additionalInfo);
                     });
                 }
 
