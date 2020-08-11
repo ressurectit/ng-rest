@@ -4,6 +4,9 @@
 
 ### Features
 
+- added *subpackage* `@anglr/rest/avsc`
+- package `@anglr/rest/avsc`
+    - 
 - added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 
