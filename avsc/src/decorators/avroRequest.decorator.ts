@@ -21,7 +21,7 @@ export function AvroRequest(namespace: string, typeName: string)
             name: typeName,
             namespace: namespace
         };
-        
+
         return descriptor;
     };
 }

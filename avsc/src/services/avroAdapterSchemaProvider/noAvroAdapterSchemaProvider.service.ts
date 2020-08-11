@@ -11,6 +11,7 @@ import {AvroAdapterSchemaProvider} from './avroAdapterSchemaProvider.interface';
 export class NoAvroAdapterSchemaProviderService implements AvroAdapterSchemaProvider
 {
     //######################### public properties - implementation of AvroAdapterSchemaProvider #########################
+    
     /**
      * Gets object containing namespaces and for each namespace types that are available in schema
      */
