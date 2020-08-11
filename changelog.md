@@ -13,6 +13,7 @@
 - minimal supported version of `@jscrpt/common` is `1.2.0`
 - minimal supported version of `@anglr/common` is `8.0.0`
 - minimal supported version of `crypto-js` is `4.0.0`
+- changed response type for `getDefaultHeaders` method of `RESTClient`
 
 ## Version 7.0.1
 

@@ -12,6 +12,24 @@ import {RestTransferStateService} from '../transferState/restTransferState.servi
 import {AdditionalInfoPropertyDescriptor} from './additionalInfoPropertyDescriptor';
 
 /**
+ * Represents private defintion of rest client
+ */
+interface ɵRESTClient
+{
+    http: HttpClient;
+    transferState?: RestTransferStateService;
+    baseUrl?: string;
+    serverCookieHeader?: string;
+    serverAuthHeader?: string;
+    ignoredInterceptorsService?: IgnoredInterceptorsService;
+    injector?: Injector;
+    getBaseUrl(): string;
+    getDefaultHeaders(): string | {[name: string]: string | string[]};
+    requestInterceptor(req: HttpRequest<any>): HttpRequest<any>;
+    responseInterceptor(res: Observable<any>): Observable<any>;
+}
+
+/**
  * Angular RESTClient base class.
  */
 @Injectable()
@@ -42,7 +60,7 @@ export abstract class RESTClient
     /**
      * Returns the default headers of RESTClient in a key-value 
      */
-    protected getDefaultHeaders(): Object
+    protected getDefaultHeaders(): string | {[name: string]: string | string[]}
     {
         return {};
     };
@@ -356,7 +374,7 @@ function methodBuilder(method: string)
             var pHeader = target[`${propertyKey}_Header_parameters`];
             var pTransforms = target[`${propertyKey}_ParameterTransforms`];
 
-            descriptor.value = function(...args: any[])
+            descriptor.value = function(this: ɵRESTClient, ...args: any[])
             {
                 let reqId = `${id}-${generateId(6)}`;
 
@@ -557,6 +575,20 @@ function methodBuilder(method: string)
                             observable = of(data);
                         }
                     }
+                }
+
+                //add additionalInfo provided by decorators
+                if(descriptor.additionalInfo)
+                {
+                    if(!req.additionalInfo)
+                    {
+                        req.additionalInfo = {};
+                    }
+
+                    Object.keys(descriptor.additionalInfo).forEach(key =>
+                    {
+                        req.additionalInfo[key] = descriptor.additionalInfo[key];
+                    });
                 }
 
                 //disable http client interceptors
