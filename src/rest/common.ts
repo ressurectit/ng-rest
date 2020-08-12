@@ -1,7 +1,7 @@
-import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
+import {Inject, Optional, Injectable, Injector} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {extend, isBlank, isPresent, isFunction, generateId} from '@jscrpt/common';
-import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId, LocalProgressIndicatorName} from '@anglr/common';
+import {isBlank, isPresent, isFunction, generateId} from '@jscrpt/common';
+import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId} from '@anglr/common';
 import {Observable, Observer, of} from "rxjs";
 import {map, tap} from "rxjs/operators";
 import sha256 from 'crypto-js/sha256';
@@ -9,7 +9,7 @@ import param from 'jquery-param';
 
 import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
-import {AdditionalInfoPropertyDescriptor, RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, RestParameters, KeyIndex, ParametersMetadata} from './rest.interface';
+import {RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, DecoratedRESTClient, RESTClientInterface, RestMiddlewareRunMethod} from './rest.interface';
 
 /**
  * Angular RESTClient base class.
@@ -128,9 +128,30 @@ function methodBuilder(method: string)
                 pTransforms = target.parameters[propertyKey]?.transforms;
             }
 
-            descriptor.value = function(this: ɵRESTClient, ...args: any[])
+            descriptor.value = function(this: RESTClientInterface, ...args: any[])
             {
                 let reqId = `${id}-${generateId(6)}`;
+                
+                let middlewareIndex = 0;
+                let middlewares: RestMiddlewareRunMethod[];
+                let observable: Observable<any>;
+
+                if(middlewares.length)
+                {
+                    let call = () =>
+                    {
+                        observable = middlewares[middlewareIndex].call(this,
+                            reqId,
+                            target,
+                            propertyKey,
+                            descriptor,
+                            null,
+                            request =>
+                            {
+                                
+                            });
+                    }
+                }
 
                 // Body
                 var body = null;
@@ -298,7 +319,6 @@ function methodBuilder(method: string)
                 let cached: boolean = false;
                 let hashKey: string;
                 let fromState = false;
-                let observable: Observable<any>;
 
                 //tries to get response from cache
                 if(isPresent(descriptor.getCachedResponse))

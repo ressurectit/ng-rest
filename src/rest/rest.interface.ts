@@ -10,7 +10,7 @@ import {RestTransferStateService} from '../transferState/restTransferState.servi
 /**
  * Represents private defintion of rest client
  */
-export interface ɵRESTClient
+export interface RESTClientInterface
 {
     http: HttpClient;
     transferState?: RestTransferStateService;
@@ -28,7 +28,7 @@ export interface ɵRESTClient
 /**
  * Type that combines rest client and parameters for methods
  */
-export type DecoratedRESTClient = ɵRESTClient & RestParameters;
+export type DecoratedRESTClient = RESTClientInterface & RestParameters;
 
 /**
  * Property descriptor that is used for creating decorators that can pass additional info to method
@@ -112,6 +112,11 @@ export interface RestMethod extends TypedPropertyDescriptor<any>
      * Number of parameters that are on the method originaly
      */
     originalParamsCount?: number;
+
+    /**
+     * Array of middlewares that are executed for each request
+     */
+    middlewares: RestMiddlewareRunMethod[];
 }
 
 /**
@@ -181,6 +186,29 @@ export interface RestParameters
 }
 
 /**
+ * Definition of method that is used for running middleware code
+ */
+export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any, TDescriptor = any, TTarget = any>
+{
+    /**
+     * Runs code that is defined for this rest middleware, in this method you can modify request and response
+     * @param id - Unique id that identifies request method
+     * @param target - Prototype of class that are decorators applied to
+     * @param methodName - Name of method that is being modified
+     * @param descriptor - Descriptor of method that is being modified
+     * @param request - Http request that you can modify
+     * @param next - Used for calling next middleware with modified request
+     */
+    (this: RESTClientInterface,
+     id: string,
+     target: TTarget,
+     methodName: string,
+     descriptor: TDescriptor,
+     request: HttpRequest<TRequestBody>,
+     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<HttpResponse<TNextResponseBody>>): Observable<HttpResponse<TResponseBody>>;
+}
+
+/**
  * Definition of rest middleware that will be pluged in to processing of request and response
  */
 export interface RestMiddleware<TRequestBody = any, TResponseBody = any, TDescriptor = any, TTarget = any>
@@ -194,10 +222,5 @@ export interface RestMiddleware<TRequestBody = any, TResponseBody = any, TDescri
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    run(id: string,
-        target: TTarget,
-        methodName: string,
-        descriptor: TDescriptor,
-        request: HttpRequest<TRequestBody>,
-        next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<HttpResponse<TNextResponseBody>>): Observable<HttpResponse<TResponseBody>>;
+    run: RestMiddlewareRunMethod<TRequestBody, TResponseBody, TDescriptor, TTarget>;
 }
