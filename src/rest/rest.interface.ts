@@ -1,7 +1,8 @@
-import {Type} from '@angular/core';
+import {Type, Injector} from '@angular/core';
 import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {AdditionalInfo} from '@anglr/common';
 import {StringDictionary, Dictionary} from '@jscrpt/common';
+import {Observable} from 'rxjs';
 
 import {ResponseType} from './responseType';
 
@@ -153,4 +154,26 @@ export interface RestParameters
      * Parameters metadata for each decorated method
      */
     parameters?: Dictionary<ParametersMetadata & ParametersTransformMetadata>;
+}
+
+/**
+ * Definition of rest middleware that will be pluged in to processing of request and response
+ */
+export interface RestMiddleware<TRequestBody = any, TResponseBody = any, TDescriptor = any, TTarget = any>
+{
+    /**
+     * Runs code that is defined for this rest middleware, in this method you can modify request and response
+     * @param target - Prototype of class that are decorators applied to
+     * @param methodName - Name of method that is being modified
+     * @param descriptor - Descriptor of method that is being modified
+     * @param injector - Angular injector for obtaining dependencies
+     * @param request - Http request that you can modify
+     * @param next - Used for calling next middleware with modified request
+     */
+    run(target: TTarget,
+        methodName: string,
+        descriptor: TDescriptor,
+        injector: Injector,
+        request: HttpRequest<TRequestBody>,
+        next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<HttpResponse<TNextResponseBody>>): Observable<HttpResponse<TResponseBody>>;
 }

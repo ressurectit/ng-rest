@@ -149,7 +149,7 @@ function paramBuilder(paramName: keyof ParametersMetadata)
             }
 
             //parameter transforms object missing
-            if(isBlank(target.parameters[propertyKey].transforms))
+            if(isBlank(target.parameters[propertyKey][paramName]))
             {
                 target.parameters[propertyKey][paramName] = [];
             }
@@ -403,13 +403,24 @@ function methodBuilder(method: string)
             }
 
             let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
-            
-            let pPath = target.parameters[propertyKey]?.path;
-            let pQuery = target.parameters[propertyKey]?.query;
-            let pQueryObject = target.parameters[propertyKey]?.queryObject;
-            let pBody = target.parameters[propertyKey]?.body;
-            let pHeader = target.parameters[propertyKey]?.header;
-            let pTransforms = target.parameters[propertyKey]?.transforms;
+            let parameters = target.parameters;
+
+            let pPath = null;
+            let pQuery = null;
+            let pQueryObject = null;
+            let pBody = null;
+            let pHeader = null;
+            let pTransforms = null;
+
+            if(parameters)
+            {
+                pPath = target.parameters[propertyKey]?.path;
+                pQuery = target.parameters[propertyKey]?.query;
+                pQueryObject = target.parameters[propertyKey]?.queryObject;
+                pBody = target.parameters[propertyKey]?.body;
+                pHeader = target.parameters[propertyKey]?.header;
+                pTransforms = target.parameters[propertyKey]?.transforms;
+            }
 
             descriptor.value = function(this: ɵRESTClient, ...args: any[])
             {
