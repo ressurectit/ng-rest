@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2020-08-11)
+## Version 8.0.0 (2020-08-12)
 
 ### Features
 
@@ -19,6 +19,15 @@
     - added new `AvroRequestType`, `AvroResponseType`, `AvroRequestObj`, `AvroResponseObj` interfaces which enables easier definition of *additional data* available in interceptor
     - added new `AvroAdapterInterceptor` interceptor, which allows AVRO request and response processing, it works together with `AvroRequest`, `AvroResponse` decorators which tells this interceptor that request or response should be processed and provides information about type
 - added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
+- added new types that are used for helping working with metadata stored in *Descriptor*
+    - `RestHttpHeaders` - contains additional headers that will be added
+    - `RestResponseType` - contains response type that will be set
+    - `RestResponseTransform` - contains response transform function to be called
+    - `RestDisabledInterceptors` - contains array of interceptor types that will be disabled
+    - `RestReportProgress` - contains indication whether report progress
+    - `RestFullHttpResponse` - contains indication whether is response full HttpResponse or just data
+    - `RestMethod` - contains data that are stored when REST method is set
+    - `RestCaching` - contains methods used for handling 'caching'
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 - added new constants for *Http Header* names
     - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header

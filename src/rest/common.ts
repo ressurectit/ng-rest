@@ -9,7 +9,7 @@ import param from 'jquery-param';
 
 import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
-import {AdditionalInfoPropertyDescriptor} from './additionalInfoPropertyDescriptor';
+import {AdditionalInfoPropertyDescriptor, RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching} from './rest.interface';
 
 /**
  * Represents private defintion of rest client
@@ -58,7 +58,7 @@ export abstract class RESTClient
     };
 
     /**
-     * Returns the default headers of RESTClient in a key-value 
+     * Returns the default headers of RESTClient in a key-value
      */
     protected getDefaultHeaders(): string | {[name: string]: string | string[]}
     {
@@ -97,7 +97,7 @@ export function BaseUrl(url: string): ClassDecorator
         {
             return url;
         };
-        
+
         return Target;
     };
 }
@@ -114,7 +114,7 @@ export function DefaultHeaders(headers: {[key: string]: string}): ClassDecorator
         {
             return headers;
         };
-        
+
         return Target;
     };
 }
@@ -127,7 +127,7 @@ function paramBuilder(paramName: string)
         {
             var metadataKey = `${propertyKey}_${paramName}_parameters`;
 
-            var paramObj: any = 
+            var paramObj: any =
             {
                 key: key,
                 parameterIndex: parameterIndex
@@ -180,7 +180,7 @@ export var Header = paramBuilder("Header");
  */
 export function Headers(headersDef: {[key: string]: string})
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders)
     {
         descriptor.headers = extend({}, headersDef, descriptor.headers);
 
@@ -193,10 +193,10 @@ export function Headers(headersDef: {[key: string]: string})
  */
 export function JsonContentType()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders)
     {
         descriptor.headers = extend(descriptor.headers || {}, {"content-type": "application/json"});
-        
+
         return descriptor;
     };
 }
@@ -207,9 +207,10 @@ export function JsonContentType()
  */
 export function Produces(producesDef: ResponseType)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestResponseType)
     {
         descriptor.responseType = producesDef;
+
         return descriptor;
     };
 }
@@ -220,18 +221,18 @@ export function Produces(producesDef: ResponseType)
  */
 export function ResponseTransform(methodName?: string)
 {
-    return function(target: RESTClient, propertyKey: string, descriptor: any)
+    return function(target: RESTClient, propertyKey: string, descriptor: RestResponseTransform)
     {
         if(isBlank(methodName))
         {
             methodName = `${propertyKey}ResponseTransform`;
         }
-        
+
         if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
         {
             descriptor.responseTransform = target[methodName!];
         }
-        
+
         return descriptor;
     };
 }
@@ -242,13 +243,13 @@ export function ResponseTransform(methodName?: string)
  */
 export function DisableInterceptor<TType>(interceptorType: Type<TType>)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestDisabledInterceptors<TType>)
     {
         if(isBlank(interceptorType))
         {
             return descriptor;
         }
-        
+
         if(!descriptor.disabledInterceptors || !Array.isArray(descriptor.disabledInterceptors))
         {
             descriptor.disabledInterceptors = [];
@@ -265,10 +266,10 @@ export function DisableInterceptor<TType>(interceptorType: Type<TType>)
  */
 export function ReportProgress()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestReportProgress)
     {
         descriptor.reportProgress = true;
-        
+
         return descriptor;
     };
 }
@@ -278,10 +279,10 @@ export function ReportProgress()
  */
 export function FullHttpResponse()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestFullHttpResponse)
     {
         descriptor.fullHttpResponse = true;
-        
+
         return descriptor;
     };
 }
@@ -300,7 +301,7 @@ export function ProgressIndicatorGroup(name: string)
         }
 
         descriptor.additionalInfo.progressGroupName = name;
-        
+
         return descriptor;
     };
 }
@@ -317,17 +318,17 @@ export function ParameterTransform(methodName?: string)
         {
             methodName = `${propertyKey}ParameterTransform`;
         }
-        
+
         if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
         {
             let func = target[methodName!];
             let metadataKey = `${propertyKey}_ParameterTransforms`;
-            
+
             if (!isPresent(target[metadataKey]) || !isJsObject(target[metadataKey]))
             {
                 target[metadataKey] = {};
             }
-            
+
             target[metadataKey][parameterIndex] = func;
         }
     };
@@ -359,7 +360,15 @@ function methodBuilder(method: string)
 {
     return function(url: string)
     {
-        return function(target: RESTClient, propertyKey: string, descriptor: any)
+        return function(target: RESTClient, propertyKey: string, descriptor: RestMethod &
+                                                                             RestFullHttpResponse &
+                                                                             RestReportProgress &
+                                                                             RestDisabledInterceptors &
+                                                                             RestResponseTransform &
+                                                                             RestResponseType &
+                                                                             RestHttpHeaders &
+                                                                             RestCaching &
+                                                                             AdditionalInfo)
         {
             if(isFunction(descriptor.value))
             {
@@ -412,12 +421,12 @@ function methodBuilder(method: string)
                         .forEach(p =>
                         {
                             var value = args[p.parameterIndex];
-                            
+
                             if(pTransforms && pTransforms[p.parameterIndex])
                             {
                                 value = pTransforms[p.parameterIndex](value);
                             }
-                            
+
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
@@ -429,7 +438,7 @@ function methodBuilder(method: string)
                                                           .replace(/\.(\d+)\./g, "%5B$1%5D.");
                             }
                         });
-                        
+
                     queryString = queryString.replace(/\w+=(&|$)/g, "")
                                              .replace(/(&|\?)$/g, "");
                 }
@@ -444,17 +453,17 @@ function methodBuilder(method: string)
                         {
                             var key = p.key;
                             var value = args[p.parameterIndex];
-                            
+
                             // if the value is a instance of Object, we stringify it
                             if (value instanceof Object)
                             {
                                 value = JSON.stringify(value);
                             }
-                            
+
                             params = params.append(key, value);
                         });
                 }
-                
+
                 // Headers
                 // set class default headers
                 var headers = new HttpHeaders(this.getDefaultHeaders());
@@ -482,7 +491,7 @@ function methodBuilder(method: string)
                 {
                     descriptor.responseType = ResponseType.Json;
                 }
-                
+
                 let responseType: 'arraybuffer' | 'blob' | 'json' | 'text' = 'json';
 
                 switch(descriptor.responseType)
@@ -498,20 +507,20 @@ function methodBuilder(method: string)
                     case ResponseType.Text:
                     {
                         responseType = 'text';
-                        
+
                         break;
                     }
                     case ResponseType.Blob:
                     case ResponseType.BlobAndFilename:
                     {
                         responseType = 'blob';
-                        
+
                         break;
                     }
                     case ResponseType.ArrayBuffer:
                     {
                         responseType = 'arraybuffer';
-                        
+
                         break;
                     }
                 }
@@ -545,12 +554,12 @@ function methodBuilder(method: string)
                 let hashKey: string;
                 let fromState = false;
                 let observable: Observable<any>;
-                
+
                 //tries to get response from cache
                 if(isPresent(descriptor.getCachedResponse))
                 {
                     let cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(req);
-                    
+
                     if (isPresent(cachedResponse))
                     {
                         cached = true;
@@ -560,7 +569,7 @@ function methodBuilder(method: string)
 
                 // intercept the request
                 req = this.requestInterceptor(req);
-                
+
                 if(!cached)
                 {
                     //try to retrieve value from transfer state
@@ -664,7 +673,7 @@ function methodBuilder(method: string)
                         }
                         case ResponseType.BlobAndFilename:
                         {
-                            observable = observable!.pipe(map((res: HttpResponse<any>) => 
+                            observable = observable!.pipe(map((res: HttpResponse<any>) =>
                             {
                                 let contentDisposition = res.headers.get("content-disposition");
                                 let filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
@@ -679,7 +688,7 @@ function methodBuilder(method: string)
                         }
                         case ResponseType.LocationHeader:
                         {
-                            observable = observable!.pipe(map((res: HttpResponse<any>) => 
+                            observable = observable!.pipe(map((res: HttpResponse<any>) =>
                             {
                                 let headerValue = res.headers.get("location");
                                 let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
@@ -690,12 +699,12 @@ function methodBuilder(method: string)
                                     id: isPresent(headerValue) ? headerValue!.replace(url, "") : null
                                 };
                             }));
-                            
+
                             break;
                         }
                         case ResponseType.LocationHeaderAndJson:
                         {
-                            observable = observable!.pipe(map((res: HttpResponse<any>) => 
+                            observable = observable!.pipe(map((res: HttpResponse<any>) =>
                             {
                                 let headerValue = res.headers.get("location");
                                 let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
@@ -707,7 +716,7 @@ function methodBuilder(method: string)
                                     data: res.body
                                 };
                             }));
-                            
+
                             break;
                         }
                     }
@@ -726,7 +735,7 @@ function methodBuilder(method: string)
 
                 // intercept the response
                 observable = this.responseInterceptor(observable!);
-                
+
                 // transforms response
                 if(isPresent(descriptor.responseTransform))
                 {

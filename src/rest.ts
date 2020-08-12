@@ -2,5 +2,5 @@ export {ResponseType, LocationHeaderAndJsonResponse, LocationHeaderResponse, Blo
 export {Cache} from './rest/cache';
 export {Body,BaseUrl,DefaultHeaders,DELETE,GET,HEAD,Header,Headers,JsonContentType,ParameterTransform,Path,POST,Produces,PUT,Query,QueryObject,ResponseTransform,RESTClient,FullHttpResponse,ReportProgress, DisableInterceptor, ProgressIndicatorGroup} from './rest/common';
 export {RestTransferStateService} from './transferState/restTransferState.service';
-export {AdditionalInfoPropertyDescriptor} from './rest/additionalInfoPropertyDescriptor';
+export {AdditionalInfoPropertyDescriptor} from './rest/rest.interface';
 export {HTTP_HEADER_ACCEPT, HTTP_HEADER_CONTENT_TYPE} from './rest/constants';

@@ -2,6 +2,7 @@ import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {isPresent} from '@jscrpt/common';
 
 import {RESTClient} from '../rest/common';
+import {RestCaching} from './rest.interface';
 
 //Object storing response cache itself
 //It caches request urls to response data
@@ -12,7 +13,7 @@ var responseCache: {[key: string]: HttpResponse<any>} = {};
  */
 export function Cache()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: any)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestCaching)
     {
         descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any>|null =>
         {
