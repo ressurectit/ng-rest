@@ -1,8 +1,9 @@
 import {Injectable, Inject, Optional, ClassProvider} from '@angular/core';
-import {HttpInterceptor, HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpErrorResponse, HttpRequest} from '@angular/common/http';
+import {HttpInterceptor, HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpRequest, HttpEventType} from '@angular/common/http';
 import {IgnoredInterceptorsService, IgnoredInterceptorId, AdditionalInfo} from '@anglr/common';
+import {HTTP_HEADER_CONTENT_TYPE} from '@anglr/rest';
 import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Schema, Type} from 'avsc';
 
 import {AvroAdapterInterceptorOptions} from './avroAdapter.options';
@@ -36,23 +37,28 @@ export class AvroAdapterInterceptor implements HttpInterceptor
      */
     public intercept(req: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId & AvroRequestType & AvroResponseType>, next: HttpHandler): Observable<HttpEvent<any>>
     {
-        if(this._options.disabled)
+        let avroReq = req.additionalInfo?.avroRequest;
+        let avroRes = req.additionalInfo?.avroResponse;
+        let schemaObj = this._schemaProvider.schema;
+
+        if(this._options.disabled ||
+           (!avroReq && !avroRes))
         {
             return next.handle(req);
         }
 
         //process request with avro
-        if(req.additionalInfo?.avroRequest)
+        if(avroReq)
         {
-            let avroReq = req.additionalInfo.avroRequest;
-            let schemaObj = this._schemaProvider.schema;
             let schema: Schema;
 
-            //body present and schema for specified type exists
-            if(req.body && schemaObj[avroReq.namespace] && (schema = schemaObj[avroReq.namespace][name]))
+            //body present and schema for specified type exists and content type provided
+            if(req.body && schemaObj[avroReq.namespace] && (schema = schemaObj[avroReq.namespace][avroReq.name]) && this._options.customAcceptContentTypeHeader)
             {
                 let type = Type.forSchema(schema);
                 let additionalHeaders = {};
+
+                additionalHeaders[HTTP_HEADER_CONTENT_TYPE] = this._options.customAcceptContentTypeHeader;
 
                 if(this._options.typeHeaderName)
                 {
@@ -73,47 +79,48 @@ export class AvroAdapterInterceptor implements HttpInterceptor
         }
 
         //adds header for Accept header
-        if(req.additionalInfo?.avroResponse && this._options.customAcceptHeader)
+        if(avroRes && this._options.customAcceptContentTypeHeader)
         {
             req = req.clone(
             {
                 setHeaders:
                 {
-                    'Accept': this._options.customAcceptHeader
+                    'Accept': this._options.customAcceptContentTypeHeader
                 }
             });
         }
 
         return next.handle(req)
-            .pipe(tap(_data =>
+            .pipe(map(result =>
                       {
                           //is ignored
                           if (this._ignoredInterceptorsService && this._ignoredInterceptorsService.isIgnored(AvroAdapterInterceptor, req.additionalInfo))
                           {
-                              return;
+                              return result;
                           }
                           
+                          //process only response
+                          if(result.type != HttpEventType.Response)
+                          {
+                              return result;
+                          }
+
+                          let schema: Schema;
+
                           //process response with avro
-                          if(req.additionalInfo?.avroResponse)
+                          if(avroRes && result.headers.get(HTTP_HEADER_CONTENT_TYPE) == this._options.customAcceptContentTypeHeader &&
+                             schemaObj[avroRes.namespace] && (schema = schemaObj[avroRes.namespace][avroRes.name]))
                           {
-                              console.log('AVRO response', req.additionalInfo);
+                              console.log(result.body);
+                              let type = Type.forSchema(schema);
+
+                              return result.clone<any>(
+                              {
+                                  body: type.fromBuffer(new Buffer(new Uint8Array(result.body)))
+                              });
                           }
-                      },
-                      (err: HttpErrorResponse) =>
-                      {
-                          //client error, not response from server, or is ignored
-                          if (err.error instanceof Error || 
-                              (this._ignoredInterceptorsService && this._ignoredInterceptorsService.isIgnored(AvroAdapterInterceptor, req.additionalInfo)))
-                          {
-                              return;
-                          }
-                      
-                          //process response with avro
-                          if(req.additionalInfo?.avroResponse)
-                          {
-                              console.log('AVRO error response', req.additionalInfo);
-                          }
-                          //TODO - finish
+
+                          return result;
                       }));
     }
 }

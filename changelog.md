@@ -1,14 +1,28 @@
 # Changelog
 
-## Version 8.0.0 (2020-08-10)
+## Version 8.0.0 (2020-08-11)
 
 ### Features
 
 - added *subpackage* `@anglr/rest/avsc`
 - package `@anglr/rest/avsc`
-    - 
+    - you need to have avro schemas available to make it working
+    - added new `AvroAdapterSchemaProvider` service interface for obtaining AVRO schemas
+    - added new `AVRO_ADAPTER_SCHEMA_PROVIDER` *injection token* for obtaining `AvroAdapterSchemaProvider` with default provider set to dummy `NoAvroAdapterSchemaProviderService`
+    - added new `AvroRequest` decorator which enables AVRO processing of request (requires `AvroAdapterInterceptor` to work)
+    - added new `AvroResponse` decorator which enables AVRO processing of response (requires `AvroAdapterInterceptor` to work)
+    - added new `AvroAdapterInterceptorOptions` which provides options for `AvroAdapterInterceptor`
+        - `disabled` - indication whether this interceptor is disabled
+        - `fingerprintHeaderName` - name of header used for passing fingerprint of schema
+        - `typeHeaderName` - name of header used for passing name of type
+        - `customAcceptContentTypeHeader` - value passed to custom Accept header and Content-Type header
+    - added new `AvroRequestType`, `AvroResponseType`, `AvroRequestObj`, `AvroResponseObj` interfaces which enables easier definition of *additional data* available in interceptor
+    - added new `AvroAdapterInterceptor` interceptor, which allows AVRO request and response processing, it works together with `AvroRequest`, `AvroResponse` decorators which tells this interceptor that request or response should be processed and provides information about type
 - added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
+- added new constants for *Http Header* names
+    - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header
+    - `HTTP_HEADER_ACCEPT` for *Accept* header
 
 ### BREAKING CHANGES
 

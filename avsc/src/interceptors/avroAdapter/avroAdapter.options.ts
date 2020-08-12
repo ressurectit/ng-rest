@@ -13,7 +13,7 @@ export class AvroAdapterInterceptorOptions
     public disabled: boolean = false;
     
     /**
-     * Name of header used for passing fingerprint
+     * Name of header used for passing fingerprint of schema
      */
     public fingerprintHeaderName: string;
 
@@ -23,9 +23,9 @@ export class AvroAdapterInterceptorOptions
     public typeHeaderName: string;
 
     /**
-     * Value passed to custom Accept header
+     * Value passed to custom Accept header and Content-Type header
      */
-    public customAcceptHeader: string;
+    public customAcceptContentTypeHeader: string;
 
     //######################### constructor #########################
     
@@ -33,11 +33,11 @@ export class AvroAdapterInterceptorOptions
     /**
      * Creates instance of HttpErrorInterceptorOptions
      * @param disabled - Indication whether this interceptor is disabled
-     * @param fingerprintHeaderName - Name of header used for passing fingerprint
+     * @param fingerprintHeaderName - Name of header used for passing fingerprint of schema
      * @param typeHeaderName - Name of header used for passing name of type
-     * @param customAcceptHeader - Value passed to custom Accept header
+     * @param customAcceptContentTypeHeader - Value passed to custom Accept header and Content-Type header
      */
-    constructor(disabled?: boolean, fingerprintHeaderName?: string, typeHeaderName?: string, customAcceptHeader?: string)
+    constructor(disabled?: boolean, fingerprintHeaderName?: string, typeHeaderName?: string, customAcceptContentTypeHeader?: string)
     {
         if(isPresent(disabled))
         {
@@ -54,9 +54,9 @@ export class AvroAdapterInterceptorOptions
             this.typeHeaderName = typeHeaderName;
         }
 
-        if(isPresent(customAcceptHeader))
+        if(isPresent(customAcceptContentTypeHeader))
         {
-            this.customAcceptHeader = customAcceptHeader;
+            this.customAcceptContentTypeHeader = customAcceptContentTypeHeader;
         }
     }
 }
