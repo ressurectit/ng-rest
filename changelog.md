@@ -36,6 +36,7 @@
 - added new constants for *Http Header* names
     - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header
     - `HTTP_HEADER_ACCEPT` for *Accept* header
+- added new `RestMiddleware` interface, that is used for definition of *rest middleware* classes, that are used for building request and processing response
 
 ### BREAKING CHANGES
 
@@ -44,6 +45,7 @@
 - minimal supported version of `@anglr/common` is `8.0.0`
 - minimal supported version of `crypto-js` is `4.0.0`
 - changed response type for `getDefaultHeaders` method of `RESTClient`
+- completely refactored library and how it works
 
 ## Version 7.0.1
 

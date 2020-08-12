@@ -1,10 +1,34 @@
 import {Type, Injector} from '@angular/core';
-import {HttpRequest, HttpResponse} from '@angular/common/http';
-import {AdditionalInfo} from '@anglr/common';
+import {HttpRequest, HttpResponse, HttpClient} from '@angular/common/http';
+import {AdditionalInfo, IgnoredInterceptorsService} from '@anglr/common';
 import {StringDictionary, Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {ResponseType} from './responseType';
+import {RestTransferStateService} from '../transferState/restTransferState.service';
+
+/**
+ * Represents private defintion of rest client
+ */
+export interface ɵRESTClient
+{
+    http: HttpClient;
+    transferState?: RestTransferStateService;
+    baseUrl?: string;
+    serverCookieHeader?: string;
+    serverAuthHeader?: string;
+    ignoredInterceptorsService?: IgnoredInterceptorsService;
+    injector?: Injector;
+    getBaseUrl(): string;
+    getDefaultHeaders(): string | {[name: string]: string | string[]};
+    requestInterceptor(req: HttpRequest<any>): HttpRequest<any>;
+    responseInterceptor(res: Observable<any>): Observable<any>;
+}
+
+/**
+ * Type that combines rest client and parameters for methods
+ */
+export type DecoratedRESTClient = ɵRESTClient & RestParameters;
 
 /**
  * Property descriptor that is used for creating decorators that can pass additional info to method
@@ -163,17 +187,17 @@ export interface RestMiddleware<TRequestBody = any, TResponseBody = any, TDescri
 {
     /**
      * Runs code that is defined for this rest middleware, in this method you can modify request and response
+     * @param id - Unique id that identifies request method
      * @param target - Prototype of class that are decorators applied to
      * @param methodName - Name of method that is being modified
      * @param descriptor - Descriptor of method that is being modified
-     * @param injector - Angular injector for obtaining dependencies
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    run(target: TTarget,
+    run(id: string,
+        target: TTarget,
         methodName: string,
         descriptor: TDescriptor,
-        injector: Injector,
         request: HttpRequest<TRequestBody>,
         next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<HttpResponse<TNextResponseBody>>): Observable<HttpResponse<TResponseBody>>;
 }
