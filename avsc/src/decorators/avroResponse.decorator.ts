@@ -1,4 +1,4 @@
-import {RESTClient, AdditionalInfoPropertyDescriptor, ResponseType} from '@anglr/rest';
+import {RESTClient, AdditionalInfoPropertyDescriptor} from '@anglr/rest';
 
 import {AvroResponseType} from '../avsc';
 
@@ -22,9 +22,6 @@ export function AvroResponse(namespace: string, typeName: string)
             namespace: namespace
         };
 
-        //TODO finish
-        (descriptor as any).responseType = ResponseType.ArrayBuffer;
-        
         return descriptor;
     };
 }

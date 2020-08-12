@@ -67,7 +67,7 @@ export class AvroAdapterInterceptor implements HttpInterceptor
 
                 if(this._options.fingerprintHeaderName)
                 {
-                    additionalHeaders[this._options.fingerprintHeaderName] = type.fingerprint();
+                    additionalHeaders[this._options.fingerprintHeaderName] = type.fingerprint().toString('hex');
                 }
 
                 req = req.clone(
@@ -83,6 +83,7 @@ export class AvroAdapterInterceptor implements HttpInterceptor
         {
             req = req.clone(
             {
+                responseType: 'arraybuffer',
                 setHeaders:
                 {
                     'Accept': this._options.customAcceptContentTypeHeader
@@ -111,7 +112,6 @@ export class AvroAdapterInterceptor implements HttpInterceptor
                           if(avroRes && result.headers.get(HTTP_HEADER_CONTENT_TYPE) == this._options.customAcceptContentTypeHeader &&
                              schemaObj[avroRes.namespace] && (schema = schemaObj[avroRes.namespace][avroRes.name]))
                           {
-                              console.log(result.body);
                               let type = Type.forSchema(schema);
 
                               return result.clone<any>(
