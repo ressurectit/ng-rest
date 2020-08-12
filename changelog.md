@@ -28,6 +28,10 @@
     - `RestFullHttpResponse` - contains indication whether is response full HttpResponse or just data
     - `RestMethod` - contains data that are stored when REST method is set
     - `RestCaching` - contains methods used for handling 'caching'
+    - `KeyIndex` - information about parameter key and index
+    - `ParametersMetadata` - metadata for parameters
+    - `ParametersTransformMetadata` - contains parameters metadata for each decorated method parameters transforms
+    - `RestParameters` - contains parameters metadata for each decorated method parameters
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 - added new constants for *Http Header* names
     - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header

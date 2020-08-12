@@ -1,7 +1,7 @@
 import {Type} from '@angular/core';
 import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {AdditionalInfo} from '@anglr/common';
-import {StringDictionary} from '@jscrpt/common';
+import {StringDictionary, Dictionary} from '@jscrpt/common';
 
 import {ResponseType} from './responseType';
 
@@ -106,4 +106,51 @@ export interface RestCaching extends TypedPropertyDescriptor<any>
      * @param response - Response to be cached
      */
     saveResponseToCache?: (request: HttpRequest<any>, response: HttpResponse<any>) => HttpResponse<any>;
+}
+
+/**
+ * Information about parameter key and index
+ */
+export interface KeyIndex
+{
+    /**
+     * Key value that is passed to parameter
+     */
+    key?: string;
+
+    /**
+     * Index of parameter
+     */
+    parameterIndex?: number;
+}
+
+/**
+ * Metadata for parameters
+ */
+export interface ParametersMetadata
+{
+    path?: KeyIndex[];
+    query?: KeyIndex[];
+    queryObject?: KeyIndex[];
+    body?: KeyIndex[];
+    header?: KeyIndex[];
+}
+
+/**
+ * Metadata for parameters transforms
+ */
+export interface ParametersTransformMetadata
+{
+    transforms?: {[parameterIndex: number]: <TData = any, TRansformedData = TData>(data: TData) => TRansformedData};
+}
+
+/**
+ * Contains parameters metadata for each decorated method parameters
+ */
+export interface RestParameters
+{
+    /**
+     * Parameters metadata for each decorated method
+     */
+    parameters?: Dictionary<ParametersMetadata & ParametersTransformMetadata>;
 }

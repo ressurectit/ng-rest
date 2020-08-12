@@ -1,6 +1,6 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {extend, isBlank, isPresent, isFunction, isJsObject, generateId} from '@jscrpt/common';
+import {extend, isBlank, isPresent, isFunction, generateId} from '@jscrpt/common';
 import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId, LocalProgressIndicatorName} from '@anglr/common';
 import {Observable, Observer, of} from "rxjs";
 import {map, tap} from "rxjs/operators";
@@ -9,7 +9,7 @@ import param from 'jquery-param';
 
 import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
-import {AdditionalInfoPropertyDescriptor, RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching} from './rest.interface';
+import {AdditionalInfoPropertyDescriptor, RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, RestParameters, KeyIndex, ParametersMetadata} from './rest.interface';
 
 /**
  * Represents private defintion of rest client
@@ -86,6 +86,11 @@ export abstract class RESTClient
 }
 
 /**
+ * Type that combines rest client and parameters for methods
+ */
+type DecoratedRESTClient = RESTClient & RestParameters;
+
+/**
  * Set the base URL of REST resource
  * @param url - base URL
  */
@@ -119,28 +124,37 @@ export function DefaultHeaders(headers: {[key: string]: string}): ClassDecorator
     };
 }
 
-function paramBuilder(paramName: string)
+function paramBuilder(paramName: keyof ParametersMetadata)
 {
     return function(key: string)
     {
-        return function(target: RESTClient, propertyKey: string, parameterIndex: number)
+        return function(target: DecoratedRESTClient, propertyKey: string, parameterIndex: number)
         {
-            var metadataKey = `${propertyKey}_${paramName}_parameters`;
-
-            var paramObj: any =
+            let paramObj: KeyIndex =
             {
                 key: key,
                 parameterIndex: parameterIndex
             };
 
-            if (Array.isArray(target[metadataKey]))
+            //params metadata missing
+            if(isBlank(target.parameters))
             {
-                target[metadataKey].push(paramObj);
+                target.parameters = {};
             }
-            else
+
+            //params metadata for method missing
+            if(isBlank(target.parameters[propertyKey]))
             {
-                target[metadataKey] = [paramObj];
+                target.parameters[propertyKey] = {};
             }
+
+            //parameter transforms object missing
+            if(isBlank(target.parameters[propertyKey].transforms))
+            {
+                target.parameters[propertyKey][paramName] = [];
+            }
+
+            target.parameters[propertyKey][paramName].push(paramObj);
         };
     };
 }
@@ -149,30 +163,30 @@ function paramBuilder(paramName: string)
  * Path variable of a method's url, type: string
  * @param key - path key to bind value
  */
-export var Path = paramBuilder("Path");
+export var Path = paramBuilder("path");
 
 /**
  * Query value of a method's url, type: string
  * @param key - query key to bind value
  */
-export var Query = paramBuilder("Query");
+export var Query = paramBuilder("query");
 
 /**
  * Query object serialized with dot notation separating hierarchies
  */
-export var QueryObject = paramBuilder("QueryObject")("QueryObject");
+export var QueryObject = paramBuilder("queryObject")("queryObject");
 
 /**
  * Body of a REST method, json stringify applied
  * Only one body per method!
  */
-export var Body = paramBuilder("Body")("Body");
+export var Body = paramBuilder("body")("body");
 
 /**
  * Custom header of a REST method, type: string
  * @param key - header key to bind value
  */
-export var Header = paramBuilder("Header");
+export var Header = paramBuilder("header");
 
 /**
  * Set custom headers for a REST method
@@ -312,24 +326,37 @@ export function ProgressIndicatorGroup(name: string)
  */
 export function ParameterTransform(methodName?: string)
 {
-    return function(target: RESTClient, propertyKey: string, parameterIndex: number)
+    return function(target: DecoratedRESTClient & RestParameters, propertyKey: string, parameterIndex: number)
     {
         if(isBlank(methodName))
         {
             methodName = `${propertyKey}ParameterTransform`;
         }
 
-        if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
+        //method exists
+        if(isPresent(target[methodName]) && isFunction(target[methodName!]))
         {
             let func = target[methodName!];
-            let metadataKey = `${propertyKey}_ParameterTransforms`;
 
-            if (!isPresent(target[metadataKey]) || !isJsObject(target[metadataKey]))
+            //params metadata missing
+            if(isBlank(target.parameters))
             {
-                target[metadataKey] = {};
+                target.parameters = {};
             }
 
-            target[metadataKey][parameterIndex] = func;
+            //params metadata for method missing
+            if(isBlank(target.parameters[propertyKey]))
+            {
+                target.parameters[propertyKey] = {};
+            }
+
+            //parameter transforms object missing
+            if(isBlank(target.parameters[propertyKey].transforms))
+            {
+                target.parameters[propertyKey].transforms = {};
+            }
+
+            target.parameters[propertyKey].transforms[parameterIndex] = func;
         }
     };
 };
@@ -360,15 +387,15 @@ function methodBuilder(method: string)
 {
     return function(url: string)
     {
-        return function(target: RESTClient, propertyKey: string, descriptor: RestMethod &
-                                                                             RestFullHttpResponse &
-                                                                             RestReportProgress &
-                                                                             RestDisabledInterceptors &
-                                                                             RestResponseTransform &
-                                                                             RestResponseType &
-                                                                             RestHttpHeaders &
-                                                                             RestCaching &
-                                                                             AdditionalInfo)
+        return function(target: DecoratedRESTClient, propertyKey: string, descriptor: RestMethod &
+                                                                                      RestFullHttpResponse &
+                                                                                      RestReportProgress &
+                                                                                      RestDisabledInterceptors &
+                                                                                      RestResponseTransform &
+                                                                                      RestResponseType &
+                                                                                      RestHttpHeaders &
+                                                                                      RestCaching &
+                                                                                      AdditionalInfo)
         {
             if(isFunction(descriptor.value))
             {
@@ -376,12 +403,13 @@ function methodBuilder(method: string)
             }
 
             let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
-            var pPath = target[`${propertyKey}_Path_parameters`];
-            var pQuery = target[`${propertyKey}_Query_parameters`];
-            var pQueryObject = target[`${propertyKey}_QueryObject_parameters`];
-            var pBody = target[`${propertyKey}_Body_parameters`];
-            var pHeader = target[`${propertyKey}_Header_parameters`];
-            var pTransforms = target[`${propertyKey}_ParameterTransforms`];
+            
+            let pPath = target.parameters[propertyKey]?.path;
+            let pQuery = target.parameters[propertyKey]?.query;
+            let pQueryObject = target.parameters[propertyKey]?.queryObject;
+            let pBody = target.parameters[propertyKey]?.body;
+            let pHeader = target.parameters[propertyKey]?.header;
+            let pTransforms = target.parameters[propertyKey]?.transforms;
 
             descriptor.value = function(this: ɵRESTClient, ...args: any[])
             {
