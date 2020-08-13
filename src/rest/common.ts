@@ -178,16 +178,6 @@ function methodBuilder(method: string)
                 return call(httpRequest, 0);
 
                 // // Body
-                // var body = null;
-                // if (pBody)
-                // {
-                //     body = args[pBody[0].parameterIndex];
-
-                //     if(pTransforms && pTransforms[pBody[0].parameterIndex])
-                //     {
-                //         body = pTransforms[pBody[0].parameterIndex](body);
-                //     }
-                // }
 
                 // // Path
                 // var resUrl: string = url;
@@ -275,11 +265,6 @@ function methodBuilder(method: string)
                 //             headers = headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
                 //         }
                 //     }
-                // }
-
-                // if(isBlank(descriptor.responseType))
-                // {
-                //     descriptor.responseType = ResponseType.Json;
                 // }
 
                 // PRODUCES MIDDLEWARE

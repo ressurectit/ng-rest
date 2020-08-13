@@ -4,3 +4,4 @@ export * from './responseTransform.middleware';
 export * from './ignoredInterceptors.middleware';
 export * from './additionalData.middleware';
 export * from './produces.middleware';
+export * from './bodyParameter.middleware';

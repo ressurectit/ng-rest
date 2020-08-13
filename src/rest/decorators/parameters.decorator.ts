@@ -15,6 +15,10 @@ function paramBuilder(paramName: keyof ParametersMetadata)
                 parameterIndex: parameterIndex
             };
 
+            let descriptor = Object.getOwnPropertyDescriptor(target, propertyKey);
+
+            console.log(descriptor);
+
             //params metadata missing
             if(isBlank(target.parameters))
             {
