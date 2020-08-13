@@ -1,13 +1,12 @@
-import {HttpRequest, HttpEvent, HttpEventType} from '@angular/common/http';
+import {HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {filter} from 'rxjs/operators';
 
-import {RestMiddleware, ɵRESTClient, RestReportProgress} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestResponseTransform} from '../rest.interface';
 
 /**
- * Middleware that is used for handling report progress setting, if not set returns only final http response with data
+ * Middleware that is used for adding support of response transform
  */
-export class ReportProgressMiddleware implements RestMiddleware<any, HttpEvent<any>, RestReportProgress, any>
+export class ResponseTransformMiddleware implements RestMiddleware<any, any, RestResponseTransform, any>
 {
     //######################### public methods - implementation of RestMiddleware #########################
 
@@ -26,20 +25,16 @@ export class ReportProgressMiddleware implements RestMiddleware<any, HttpEvent<a
                _id: string,
                _target: any,
                _methodName: string,
-               descriptor: RestReportProgress,
+               descriptor: RestResponseTransform,
                _args: any[],
                request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<HttpEvent<any>>): Observable<HttpEvent<any>>
+               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        if(descriptor.reportProgress)
+        if(!descriptor.responseTransform)
         {
-            request = request.clone(
-            {
-                reportProgress: true
-            });
+            return next(request);
         }
 
-        return next(request)
-            .pipe(filter(response => descriptor.reportProgress ? true : response.type == HttpEventType.Response));
+        return descriptor.responseTransform.call(this, next(request));
     }
 }

@@ -1,15 +1,10 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
-import {isBlank, isPresent, isFunction, generateId} from '@jscrpt/common';
-import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId} from '@anglr/common';
-import {Observable, Observer, of} from "rxjs";
-import {map, tap} from "rxjs/operators";
-import sha256 from 'crypto-js/sha256';
-import param from 'jquery-param';
-
-import {ResponseType} from './responseType';
+import {HttpClient, HttpHeaders, HttpRequest} from '@angular/common/http';
+import {isBlank, isFunction, generateId} from '@jscrpt/common';
+import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo} from '@anglr/common';
+import {Observable} from "rxjs";
 import {RestTransferStateService} from '../transferState/restTransferState.service';
-import {RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware} from './rest.interface';
+import {RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware, BuildMiddlewaresFn} from './rest.interface';
 import {buildMiddlewares} from './utils';
 import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 
@@ -71,27 +66,27 @@ export abstract class RESTClient
     }
 }
 
-/**
- * Gets hash of request passed to http
- * @param baseUrl - Base url that is used with request
- * @param request - Request to be hashed
- */
-function getRequestHash(baseUrl: string, request: HttpRequest<any>)
-{
-    let hashRequest = request;
+// /**
+//  * Gets hash of request passed to http
+//  * @param baseUrl - Base url that is used with request
+//  * @param request - Request to be hashed
+//  */
+// function getRequestHash(baseUrl: string, request: HttpRequest<any>)
+// {
+//     let hashRequest = request;
 
-    if(baseUrl.length > 0)
-    {
-        let regex = new RegExp(`^${baseUrl}`);
+//     if(baseUrl.length > 0)
+//     {
+//         let regex = new RegExp(`^${baseUrl}`);
 
-        hashRequest = hashRequest.clone(
-        {
-            url: hashRequest.url.replace(regex, "")
-        });
-    }
+//         hashRequest = hashRequest.clone(
+//         {
+//             url: hashRequest.url.replace(regex, "")
+//         });
+//     }
 
-    return sha256(`${hashRequest.method}-${hashRequest.urlWithParams}-${JSON.stringify(request.body)}`).toString();
-}
+//     return sha256(`${hashRequest.method}-${hashRequest.urlWithParams}-${JSON.stringify(request.body)}`).toString();
+// }
 
 function methodBuilder(method: string)
 {
@@ -141,7 +136,7 @@ function methodBuilder(method: string)
                 //get middlewares definition only during first call
                 if(!descriptor.middlewares)
                 {
-                    descriptor.middlewares = buildMiddlewares((descriptor.middlewareTypes ?? []).concat(this.methodMiddlewares), this.middlewaresOrder);
+                    descriptor.middlewares = (buildMiddlewares.bind(this) as BuildMiddlewaresFn)((descriptor.middlewareTypes ?? []).concat(this.methodMiddlewares), this.middlewaresOrder);
                 }
 
                 let reqId = `${id}-${generateId(6)}`;
@@ -394,21 +389,7 @@ function methodBuilder(method: string)
                 //     });
                 // }
 
-                // //disable http client interceptors
-                // if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
-                // {
-                //     if(!req.additionalInfo)
-                //     {
-                //         req.additionalInfo = {};
-                //     }
-
-                //     req.additionalInfo.requestId = reqId;
-
-                //     descriptor.disabledInterceptors.forEach(interceptorType =>
-                //     {
-                //         this.ignoredInterceptorsService.addInterceptor(interceptorType, req.additionalInfo);
-                //     });
-                // }
+                // //disable http client interceptors - IGNORED INTERCEPTORS
 
                 // //not cached on server side
                 // if(!fromState && !cached)
@@ -455,10 +436,6 @@ function methodBuilder(method: string)
                 // observable = this.responseInterceptor(observable!);
 
                 // // transforms response
-                // if(isPresent(descriptor.responseTransform))
-                // {
-                //     observable = descriptor.responseTransform.call(this, observable);
-                // }
 
                 // return observable;
             };

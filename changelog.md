@@ -43,6 +43,8 @@
 - added new `BASIC_DEFAULT_REST_MIDDLEWARES_ORDER` constant with basic defaut array of rest middlewares used for each rest method
 - added new `RestMiddleware` interface, that is used for definition of *rest middleware* classes, that are used for building request and processing response
 - added new `RestMiddlewareRunMethod` interface, that defines run method signature for *rest middleware*
+- added new `BuildMiddlewaresFn` interface, which is defintion of `buildMiddleware` function type
+- added new `buildMiddleware` function used for building and returning array of middleware run functions
 - added new `ɵRESTClient` interface, which has definition of *private* members of `RESTClient` and makes them available in decorators
 - added new `NotType` type, which indicates that this type should be removed during building middlewares
 - added new `not` function that helps creating `NotType` which will remove specified middleware type from middlewares
@@ -51,6 +53,8 @@
 - added middlewares to process request and response
     - `ReportProgressMiddleware` - middleware that is used for handling report progress setting, if not set returns only final http response with data
     - `ResponseTypeMiddleware` - middleware that is used for extracting http body and transforming it according to specified response type
+    - `ResponseTransformMiddleware` - middleware that is used for adding support of response transform
+    - `IgnoredInterceptorsMiddleware` - middleware that is used for adding support for ignored interceptors
 
 ### BREAKING CHANGES
 
