@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2020-08-12)
+## Version 8.0.0 (2020-08-13)
 
 ### Features
 
@@ -32,11 +32,14 @@
     - `ParametersMetadata` - metadata for parameters
     - `ParametersTransformMetadata` - contains parameters metadata for each decorated method parameters transforms
     - `RestParameters` - contains parameters metadata for each decorated method parameters
+    - `RestMethodMiddlewares` - contains rest middleware types that will be used, decorator can add type if it wish to be used
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 - added new constants for *Http Header* names
     - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header
     - `HTTP_HEADER_ACCEPT` for *Accept* header
 - added new `RestMiddleware` interface, that is used for definition of *rest middleware* classes, that are used for building request and processing response
+- added new `RestMiddlewareRunMethod` interface, that defines run method signature for *rest middleware*
+- added new `ɵRESTClient` interface, which has definition of *private* members of `RESTClient` and makes them available in decorators
 
 ### BREAKING CHANGES
 

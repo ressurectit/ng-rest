@@ -1,6 +1,7 @@
 import {isBlank, isPresent, isFunction} from '@jscrpt/common';
 
-import {DecoratedRESTClient, RestParameters} from '../rest.interface';
+import {RestParameters} from '../rest.interface';
+import {RESTClient} from '../common';
 
 /**
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization
@@ -8,7 +9,7 @@ import {DecoratedRESTClient, RestParameters} from '../rest.interface';
  */
 export function ParameterTransform(methodName?: string)
 {
-    return function(target: DecoratedRESTClient & RestParameters, propertyKey: string, parameterIndex: number)
+    return function(target: RESTClient & RestParameters, propertyKey: string, parameterIndex: number)
     {
         if(isBlank(methodName))
         {

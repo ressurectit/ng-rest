@@ -1,4 +1,4 @@
-import {Inject, Optional, Injectable, Injector} from '@angular/core';
+import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse, HttpEventType} from '@angular/common/http';
 import {isBlank, isPresent, isFunction, generateId} from '@jscrpt/common';
 import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId} from '@anglr/common';
@@ -9,7 +9,9 @@ import param from 'jquery-param';
 
 import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
-import {RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, DecoratedRESTClient, RESTClientInterface, RestMiddlewareRunMethod} from './rest.interface';
+import {RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware} from './rest.interface';
+import {buildMiddlewares} from './utils';
+import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 
 /**
  * Angular RESTClient base class.
@@ -23,7 +25,9 @@ export abstract class RESTClient
                 @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
                 @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
                 @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
-                protected injector?: Injector)
+                protected injector?: Injector,
+                @Inject(REST_MIDDLEWARES_ORDER) protected middlewaresOrder?: Type<RestMiddleware>[],
+                @Inject(REST_METHOD_MIDDLEWARES) protected methodMiddlewares?: Type<RestMiddleware>[])
     {
         if(isBlank(baseUrl))
         {
@@ -93,15 +97,17 @@ function methodBuilder(method: string)
 {
     return function(url: string)
     {
-        return function(target: DecoratedRESTClient, propertyKey: string, descriptor: RestMethod &
-                                                                                      RestFullHttpResponse &
-                                                                                      RestReportProgress &
-                                                                                      RestDisabledInterceptors &
-                                                                                      RestResponseTransform &
-                                                                                      RestResponseType &
-                                                                                      RestHttpHeaders &
-                                                                                      RestCaching &
-                                                                                      AdditionalInfo)
+        return function(target: RESTClient & RestParameters, propertyKey: string, descriptor: RestMethod &
+                                                                                              RestFullHttpResponse &
+                                                                                              RestReportProgress &
+                                                                                              RestDisabledInterceptors &
+                                                                                              RestResponseTransform &
+                                                                                              RestResponseType &
+                                                                                              RestHttpHeaders &
+                                                                                              RestCaching &
+                                                                                              AdditionalInfo &
+                                                                                              ɵRestMethod &
+                                                                                              RestMethodMiddlewares)
         {
             if(isFunction(descriptor.value))
             {
@@ -128,30 +134,51 @@ function methodBuilder(method: string)
                 pTransforms = target.parameters[propertyKey]?.transforms;
             }
 
-            descriptor.value = function(this: RESTClientInterface, ...args: any[])
+            descriptor.value = function(this: ɵRESTClient, ...args: any[])
             {
+                //get middlewares definition only during first call
+                if(!descriptor.middlewares)
+                {
+                    descriptor.middlewares = buildMiddlewares(descriptor.middlewareTypes ?? [], []);
+                }
+
                 let reqId = `${id}-${generateId(6)}`;
-                
-                let middlewareIndex = 0;
-                let middlewares: RestMiddlewareRunMethod[];
                 let observable: Observable<any>;
 
-                if(middlewares.length)
+                let httpRequest = new HttpRequest<any>(method,
+                                                       this.baseUrl + this.getBaseUrl() + url,
+                                                       null,
+                                                       {
+                                                            headers: new HttpHeaders(this.getDefaultHeaders()),
+                                                            responseType: 'json',
+                                                            reportProgress: false
+                                                       });
+
+                //run all middlewares
+                let call = (httpReq: HttpRequest<any>, index: number): Observable<any> =>
                 {
-                    let call = () =>
+                    if(!descriptor.middlewares[index])
                     {
-                        observable = middlewares[middlewareIndex].call(this,
-                            reqId,
-                            target,
-                            propertyKey,
-                            descriptor,
-                            null,
-                            request =>
-                            {
-                                
-                            });
+                        httpReq = this.requestInterceptor(httpReq);
+
+                        let response = this.http.request(req);
+
+                        response = this.responseInterceptor(response);
+
+                        return response;
+                    }
+                    else
+                    {
+                        return descriptor.middlewares[index](reqId,
+                                                             target,
+                                                             propertyKey,
+                                                             descriptor,
+                                                             httpReq,
+                                                             request => call(request, ++index));
                     }
                 }
+
+                observable = call(httpRequest, 0);
 
                 // Body
                 var body = null;

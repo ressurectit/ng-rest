@@ -1,12 +1,13 @@
 import {isBlank} from '@jscrpt/common';
 
-import {ParametersMetadata, DecoratedRESTClient, KeyIndex} from '../rest.interface';
+import {ParametersMetadata, RestParameters, KeyIndex} from '../rest.interface';
+import {RESTClient} from '../common';
 
 function paramBuilder(paramName: keyof ParametersMetadata)
 {
     return function(key: string)
     {
-        return function(target: DecoratedRESTClient, propertyKey: string, parameterIndex: number)
+        return function(target: RESTClient & RestParameters, propertyKey: string, parameterIndex: number)
         {
             let paramObj: KeyIndex =
             {
