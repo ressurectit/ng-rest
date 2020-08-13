@@ -44,8 +44,13 @@
 - added new `RestMiddleware` interface, that is used for definition of *rest middleware* classes, that are used for building request and processing response
 - added new `RestMiddlewareRunMethod` interface, that defines run method signature for *rest middleware*
 - added new `ɵRESTClient` interface, which has definition of *private* members of `RESTClient` and makes them available in decorators
+- added new `NotType` type, which indicates that this type should be removed during building middlewares
+- added new `not` function that helps creating `NotType` which will remove specified middleware type from middlewares
+- added new `getType` function that gets underlying `Type` for `Type` and `NotType`
+- added new `isNotType` function that gets indication whether is provided `Type` of `NotType`
 - added middlewares to process request and response
     - `ReportProgressMiddleware` - middleware that is used for handling report progress setting, if not set returns only final http response with data
+    - `ResponseTypeMiddleware` - middleware that is used for extracting http body and transforming it according to specified response type
 
 ### BREAKING CHANGES
 

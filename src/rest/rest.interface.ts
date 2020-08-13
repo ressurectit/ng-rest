@@ -8,6 +8,17 @@ import {ResponseType} from './responseType';
 import {RestTransferStateService} from '../transferState/restTransferState.service';
 
 /**
+ * Type indicates that it should be removed from array
+ */
+export class NotType<TType>
+{
+    //######################### constructor #########################
+    constructor(public ɵtype: Type<TType>)
+    {
+    }
+}
+
+/**
  * Represents private defintion of rest client
  */
 export interface ɵRESTClient

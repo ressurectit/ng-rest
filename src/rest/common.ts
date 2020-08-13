@@ -417,19 +417,6 @@ function methodBuilder(method: string)
                 //     observable = Observable.create((observer: Observer<any>) =>
                 //     {
                 //         this.http.request(req)
-                //             .subscribe(result =>
-                //             {
-                //                 if(reportProgress)
-                //                 {
-                //                     observer.next(result);
-                //                 }
-
-                //                 if(result.type == HttpEventType.Response)
-                //                 {
-                //                     observer.next(result);
-                //                     observer.complete();
-                //                 }
-                //             }, error => observer.error(error));
                 //     });
                 // }
 
@@ -450,71 +437,8 @@ function methodBuilder(method: string)
                 //     observable = observable!.pipe(map(response => descriptor.saveResponseToCache(req, response)));
                 // }
 
-                // // transform the obserable in accordance to the @Produces decorator
-                // if (isPresent(descriptor.responseType) && !fromState && !reportProgress && !fullHttpResponse)
-                // {
-                //     switch(descriptor.responseType)
-                //     {
-                //         default:
-                //         case ResponseType.Text:
-                //         case ResponseType.Json:
-                //         case ResponseType.Blob:
-                //         case ResponseType.ArrayBuffer:
-                //         {
-                //             observable = observable!.pipe(map((res: HttpResponse<any>) => res.body));
+                // // RESPONSETYPEMIDDLEWARE transform the obserable in accordance to the @Produces decorator
 
-                //             break;
-                //         }
-                //         case ResponseType.BlobAndFilename:
-                //         {
-                //             observable = observable!.pipe(map((res: HttpResponse<any>) =>
-                //             {
-                //                 let contentDisposition = res.headers.get("content-disposition");
-                //                 let filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
-
-                //                 return <any>{
-                //                     filename: filename,
-                //                     blob: res.body
-                //                 };
-                //             }));
-
-                //             break;
-                //         }
-                //         case ResponseType.LocationHeader:
-                //         {
-                //             observable = observable!.pipe(map((res: HttpResponse<any>) =>
-                //             {
-                //                 let headerValue = res.headers.get("location");
-                //                 let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                //                 let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
-
-                //                 return <any>{
-                //                     location: headerValue,
-                //                     id: isPresent(headerValue) ? headerValue!.replace(url, "") : null
-                //                 };
-                //             }));
-
-                //             break;
-                //         }
-                //         case ResponseType.LocationHeaderAndJson:
-                //         {
-                //             observable = observable!.pipe(map((res: HttpResponse<any>) =>
-                //             {
-                //                 let headerValue = res.headers.get("location");
-                //                 let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                //                 let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
-
-                //                 return <any>{
-                //                     location: headerValue,
-                //                     id: isPresent(headerValue) ? headerValue!.replace(url, "") : null,
-                //                     data: res.body
-                //                 };
-                //             }));
-
-                //             break;
-                //         }
-                //     }
-                // }
 
                 // //Store value to state transfer if has not been retrieved from state or state is active
                 // if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated && !reportProgress && !fullHttpResponse)
