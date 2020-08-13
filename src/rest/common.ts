@@ -114,37 +114,38 @@ function methodBuilder(method: string)
                 descriptor.originalParamsCount = descriptor.value.length;
             }
 
+            descriptor.middlewareTypes = descriptor.middlewareTypes ?? [];
+
             let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
-            let parameters = target.parameters;
+            // let parameters = target.parameters;
 
-            let pPath = null;
-            let pQuery = null;
-            let pQueryObject = null;
-            let pBody = null;
-            let pHeader = null;
-            let pTransforms = null;
+            // let pPath = null;
+            // let pQuery = null;
+            // let pQueryObject = null;
+            // let pBody = null;
+            // let pHeader = null;
+            // let pTransforms = null;
 
-            if(parameters)
-            {
-                pPath = target.parameters[propertyKey]?.path;
-                pQuery = target.parameters[propertyKey]?.query;
-                pQueryObject = target.parameters[propertyKey]?.queryObject;
-                pBody = target.parameters[propertyKey]?.body;
-                pHeader = target.parameters[propertyKey]?.header;
-                pTransforms = target.parameters[propertyKey]?.transforms;
-            }
+            // if(parameters)
+            // {
+            //     pPath = target.parameters[propertyKey]?.path;
+            //     pQuery = target.parameters[propertyKey]?.query;
+            //     pQueryObject = target.parameters[propertyKey]?.queryObject;
+            //     pBody = target.parameters[propertyKey]?.body;
+            //     pHeader = target.parameters[propertyKey]?.header;
+            //     pTransforms = target.parameters[propertyKey]?.transforms;
+            // }
 
             descriptor.value = function(this: ɵRESTClient, ...args: any[])
             {
                 //get middlewares definition only during first call
                 if(!descriptor.middlewares)
                 {
-                    descriptor.middlewares = buildMiddlewares(descriptor.middlewareTypes ?? [], []);
+                    descriptor.middlewares = buildMiddlewares((descriptor.middlewareTypes ?? []).concat(this.methodMiddlewares), this.middlewaresOrder);
                 }
 
                 let reqId = `${id}-${generateId(6)}`;
-                let observable: Observable<any>;
-
+ 
                 let httpRequest = new HttpRequest<any>(method,
                                                        this.baseUrl + this.getBaseUrl() + url,
                                                        null,
@@ -161,7 +162,7 @@ function methodBuilder(method: string)
                     {
                         httpReq = this.requestInterceptor(httpReq);
 
-                        let response = this.http.request(req);
+                        let response = this.http.request(httpReq);
 
                         response = this.responseInterceptor(response);
 
@@ -173,368 +174,369 @@ function methodBuilder(method: string)
                                                              target,
                                                              propertyKey,
                                                              descriptor,
+                                                             args,
                                                              httpReq,
                                                              request => call(request, ++index));
                     }
                 }
 
-                observable = call(httpRequest, 0);
+                return call(httpRequest, 0);
 
-                // Body
-                var body = null;
-                if (pBody)
-                {
-                    body = args[pBody[0].parameterIndex];
+                // // Body
+                // var body = null;
+                // if (pBody)
+                // {
+                //     body = args[pBody[0].parameterIndex];
 
-                    if(pTransforms && pTransforms[pBody[0].parameterIndex])
-                    {
-                        body = pTransforms[pBody[0].parameterIndex](body);
-                    }
-                }
+                //     if(pTransforms && pTransforms[pBody[0].parameterIndex])
+                //     {
+                //         body = pTransforms[pBody[0].parameterIndex](body);
+                //     }
+                // }
 
-                // Path
-                var resUrl: string = url;
-                if (pPath)
-                {
-                    for (var k in pPath)
-                    {
-                        if (pPath.hasOwnProperty(k))
-                        {
-                            resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
-                        }
-                    }
-                }
+                // // Path
+                // var resUrl: string = url;
+                // if (pPath)
+                // {
+                //     for (var k in pPath)
+                //     {
+                //         if (pPath.hasOwnProperty(k))
+                //         {
+                //             resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                //         }
+                //     }
+                // }
 
-                // QueryObject
-                var queryString: string = "";
-                if (pQueryObject)
-                {
-                    pQueryObject
-                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                        .forEach(p =>
-                        {
-                            var value = args[p.parameterIndex];
+                // // QueryObject
+                // var queryString: string = "";
+                // if (pQueryObject)
+                // {
+                //     pQueryObject
+                //         .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                //         .forEach(p =>
+                //         {
+                //             var value = args[p.parameterIndex];
 
-                            if(pTransforms && pTransforms[p.parameterIndex])
-                            {
-                                value = pTransforms[p.parameterIndex](value);
-                            }
+                //             if(pTransforms && pTransforms[p.parameterIndex])
+                //             {
+                //                 value = pTransforms[p.parameterIndex](value);
+                //             }
 
-                            // if the value is a instance of Object, we stringify it
-                            if (value instanceof Object)
-                            {
-                                queryString += (queryString.length > 0 ? "&" : "") + param(value)
-                                                          .replace(/&&/g, "&")
-                                                          .replace(/%5B%5D/g, "")
-                                                          .replace(/%5D/g, "")
-                                                          .replace(/%5B/g, ".")
-                                                          .replace(/\.(\d+)\./g, "%5B$1%5D.");
-                            }
-                        });
+                //             // if the value is a instance of Object, we stringify it
+                //             if (value instanceof Object)
+                //             {
+                //                 queryString += (queryString.length > 0 ? "&" : "") + param(value)
+                //                                           .replace(/&&/g, "&")
+                //                                           .replace(/%5B%5D/g, "")
+                //                                           .replace(/%5D/g, "")
+                //                                           .replace(/%5B/g, ".")
+                //                                           .replace(/\.(\d+)\./g, "%5B$1%5D.");
+                //             }
+                //         });
 
-                    queryString = queryString.replace(/\w+=(&|$)/g, "")
-                                             .replace(/(&|\?)$/g, "");
-                }
+                //     queryString = queryString.replace(/\w+=(&|$)/g, "")
+                //                              .replace(/(&|\?)$/g, "");
+                // }
 
-                // Query
-                var params = new HttpParams({fromString: queryString});
-                if (pQuery)
-                {
-                    pQuery
-                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                        .forEach(p =>
-                        {
-                            var key = p.key;
-                            var value = args[p.parameterIndex];
+                // // Query
+                // var params = new HttpParams({fromString: queryString});
+                // if (pQuery)
+                // {
+                //     pQuery
+                //         .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                //         .forEach(p =>
+                //         {
+                //             var key = p.key;
+                //             var value = args[p.parameterIndex];
 
-                            // if the value is a instance of Object, we stringify it
-                            if (value instanceof Object)
-                            {
-                                value = JSON.stringify(value);
-                            }
+                //             // if the value is a instance of Object, we stringify it
+                //             if (value instanceof Object)
+                //             {
+                //                 value = JSON.stringify(value);
+                //             }
 
-                            params = params.append(key, value);
-                        });
-                }
+                //             params = params.append(key, value);
+                //         });
+                // }
 
-                // Headers
-                // set class default headers
-                var headers = new HttpHeaders(this.getDefaultHeaders());
-                // set method specific headers
-                for (var k in descriptor.headers)
-                {
-                    if (descriptor.headers.hasOwnProperty(k))
-                    {
-                        headers = headers.append(k, descriptor.headers[k]);
-                    }
-                }
-                // set parameter specific headers
-                if (pHeader)
-                {
-                    for (var k in pHeader)
-                    {
-                        if (pHeader.hasOwnProperty(k))
-                        {
-                            headers = headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
-                        }
-                    }
-                }
+                // // Headers
+                // // set class default headers
+                // var headers = new HttpHeaders(this.getDefaultHeaders());
+                // // set method specific headers
+                // for (var k in descriptor.headers)
+                // {
+                //     if (descriptor.headers.hasOwnProperty(k))
+                //     {
+                //         headers = headers.append(k, descriptor.headers[k]);
+                //     }
+                // }
+                // // set parameter specific headers
+                // if (pHeader)
+                // {
+                //     for (var k in pHeader)
+                //     {
+                //         if (pHeader.hasOwnProperty(k))
+                //         {
+                //             headers = headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                //         }
+                //     }
+                // }
 
-                if(isBlank(descriptor.responseType))
-                {
-                    descriptor.responseType = ResponseType.Json;
-                }
+                // if(isBlank(descriptor.responseType))
+                // {
+                //     descriptor.responseType = ResponseType.Json;
+                // }
 
-                let responseType: 'arraybuffer' | 'blob' | 'json' | 'text' = 'json';
+                // let responseType: 'arraybuffer' | 'blob' | 'json' | 'text' = 'json';
 
-                switch(descriptor.responseType)
-                {
-                    case ResponseType.Json:
-                    case ResponseType.LocationHeaderAndJson:
-                    {
-                        responseType = 'json';
+                // switch(descriptor.responseType)
+                // {
+                //     case ResponseType.Json:
+                //     case ResponseType.LocationHeaderAndJson:
+                //     {
+                //         responseType = 'json';
 
-                        break;
-                    }
-                    case ResponseType.LocationHeader:
-                    case ResponseType.Text:
-                    {
-                        responseType = 'text';
+                //         break;
+                //     }
+                //     case ResponseType.LocationHeader:
+                //     case ResponseType.Text:
+                //     {
+                //         responseType = 'text';
 
-                        break;
-                    }
-                    case ResponseType.Blob:
-                    case ResponseType.BlobAndFilename:
-                    {
-                        responseType = 'blob';
+                //         break;
+                //     }
+                //     case ResponseType.Blob:
+                //     case ResponseType.BlobAndFilename:
+                //     {
+                //         responseType = 'blob';
 
-                        break;
-                    }
-                    case ResponseType.ArrayBuffer:
-                    {
-                        responseType = 'arraybuffer';
+                //         break;
+                //     }
+                //     case ResponseType.ArrayBuffer:
+                //     {
+                //         responseType = 'arraybuffer';
 
-                        break;
-                    }
-                }
+                //         break;
+                //     }
+                // }
 
-                var reportProgress = descriptor.reportProgress || false;
-                var fullHttpResponse = descriptor.fullHttpResponse || false;
+                // var reportProgress = descriptor.reportProgress || false;
+                // var fullHttpResponse = descriptor.fullHttpResponse || false;
 
-                //append server headers
-                if(isPresent(this.serverCookieHeader))
-                {
-                    headers = headers.append('Cookie', this.serverCookieHeader);
-                }
+                // //append server headers
+                // if(isPresent(this.serverCookieHeader))
+                // {
+                //     headers = headers.append('Cookie', this.serverCookieHeader);
+                // }
 
-                if(isPresent(this.serverAuthHeader))
-                {
-                    headers = headers.append('Authorization', this.serverAuthHeader);
-                }
+                // if(isPresent(this.serverAuthHeader))
+                // {
+                //     headers = headers.append('Authorization', this.serverAuthHeader);
+                // }
 
-                // Request options
-                let req: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId> = new HttpRequest<any>(method,
-                                                                                                        this.baseUrl + this.getBaseUrl() + resUrl,
-                                                                                                        body,
-                                                                                                        {
-                                                                                                             headers,
-                                                                                                             params,
-                                                                                                             responseType,
-                                                                                                             reportProgress
-                                                                                                        });
+                // // Request options
+                // let req: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId> = new HttpRequest<any>(method,
+                //                                                                                         this.baseUrl + this.getBaseUrl() + resUrl,
+                //                                                                                         body,
+                //                                                                                         {
+                //                                                                                              headers,
+                //                                                                                              params,
+                //                                                                                              responseType,
+                //                                                                                              reportProgress
+                //                                                                                         });
 
-                let cached: boolean = false;
-                let hashKey: string;
-                let fromState = false;
+                // let cached: boolean = false;
+                // let hashKey: string;
+                // let fromState = false;
 
-                //tries to get response from cache
-                if(isPresent(descriptor.getCachedResponse))
-                {
-                    let cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(req);
+                // //tries to get response from cache
+                // if(isPresent(descriptor.getCachedResponse))
+                // {
+                //     let cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(req);
 
-                    if (isPresent(cachedResponse))
-                    {
-                        cached = true;
-                        observable = of(cachedResponse);
-                    }
-                }
+                //     if (isPresent(cachedResponse))
+                //     {
+                //         cached = true;
+                //         observable = of(cachedResponse);
+                //     }
+                // }
 
-                // intercept the request
-                req = this.requestInterceptor(req);
+                // // intercept the request
+                // req = this.requestInterceptor(req);
 
-                if(!cached)
-                {
-                    //try to retrieve value from transfer state
-                    if(isPresent(this.transferState) && !this.transferState.deactivated)
-                    {
-                        hashKey = getRequestHash(this.baseUrl, req);
-                        const data = this.transferState.get(hashKey);
+                // if(!cached)
+                // {
+                //     //try to retrieve value from transfer state
+                //     if(isPresent(this.transferState) && !this.transferState.deactivated)
+                //     {
+                //         hashKey = getRequestHash(this.baseUrl, req);
+                //         const data = this.transferState.get(hashKey);
 
-                        if(data)
-                        {
-                            fromState = true;
-                            observable = of(data);
-                        }
-                    }
-                }
+                //         if(data)
+                //         {
+                //             fromState = true;
+                //             observable = of(data);
+                //         }
+                //     }
+                // }
 
-                //add additionalInfo provided by decorators
-                if(descriptor.additionalInfo)
-                {
-                    if(!req.additionalInfo)
-                    {
-                        req.additionalInfo = {};
-                    }
+                // //add additionalInfo provided by decorators
+                // if(descriptor.additionalInfo)
+                // {
+                //     if(!req.additionalInfo)
+                //     {
+                //         req.additionalInfo = {};
+                //     }
 
-                    Object.keys(descriptor.additionalInfo).forEach(key =>
-                    {
-                        req.additionalInfo[key] = descriptor.additionalInfo[key];
-                    });
-                }
+                //     Object.keys(descriptor.additionalInfo).forEach(key =>
+                //     {
+                //         req.additionalInfo[key] = descriptor.additionalInfo[key];
+                //     });
+                // }
 
-                //disable http client interceptors
-                if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
-                {
-                    if(!req.additionalInfo)
-                    {
-                        req.additionalInfo = {};
-                    }
+                // //disable http client interceptors
+                // if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
+                // {
+                //     if(!req.additionalInfo)
+                //     {
+                //         req.additionalInfo = {};
+                //     }
 
-                    req.additionalInfo.requestId = reqId;
+                //     req.additionalInfo.requestId = reqId;
 
-                    descriptor.disabledInterceptors.forEach(interceptorType =>
-                    {
-                        this.ignoredInterceptorsService.addInterceptor(interceptorType, req.additionalInfo);
-                    });
-                }
+                //     descriptor.disabledInterceptors.forEach(interceptorType =>
+                //     {
+                //         this.ignoredInterceptorsService.addInterceptor(interceptorType, req.additionalInfo);
+                //     });
+                // }
 
-                //not cached on server side
-                if(!fromState && !cached)
-                {
-                    // make the request and store the observable for later transformation
-                    observable = Observable.create((observer: Observer<any>) =>
-                    {
-                        this.http.request(req)
-                            .subscribe(result =>
-                            {
-                                if(reportProgress)
-                                {
-                                    observer.next(result);
-                                }
+                // //not cached on server side
+                // if(!fromState && !cached)
+                // {
+                //     // make the request and store the observable for later transformation
+                //     observable = Observable.create((observer: Observer<any>) =>
+                //     {
+                //         this.http.request(req)
+                //             .subscribe(result =>
+                //             {
+                //                 if(reportProgress)
+                //                 {
+                //                     observer.next(result);
+                //                 }
 
-                                if(result.type == HttpEventType.Response)
-                                {
-                                    observer.next(result);
-                                    observer.complete();
-                                }
-                            }, error => observer.error(error));
-                    });
-                }
+                //                 if(result.type == HttpEventType.Response)
+                //                 {
+                //                     observer.next(result);
+                //                     observer.complete();
+                //                 }
+                //             }, error => observer.error(error));
+                //     });
+                // }
 
-                //if ignoredInterceptorsService is present clear ignored interceptors
-                if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
-                {
-                    observable = observable!.pipe(map(response =>
-                    {
-                        this.ignoredInterceptorsService.clear();
+                // //if ignoredInterceptorsService is present clear ignored interceptors
+                // if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
+                // {
+                //     observable = observable!.pipe(map(response =>
+                //     {
+                //         this.ignoredInterceptorsService.clear();
 
-                        return response;
-                    }));
-                }
+                //         return response;
+                //     }));
+                // }
 
-                //tries to set response to cache
-                if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState && !reportProgress)
-                {
-                    observable = observable!.pipe(map(response => descriptor.saveResponseToCache(req, response)));
-                }
+                // //tries to set response to cache
+                // if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState && !reportProgress)
+                // {
+                //     observable = observable!.pipe(map(response => descriptor.saveResponseToCache(req, response)));
+                // }
 
-                // transform the obserable in accordance to the @Produces decorator
-                if (isPresent(descriptor.responseType) && !fromState && !reportProgress && !fullHttpResponse)
-                {
-                    switch(descriptor.responseType)
-                    {
-                        default:
-                        case ResponseType.Text:
-                        case ResponseType.Json:
-                        case ResponseType.Blob:
-                        case ResponseType.ArrayBuffer:
-                        {
-                            observable = observable!.pipe(map((res: HttpResponse<any>) => res.body));
+                // // transform the obserable in accordance to the @Produces decorator
+                // if (isPresent(descriptor.responseType) && !fromState && !reportProgress && !fullHttpResponse)
+                // {
+                //     switch(descriptor.responseType)
+                //     {
+                //         default:
+                //         case ResponseType.Text:
+                //         case ResponseType.Json:
+                //         case ResponseType.Blob:
+                //         case ResponseType.ArrayBuffer:
+                //         {
+                //             observable = observable!.pipe(map((res: HttpResponse<any>) => res.body));
 
-                            break;
-                        }
-                        case ResponseType.BlobAndFilename:
-                        {
-                            observable = observable!.pipe(map((res: HttpResponse<any>) =>
-                            {
-                                let contentDisposition = res.headers.get("content-disposition");
-                                let filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
+                //             break;
+                //         }
+                //         case ResponseType.BlobAndFilename:
+                //         {
+                //             observable = observable!.pipe(map((res: HttpResponse<any>) =>
+                //             {
+                //                 let contentDisposition = res.headers.get("content-disposition");
+                //                 let filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
 
-                                return <any>{
-                                    filename: filename,
-                                    blob: res.body
-                                };
-                            }));
+                //                 return <any>{
+                //                     filename: filename,
+                //                     blob: res.body
+                //                 };
+                //             }));
 
-                            break;
-                        }
-                        case ResponseType.LocationHeader:
-                        {
-                            observable = observable!.pipe(map((res: HttpResponse<any>) =>
-                            {
-                                let headerValue = res.headers.get("location");
-                                let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                                let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+                //             break;
+                //         }
+                //         case ResponseType.LocationHeader:
+                //         {
+                //             observable = observable!.pipe(map((res: HttpResponse<any>) =>
+                //             {
+                //                 let headerValue = res.headers.get("location");
+                //                 let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
+                //                 let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
-                                return <any>{
-                                    location: headerValue,
-                                    id: isPresent(headerValue) ? headerValue!.replace(url, "") : null
-                                };
-                            }));
+                //                 return <any>{
+                //                     location: headerValue,
+                //                     id: isPresent(headerValue) ? headerValue!.replace(url, "") : null
+                //                 };
+                //             }));
 
-                            break;
-                        }
-                        case ResponseType.LocationHeaderAndJson:
-                        {
-                            observable = observable!.pipe(map((res: HttpResponse<any>) =>
-                            {
-                                let headerValue = res.headers.get("location");
-                                let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                                let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+                //             break;
+                //         }
+                //         case ResponseType.LocationHeaderAndJson:
+                //         {
+                //             observable = observable!.pipe(map((res: HttpResponse<any>) =>
+                //             {
+                //                 let headerValue = res.headers.get("location");
+                //                 let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
+                //                 let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
-                                return <any>{
-                                    location: headerValue,
-                                    id: isPresent(headerValue) ? headerValue!.replace(url, "") : null,
-                                    data: res.body
-                                };
-                            }));
+                //                 return <any>{
+                //                     location: headerValue,
+                //                     id: isPresent(headerValue) ? headerValue!.replace(url, "") : null,
+                //                     data: res.body
+                //                 };
+                //             }));
 
-                            break;
-                        }
-                    }
-                }
+                //             break;
+                //         }
+                //     }
+                // }
 
-                //Store value to state transfer if has not been retrieved from state or state is active
-                if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated && !reportProgress && !fullHttpResponse)
-                {
-                    hashKey = hashKey! || getRequestHash(this.baseUrl, req);
+                // //Store value to state transfer if has not been retrieved from state or state is active
+                // if(isPresent(this.transferState) && !fromState && !this.transferState.deactivated && !reportProgress && !fullHttpResponse)
+                // {
+                //     hashKey = hashKey! || getRequestHash(this.baseUrl, req);
 
-                    observable = observable!.pipe(tap((res) =>
-                    {
-                        this.transferState.set(hashKey, res);
-                    }));
-                }
+                //     observable = observable!.pipe(tap((res) =>
+                //     {
+                //         this.transferState.set(hashKey, res);
+                //     }));
+                // }
 
-                // intercept the response
-                observable = this.responseInterceptor(observable!);
+                // // intercept the response
+                // observable = this.responseInterceptor(observable!);
 
-                // transforms response
-                if(isPresent(descriptor.responseTransform))
-                {
-                    observable = descriptor.responseTransform.call(this, observable);
-                }
+                // // transforms response
+                // if(isPresent(descriptor.responseTransform))
+                // {
+                //     observable = descriptor.responseTransform.call(this, observable);
+                // }
 
-                return observable;
+                // return observable;
             };
 
             return descriptor;

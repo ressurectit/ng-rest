@@ -37,9 +37,15 @@
 - added new constants for *Http Header* names
     - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header
     - `HTTP_HEADER_ACCEPT` for *Accept* header
+- added new `REST_METHOD_MIDDLEWARES` injection token used for injecting array of rest middleware types that defines order of rest middlewares
+- added new `REST_MIDDLEWARES_ORDER` injection token used for injecting array of rest middleware types that are default for each rest method
+- added new `BASIC_DEFAULT_REST_METHOD_MIDDLEWARES` constant with basic default array of rest middlewares order
+- added new `BASIC_DEFAULT_REST_MIDDLEWARES_ORDER` constant with basic defaut array of rest middlewares used for each rest method
 - added new `RestMiddleware` interface, that is used for definition of *rest middleware* classes, that are used for building request and processing response
 - added new `RestMiddlewareRunMethod` interface, that defines run method signature for *rest middleware*
 - added new `ɵRESTClient` interface, which has definition of *private* members of `RESTClient` and makes them available in decorators
+- added middlewares to process request and response
+    - `ReportProgressMiddleware` - middleware that is used for handling report progress setting, if not set returns only final http response with data
 
 ### BREAKING CHANGES
 

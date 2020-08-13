@@ -19,6 +19,8 @@ export interface ɵRESTClient
     serverAuthHeader?: string;
     ignoredInterceptorsService?: IgnoredInterceptorsService;
     injector?: Injector;
+    middlewaresOrder?: Type<RestMiddleware>[];
+    methodMiddlewares?: Type<RestMiddleware>[];
     getBaseUrl(): string;
     getDefaultHeaders(): string | {[name: string]: string | string[]};
     requestInterceptor(req: HttpRequest<any>): HttpRequest<any>;
@@ -209,6 +211,7 @@ export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any
      * @param target - Prototype of class that are decorators applied to
      * @param methodName - Name of method that is being modified
      * @param descriptor - Descriptor of method that is being modified
+     * @param args - Array of arguments passed to called method
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
@@ -217,8 +220,9 @@ export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any
      target: TTarget,
      methodName: string,
      descriptor: TDescriptor,
+     args: any[],
      request: HttpRequest<TRequestBody>,
-     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<HttpResponse<TNextResponseBody> | TRequestBody>): Observable<HttpResponse<TResponseBody> | TRequestBody>;
+     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<TResponseBody>;
 
     /**
      * Runs code that is defined for this rest middleware, in this method you can modify request and response
@@ -226,6 +230,7 @@ export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any
      * @param target - Prototype of class that are decorators applied to
      * @param methodName - Name of method that is being modified
      * @param descriptor - Descriptor of method that is being modified
+     * @param args - Array of arguments passed to called method
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
@@ -233,8 +238,9 @@ export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any
      target: TTarget,
      methodName: string,
      descriptor: TDescriptor,
+     args: any[],
      request: HttpRequest<TRequestBody>,
-     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<HttpResponse<TNextResponseBody> | TRequestBody>): Observable<HttpResponse<TResponseBody> | TRequestBody>;
+     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<TResponseBody>;
 }
 
 /**

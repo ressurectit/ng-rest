@@ -7,3 +7,4 @@ export {HTTP_HEADER_ACCEPT, HTTP_HEADER_CONTENT_TYPE} from './rest/constants';
 export {Body, BaseUrl, DefaultHeaders, Header, Headers, JsonContentType, ParameterTransform, Path, Produces, Query, QueryObject, ResponseTransform, FullHttpResponse, ReportProgress, DisableInterceptor, ProgressIndicatorGroup} from './rest/decorators';
 export {REST_METHOD_MIDDLEWARES, REST_MIDDLEWARES_ORDER} from './rest/tokens';
 export {BASIC_DEFAULT_REST_METHOD_MIDDLEWARES, BASIC_DEFAULT_REST_MIDDLEWARES_ORDER} from './rest/defaults';
+export {ReportProgressMiddleware} from './rest/middlewares';
