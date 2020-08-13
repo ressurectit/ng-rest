@@ -55,6 +55,8 @@
     - `ResponseTypeMiddleware` - middleware that is used for extracting http body and transforming it according to specified response type
     - `ResponseTransformMiddleware` - middleware that is used for adding support of response transform
     - `IgnoredInterceptorsMiddleware` - middleware that is used for adding support for ignored interceptors
+    - `AdditionalDataMiddleware`- middleware that is used for adding support for additional info to request from decorators
+    - `ProducesMiddleware` - middleware that is used for changing response type
 
 ### BREAKING CHANGES
 

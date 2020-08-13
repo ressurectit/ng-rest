@@ -1,4 +1,4 @@
-import {HttpRequest, HttpEvent, HttpResponse} from '@angular/common/http';
+import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {isPresent} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -9,7 +9,7 @@ import {ResponseType} from '../responseType';
 /**
  * Middleware that is used for extracting http body and transforming it according to specified response type
  */
-export class ResponseTypeMiddleware implements RestMiddleware<any, any, RestResponseType, any>
+export class ResponseTypeMiddleware implements RestMiddleware
 {
     //######################### public methods - implementation of RestMiddleware #########################
 
@@ -31,7 +31,7 @@ export class ResponseTypeMiddleware implements RestMiddleware<any, any, RestResp
                descriptor: RestResponseType,
                _args: any[],
                request: HttpRequest<any>,
-               next: <TNextRequestBody = any, TNextResponseBody = HttpEvent<any> | any>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<any>
+               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
         let responseType = descriptor.responseType ?? ResponseType.Json;
         let observable = next(request);

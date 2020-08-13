@@ -8,7 +8,7 @@ import {RestMiddleware, ɵRESTClient, RestDisabledInterceptors} from '../rest.in
 /**
  * Middleware that is used for adding support for ignored interceptors
  */
-export class IgnoredInterceptorsMiddleware implements RestMiddleware<any, any, RestDisabledInterceptors, any>
+export class IgnoredInterceptorsMiddleware implements RestMiddleware
 {
     //######################### public methods - implementation of RestMiddleware #########################
 

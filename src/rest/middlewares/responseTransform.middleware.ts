@@ -6,7 +6,7 @@ import {RestMiddleware, ɵRESTClient, RestResponseTransform} from '../rest.inter
 /**
  * Middleware that is used for adding support of response transform
  */
-export class ResponseTransformMiddleware implements RestMiddleware<any, any, RestResponseTransform, any>
+export class ResponseTransformMiddleware implements RestMiddleware
 {
     //######################### public methods - implementation of RestMiddleware #########################
 

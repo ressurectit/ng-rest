@@ -282,39 +282,7 @@ function methodBuilder(method: string)
                 //     descriptor.responseType = ResponseType.Json;
                 // }
 
-                // let responseType: 'arraybuffer' | 'blob' | 'json' | 'text' = 'json';
-
-                // switch(descriptor.responseType)
-                // {
-                //     case ResponseType.Json:
-                //     case ResponseType.LocationHeaderAndJson:
-                //     {
-                //         responseType = 'json';
-
-                //         break;
-                //     }
-                //     case ResponseType.LocationHeader:
-                //     case ResponseType.Text:
-                //     {
-                //         responseType = 'text';
-
-                //         break;
-                //     }
-                //     case ResponseType.Blob:
-                //     case ResponseType.BlobAndFilename:
-                //     {
-                //         responseType = 'blob';
-
-                //         break;
-                //     }
-                //     case ResponseType.ArrayBuffer:
-                //     {
-                //         responseType = 'arraybuffer';
-
-                //         break;
-                //     }
-                // }
-
+                // PRODUCES MIDDLEWARE
                 // var reportProgress = descriptor.reportProgress || false;
                 // var fullHttpResponse = descriptor.fullHttpResponse || false;
 
@@ -375,19 +343,7 @@ function methodBuilder(method: string)
                 //     }
                 // }
 
-                // //add additionalInfo provided by decorators
-                // if(descriptor.additionalInfo)
-                // {
-                //     if(!req.additionalInfo)
-                //     {
-                //         req.additionalInfo = {};
-                //     }
-
-                //     Object.keys(descriptor.additionalInfo).forEach(key =>
-                //     {
-                //         req.additionalInfo[key] = descriptor.additionalInfo[key];
-                //     });
-                // }
+                // //add additionalInfo provided by decorators - ADDITIONAL DATA INTERCEPTOR
 
                 // //disable http client interceptors - IGNORED INTERCEPTORS
 

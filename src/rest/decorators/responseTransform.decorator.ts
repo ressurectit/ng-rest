@@ -1,7 +1,8 @@
 import {isBlank, isPresent, isFunction} from '@jscrpt/common';
 
 import {RESTClient} from '../common';
-import {RestResponseTransform} from '../rest.interface';
+import {RestResponseTransform, RestMethodMiddlewares} from '../rest.interface';
+import {ResponseTransformMiddleware} from '../middlewares';
 
 /**
  * Defines method name that will be called and modifies response
@@ -9,7 +10,8 @@ import {RestResponseTransform} from '../rest.interface';
  */
 export function ResponseTransform(methodName?: string)
 {
-    return function(target: RESTClient, propertyKey: string, descriptor: RestResponseTransform)
+    return function(target: RESTClient, propertyKey: string, descriptor: RestResponseTransform &
+                                                                         RestMethodMiddlewares)
     {
         if(isBlank(methodName))
         {
@@ -18,6 +20,7 @@ export function ResponseTransform(methodName?: string)
 
         if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
         {
+            descriptor.middlewareTypes.push(ResponseTransformMiddleware);
             descriptor.responseTransform = target[methodName!];
         }
 

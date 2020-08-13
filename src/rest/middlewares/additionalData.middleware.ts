@@ -1,14 +1,13 @@
+import {HttpRequest} from '@angular/common/http';
 import {AdditionalInfo} from '@anglr/common';
-import {HttpRequest, HttpEventType} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {filter} from 'rxjs/operators';
 
-import {RestMiddleware, ɵRESTClient, RestReportProgress} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, AdditionalInfoPropertyDescriptor} from '../rest.interface';
 
 /**
- * Middleware that is used for handling report progress setting, if not set returns only final http response with data
+ * Middleware that is used for adding support for additional info to request from decorators
  */
-export class ReportProgressMiddleware implements RestMiddleware
+export class AdditionalDataMiddleware implements RestMiddleware
 {
     //######################### public methods - implementation of RestMiddleware #########################
 
@@ -27,20 +26,23 @@ export class ReportProgressMiddleware implements RestMiddleware
                _id: string,
                _target: any,
                _methodName: string,
-               descriptor: RestReportProgress,
+               descriptor: AdditionalInfoPropertyDescriptor,
                _args: any[],
                request: HttpRequest<any> & AdditionalInfo,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        if(descriptor.reportProgress)
+        if(!descriptor.additionalInfo)
         {
-            request = request.clone(
-            {
-                reportProgress: true
-            });
+            return next(request);
         }
 
-        return next(request)
-            .pipe(filter(response => descriptor.reportProgress ? true : response.type == HttpEventType.Response));
+        request.additionalInfo = request.additionalInfo ?? {};
+
+        Object.keys(descriptor.additionalInfo).forEach(key =>
+        {
+            request.additionalInfo[key] = descriptor.additionalInfo[key];
+        });
+
+        return next(request);
     }
 }

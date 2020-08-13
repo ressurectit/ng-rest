@@ -1,6 +1,7 @@
 import {RESTClient} from '../common';
-import {RestResponseType} from '../rest.interface';
+import {RestResponseType, RestMethodMiddlewares} from '../rest.interface';
 import {ResponseType} from '../responseType';
+import {ProducesMiddleware} from '../middlewares';
 
 /**
  * Defines the response type(s) that the methods can produce or tzpe of body id full request or events are requested
@@ -8,9 +9,11 @@ import {ResponseType} from '../responseType';
  */
 export function Produces(producesDef: ResponseType)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestResponseType)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestResponseType &
+                                                                           RestMethodMiddlewares)
     {
         descriptor.responseType = producesDef;
+        descriptor.middlewareTypes.push(ProducesMiddleware);
 
         return descriptor;
     };
