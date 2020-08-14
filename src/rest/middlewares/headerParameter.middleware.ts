@@ -1,4 +1,5 @@
-import {HttpRequest, HttpHeaders} from '@angular/common/http';
+import {HttpRequest} from '@angular/common/http';
+import {Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
@@ -44,19 +45,19 @@ export class HeaderParameterMiddleware implements RestMiddleware
 
         if (pHeader)
         {
-            let headers: HttpHeaders = new HttpHeaders();
+            let headers: Dictionary = {};
 
             for (var k in pHeader)
             {
                 if (pHeader.hasOwnProperty(k))
                 {
-                    headers = headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                    headers[pHeader[k].key] = args[pHeader[k].parameterIndex];
                 }
             }
 
             request = request.clone(
             {
-                headers: headers
+                setHeaders: headers
             });
         }
 

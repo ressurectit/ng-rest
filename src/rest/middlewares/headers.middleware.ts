@@ -1,5 +1,5 @@
-import {HttpRequest, HttpHeaders} from '@angular/common/http';
-import {isBlank} from '@jscrpt/common';
+import {HttpRequest} from '@angular/common/http';
+import {isBlank, Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestHttpHeaders} from '../rest.interface';
@@ -36,20 +36,20 @@ export class HeadersMiddleware implements RestMiddleware
             return next(request);
         }
 
-        let headers = new HttpHeaders();
+        let headers: Dictionary = {};
         
         // set method specific headers
         for (let k in descriptor.headers)
         {
             if (descriptor.headers.hasOwnProperty(k))
             {
-                headers = headers.set(k, descriptor.headers[k]);
+                headers[k] = descriptor.headers[k];
             }
         }
 
         request = request.clone(
         {
-            headers: headers
+            setHeaders: headers
         });
 
         return next(request);

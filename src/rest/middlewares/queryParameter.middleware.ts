@@ -1,4 +1,5 @@
 import {HttpRequest} from '@angular/common/http';
+import {Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
@@ -42,7 +43,7 @@ export class QueryParameterMiddleware implements RestMiddleware
             // pTransforms = parameters[methodName]?.transforms;
         }
 
-        let params = request.params;
+        let params: Dictionary = {};
 
         if (pQuery)
         {
@@ -50,8 +51,8 @@ export class QueryParameterMiddleware implements RestMiddleware
                 .filter(p => args[p.parameterIndex]) // filter out optional parameters
                 .forEach(p =>
                 {
-                    var key = p.key;
-                    var value = args[p.parameterIndex];
+                    let key = p.key;
+                    let value = args[p.parameterIndex];
 
                     // if the value is a instance of Object, we stringify it
                     if (value instanceof Object)
@@ -59,12 +60,12 @@ export class QueryParameterMiddleware implements RestMiddleware
                         value = JSON.stringify(value);
                     }
 
-                    params = params.set(key, value);
+                    params[key] = value;
                 });
 
             request = request.clone(
             {
-                params: params
+                setParams: params
             });
         }
 

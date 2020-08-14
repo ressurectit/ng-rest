@@ -1,4 +1,5 @@
 import {HttpRequest, HttpParams} from '@angular/common/http';
+import {Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 import param from 'jquery-param';
 
@@ -50,7 +51,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
                 .filter(p => args[p.parameterIndex]) // filter out optional parameters
                 .forEach(p =>
                 {
-                    var value = args[p.parameterIndex];
+                    let value = args[p.parameterIndex];
 
                     if(pTransforms && pTransforms[p.parameterIndex])
                     {
@@ -72,9 +73,17 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
             queryString = queryString.replace(/\w+=(&|$)/g, "")
                                      .replace(/(&|\?)$/g, "");
 
+            let dictionary: Dictionary = {};
+            let params: HttpParams = new HttpParams({fromString: queryString});
+
+            params.keys().forEach(key =>
+            {
+                dictionary[key] = params[key];
+            });
+
             request = request.clone(
             {
-                params: new HttpParams({fromString: queryString})
+                setParams: dictionary
             });
         }
 
