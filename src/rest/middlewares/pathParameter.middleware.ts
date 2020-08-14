@@ -2,7 +2,7 @@ import {HttpRequest} from '@angular/common/http';
 import {isPresent} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 /**
  * Middleware that is used for modifying request URL path
@@ -34,13 +34,12 @@ export class PathParameterMiddleware implements RestMiddleware
         let parameters = target.parameters;
 
         let pPath: KeyIndex[] = null;
-        //TODO: add support for parameter transforms
-        // let pTransforms: ParametersTransformsObj = null;
+        let pTransforms: ParametersTransformsObj = null;
 
         if(parameters)
         {
             pPath = parameters[methodName]?.path;
-            // pTransforms = parameters[methodName]?.transforms;
+            pTransforms = parameters[methodName]?.transforms;
         }
 
         var url: string = request.url;
@@ -51,7 +50,14 @@ export class PathParameterMiddleware implements RestMiddleware
             {
                 if (pPath.hasOwnProperty(k))
                 {
-                    url = url.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                    let value = args[pPath[k].parameterIndex];
+
+                    if(pTransforms && pTransforms[pPath[k].parameterIndex])
+                    {
+                        value = pTransforms[pPath[k].parameterIndex].bind(this)(value);
+                    }
+
+                    url = url.replace("{" + pPath[k].key + "}", value);
                 }
             }
 

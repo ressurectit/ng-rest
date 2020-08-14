@@ -2,7 +2,7 @@ import {HttpRequest} from '@angular/common/http';
 import {Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 /**
  * Middleware that is used for adding query string parameters
@@ -34,13 +34,12 @@ export class QueryParameterMiddleware implements RestMiddleware
         let parameters = target.parameters;
 
         let pQuery: KeyIndex[] = null;
-        //TODO: add params transform
-        // let pTransforms: ParametersTransformsObj = null;
+        let pTransforms: ParametersTransformsObj = null;
 
         if(parameters)
         {
             pQuery = parameters[methodName]?.query;
-            // pTransforms = parameters[methodName]?.transforms;
+            pTransforms = parameters[methodName]?.transforms;
         }
 
         let params: Dictionary = {};
@@ -53,6 +52,11 @@ export class QueryParameterMiddleware implements RestMiddleware
                 {
                     let key = p.key;
                     let value = args[p.parameterIndex];
+
+                    if(pTransforms && pTransforms[p.parameterIndex])
+                    {
+                        value = pTransforms[p.parameterIndex].bind(this)(value);
+                    }
 
                     // if the value is a instance of Object, we stringify it
                     if (value instanceof Object)
