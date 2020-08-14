@@ -1,12 +1,12 @@
 import {HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
 
 /**
- * Middleware that is used for adding body to request
+ * Middleware that is used for adding query string parameters
  */
-export class BodyParameterMiddleware implements RestMiddleware
+export class QueryParameterMiddleware implements RestMiddleware
 {
     //######################### public methods - implementation of RestMiddleware #########################
 
@@ -32,27 +32,39 @@ export class BodyParameterMiddleware implements RestMiddleware
     {
         let parameters = target.parameters;
 
-        let pBody: KeyIndex[] = null;
-        let pTransforms: ParametersTransformsObj = null;
+        let pQuery: KeyIndex[] = null;
+        //TODO: add params transform
+        // let pTransforms: ParametersTransformsObj = null;
 
         if(parameters)
         {
-            pBody = parameters[methodName]?.body;
-            pTransforms = parameters[methodName]?.transforms;
+            pQuery = parameters[methodName]?.query;
+            // pTransforms = parameters[methodName]?.transforms;
         }
 
-        if (pBody)
-        {
-            let body = args[pBody[0].parameterIndex];
+        let params = request.params;
 
-            if(pTransforms && pTransforms[pBody[0].parameterIndex])
-            {
-                body = pTransforms[pBody[0].parameterIndex].bind(this)(body);
-            }
+        if (pQuery)
+        {
+            pQuery
+                .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                .forEach(p =>
+                {
+                    var key = p.key;
+                    var value = args[p.parameterIndex];
+
+                    // if the value is a instance of Object, we stringify it
+                    if (value instanceof Object)
+                    {
+                        value = JSON.stringify(value);
+                    }
+
+                    params = params.set(key, value);
+                });
 
             request = request.clone(
             {
-                body
+                params: params
             });
         }
 

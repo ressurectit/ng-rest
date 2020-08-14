@@ -1,4 +1,5 @@
 import {HttpRequest} from '@angular/common/http';
+import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestResponseTransform} from '../rest.interface';
@@ -30,7 +31,7 @@ export class ResponseTransformMiddleware implements RestMiddleware
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        if(!descriptor.responseTransform)
+        if(isBlank(descriptor.responseTransform))
         {
             return next(request);
         }

@@ -1,5 +1,6 @@
 import {HttpRequest} from '@angular/common/http';
 import {AdditionalInfo} from '@anglr/common';
+import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, AdditionalInfoPropertyDescriptor} from '../rest.interface';
@@ -31,7 +32,7 @@ export class AdditionalDataMiddleware implements RestMiddleware
                request: HttpRequest<any> & AdditionalInfo,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        if(!descriptor.additionalInfo)
+        if(isBlank(descriptor.additionalInfo))
         {
             return next(request);
         }

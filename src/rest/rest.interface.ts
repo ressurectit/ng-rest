@@ -1,11 +1,10 @@
 import {Type, Injector} from '@angular/core';
-import {HttpRequest, HttpResponse, HttpClient} from '@angular/common/http';
-import {AdditionalInfo, IgnoredInterceptorsService} from '@anglr/common';
+import {HttpRequest, HttpResponse, HttpClient, HttpEvent} from '@angular/common/http';
+import {AdditionalInfo} from '@anglr/common';
 import {StringDictionary, Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {ResponseType} from './responseType';
-import {RestTransferStateService} from '../transferState/restTransferState.service';
 
 /**
  * Type indicates that it should be removed from array
@@ -24,18 +23,14 @@ export class NotType<TType>
 export interface ɵRESTClient
 {
     http: HttpClient;
-    transferState?: RestTransferStateService;
     baseUrl?: string;
-    serverCookieHeader?: string;
-    serverAuthHeader?: string;
-    ignoredInterceptorsService?: IgnoredInterceptorsService;
     injector?: Injector;
     middlewaresOrder?: Type<RestMiddleware>[];
     methodMiddlewares?: Type<RestMiddleware>[];
     getBaseUrl(): string;
     getDefaultHeaders(): string | {[name: string]: string | string[]};
     requestInterceptor(req: HttpRequest<any>): HttpRequest<any>;
-    responseInterceptor(res: Observable<any>): Observable<any>;
+    responseInterceptor<TBody = any>(res: Observable<HttpEvent<TBody>>): Observable<HttpEvent<any>>;
 }
 
 /**
@@ -192,11 +187,30 @@ export interface ParametersMetadata
 }
 
 /**
+ * Defines object for parameter transforms
+ */
+export interface ParametersTransformsObj
+{
+    [parameterIndex: number]: <TData = any, TRansformedData = TData>(data: TData) => TRansformedData;
+}
+
+/**
  * Metadata for parameters transforms
  */
 export interface ParametersTransformMetadata
 {
-    transforms?: {[parameterIndex: number]: <TData = any, TRansformedData = TData>(data: TData) => TRansformedData};
+    transforms?: ParametersTransformsObj;
+}
+
+/**
+ * Metadata for middleware types for parameters
+ */
+export interface ParametersMiddlewaresMetadata
+{
+    /**
+     * Array of rest middleware types that will be used
+     */
+    middlewareTypes?: Type<RestMiddleware>[];
 }
 
 /**
@@ -207,7 +221,7 @@ export interface RestParameters
     /**
      * Parameters metadata for each decorated method
      */
-    parameters?: Dictionary<ParametersMetadata & ParametersTransformMetadata>;
+    parameters?: Dictionary<ParametersMetadata & ParametersTransformMetadata & ParametersMiddlewaresMetadata>;
 }
 
 /**

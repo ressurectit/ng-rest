@@ -1,9 +1,15 @@
 import {HttpRequest} from '@angular/common/http';
 import {IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId} from '@anglr/common';
-import {isPresent} from '@jscrpt/common';
+import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 import {RestMiddleware, ɵRESTClient, RestDisabledInterceptors} from '../rest.interface';
+
+interface ɵIgnoredInterceptor
+{
+    ignoredInterceptorsService?: IgnoredInterceptorsService;
+}
 
 /**
  * Middleware that is used for adding support for ignored interceptors
@@ -23,7 +29,7 @@ export class IgnoredInterceptorsMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: ɵRESTClient & ɵIgnoredInterceptor,
                id: string,
                _target: any,
                _methodName: string,
@@ -32,23 +38,24 @@ export class IgnoredInterceptorsMiddleware implements RestMiddleware
                request: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        let ignoredInterceptorsSvc: IgnoredInterceptorsService = this.injector.get(IgnoredInterceptorsService, null);
+        this.ignoredInterceptorsService = this.ignoredInterceptorsService ?? this.injector.get(IgnoredInterceptorsService, null);
 
-        if(isPresent(ignoredInterceptorsSvc) && isPresent(descriptor.disabledInterceptors))
+        if(isBlank(this.ignoredInterceptorsService) || isBlank(descriptor.disabledInterceptors))
         {
-            if(!request.additionalInfo)
-            {
-                request.additionalInfo = {};
-            }
-
-            request.additionalInfo.requestId = id;
-
-            descriptor.disabledInterceptors.forEach(interceptorType =>
-            {
-                this.ignoredInterceptorsService.addInterceptor(interceptorType, request.additionalInfo);
-            });
+            return next(request);
         }
 
-        return next(request);
+        request.additionalInfo = request.additionalInfo ?? {};
+        request.additionalInfo.requestId = id;
+
+        descriptor.disabledInterceptors.forEach(interceptorType =>
+        {
+            this.ignoredInterceptorsService.addInterceptor(interceptorType, request.additionalInfo);
+        });
+
+        let clear = () => this.ignoredInterceptorsService.clear();
+
+        return next(request)
+            .pipe(tap(clear, clear, clear));
     }
 }

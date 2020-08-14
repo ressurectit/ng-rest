@@ -1,12 +1,12 @@
-import {HttpRequest} from '@angular/common/http';
+import {HttpRequest, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
 
 /**
- * Middleware that is used for adding body to request
+ * Middleware that is used for adding header from parameter
  */
-export class BodyParameterMiddleware implements RestMiddleware
+export class HeaderParameterMiddleware implements RestMiddleware
 {
     //######################### public methods - implementation of RestMiddleware #########################
 
@@ -32,27 +32,31 @@ export class BodyParameterMiddleware implements RestMiddleware
     {
         let parameters = target.parameters;
 
-        let pBody: KeyIndex[] = null;
-        let pTransforms: ParametersTransformsObj = null;
+        let pHeader: KeyIndex[] = null;
+        //TODO: add support for param transform
+        // let pTransforms: ParametersTransformsObj = null;
 
         if(parameters)
         {
-            pBody = parameters[methodName]?.body;
-            pTransforms = parameters[methodName]?.transforms;
+            pHeader = parameters[methodName]?.header;
+            // pTransforms = parameters[methodName]?.transforms;
         }
 
-        if (pBody)
+        if (pHeader)
         {
-            let body = args[pBody[0].parameterIndex];
+            let headers: HttpHeaders = new HttpHeaders();
 
-            if(pTransforms && pTransforms[pBody[0].parameterIndex])
+            for (var k in pHeader)
             {
-                body = pTransforms[pBody[0].parameterIndex].bind(this)(body);
+                if (pHeader.hasOwnProperty(k))
+                {
+                    headers = headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                }
             }
 
             request = request.clone(
             {
-                body
+                headers: headers
             });
         }
 

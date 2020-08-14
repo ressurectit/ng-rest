@@ -1,9 +1,11 @@
-import {isBlank} from '@jscrpt/common';
+import {Type} from '@angular/core';
+import {isPresent} from '@jscrpt/common';
 
-import {ParametersMetadata, RestParameters, KeyIndex} from '../rest.interface';
+import {ParametersMetadata, RestParameters, KeyIndex, RestMiddleware} from '../rest.interface';
 import {RESTClient} from '../common';
+import {BodyParameterMiddleware, PathParameterMiddleware, QueryParameterMiddleware, QueryObjectParameterMiddleware, HeaderParameterMiddleware} from '../middlewares';
 
-function paramBuilder(paramName: keyof ParametersMetadata)
+function paramBuilder(paramName: keyof ParametersMetadata, middleware: Type<RestMiddleware>)
 {
     return function(key: string)
     {
@@ -15,29 +17,24 @@ function paramBuilder(paramName: keyof ParametersMetadata)
                 parameterIndex: parameterIndex
             };
 
-            let descriptor = Object.getOwnPropertyDescriptor(target, propertyKey);
-
-            console.log(descriptor);
-
             //params metadata missing
-            if(isBlank(target.parameters))
-            {
-                target.parameters = {};
-            }
+            target.parameters = target.parameters ?? {};
 
             //params metadata for method missing
-            if(isBlank(target.parameters[propertyKey]))
-            {
-                target.parameters[propertyKey] = {};
-            }
+            target.parameters[propertyKey] = target.parameters[propertyKey] ?? {};
 
             //parameter transforms object missing
-            if(isBlank(target.parameters[propertyKey][paramName]))
-            {
-                target.parameters[propertyKey][paramName] = [];
-            }
+            target.parameters[propertyKey][paramName] = target.parameters[propertyKey][paramName] ?? [];
 
+            //adds params
             target.parameters[propertyKey][paramName].push(paramObj);
+
+            //sets middleware
+            if(isPresent(middleware))
+            {
+                target.parameters[propertyKey].middlewareTypes = target.parameters[propertyKey].middlewareTypes ?? [];
+                target.parameters[propertyKey].middlewareTypes.push(middleware);
+            }
         };
     };
 }
@@ -46,27 +43,27 @@ function paramBuilder(paramName: keyof ParametersMetadata)
  * Path variable of a method's url, type: string
  * @param key - path key to bind value
  */
-export var Path = paramBuilder("path");
+export var Path = paramBuilder("path", PathParameterMiddleware);
 
 /**
  * Query value of a method's url, type: string
  * @param key - query key to bind value
  */
-export var Query = paramBuilder("query");
+export var Query = paramBuilder("query", QueryParameterMiddleware);
 
 /**
  * Query object serialized with dot notation separating hierarchies
  */
-export var QueryObject = paramBuilder("queryObject")("queryObject");
+export var QueryObject = paramBuilder("queryObject", QueryObjectParameterMiddleware)("queryObject");
 
 /**
  * Body of a REST method, json stringify applied
  * Only one body per method!
  */
-export var Body = paramBuilder("body")("body");
+export var Body = paramBuilder("body", BodyParameterMiddleware)("body");
 
 /**
  * Custom header of a REST method, type: string
  * @param key - header key to bind value
  */
-export var Header = paramBuilder("header");
+export var Header = paramBuilder("header", HeaderParameterMiddleware);

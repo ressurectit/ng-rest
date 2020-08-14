@@ -1,12 +1,18 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpRequest} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpRequest, HttpEvent} from '@angular/common/http';
 import {isBlank, isFunction, generateId} from '@jscrpt/common';
-import {SERVER_BASE_URL, SERVER_COOKIE_HEADER, SERVER_AUTH_HEADER, IgnoredInterceptorsService, AdditionalInfo} from '@anglr/common';
+import {SERVER_BASE_URL} from '@anglr/common';
 import {Observable} from "rxjs";
-import {RestTransferStateService} from '../transferState/restTransferState.service';
-import {RestHttpHeaders, RestResponseType, RestResponseTransform, RestDisabledInterceptors, RestReportProgress, RestFullHttpResponse, RestMethod, RestCaching, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware, BuildMiddlewaresFn} from './rest.interface';
+
+import {RestMethod, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware, BuildMiddlewaresFn} from './rest.interface';
 import {buildMiddlewares} from './utils';
 import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
+
+//TODO
+// @Optional() protected transferState?: RestTransferStateService,
+// @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
+// @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
+// @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
 
 /**
  * Angular RESTClient base class.
@@ -15,11 +21,7 @@ import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 export abstract class RESTClient
 {
     constructor(protected http: HttpClient,
-                @Optional() protected transferState?: RestTransferStateService,
                 @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
-                @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
-                @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
-                @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
                 protected injector?: Injector,
                 @Inject(REST_MIDDLEWARES_ORDER) protected middlewaresOrder?: Type<RestMiddleware>[],
                 @Inject(REST_METHOD_MIDDLEWARES) protected methodMiddlewares?: Type<RestMiddleware>[])
@@ -60,7 +62,7 @@ export abstract class RESTClient
      * @param res - response object
      * @returns res - transformed response object
      */
-    protected responseInterceptor(res: Observable<any>): Observable<any>
+    protected responseInterceptor<TBody = any>(res: Observable<HttpEvent<TBody>>): Observable<HttpEvent<any>>
     {
         return res;
     }
@@ -93,14 +95,6 @@ function methodBuilder(method: string)
     return function(url: string)
     {
         return function(target: RESTClient & RestParameters, propertyKey: string, descriptor: RestMethod &
-                                                                                              RestFullHttpResponse &
-                                                                                              RestReportProgress &
-                                                                                              RestDisabledInterceptors &
-                                                                                              RestResponseTransform &
-                                                                                              RestResponseType &
-                                                                                              RestHttpHeaders &
-                                                                                              RestCaching &
-                                                                                              AdditionalInfo &
                                                                                               ɵRestMethod &
                                                                                               RestMethodMiddlewares)
         {
@@ -112,31 +106,25 @@ function methodBuilder(method: string)
             descriptor.middlewareTypes = descriptor.middlewareTypes ?? [];
 
             let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
-            // let parameters = target.parameters;
+            let parameters = target.parameters;
+            let parametersMiddlewares: Type<RestMiddleware>[];
 
-            // let pPath = null;
-            // let pQuery = null;
-            // let pQueryObject = null;
-            // let pBody = null;
-            // let pHeader = null;
-            // let pTransforms = null;
-
-            // if(parameters)
-            // {
-            //     pPath = target.parameters[propertyKey]?.path;
-            //     pQuery = target.parameters[propertyKey]?.query;
-            //     pQueryObject = target.parameters[propertyKey]?.queryObject;
-            //     pBody = target.parameters[propertyKey]?.body;
-            //     pHeader = target.parameters[propertyKey]?.header;
-            //     pTransforms = target.parameters[propertyKey]?.transforms;
-            // }
+            if(parameters)
+            {
+                parametersMiddlewares = parameters[propertyKey]?.middlewareTypes ?? [];
+            }
 
             descriptor.value = function(this: ɵRESTClient, ...args: any[])
             {
                 //get middlewares definition only during first call
                 if(!descriptor.middlewares)
                 {
-                    descriptor.middlewares = (buildMiddlewares.bind(this) as BuildMiddlewaresFn)((descriptor.middlewareTypes ?? []).concat(this.methodMiddlewares), this.middlewaresOrder);
+                    descriptor.middlewares = (buildMiddlewares.bind(this) as BuildMiddlewaresFn)([
+                                                                                                     ...descriptor.middlewareTypes ?? [],
+                                                                                                     ...parametersMiddlewares,
+                                                                                                     ...this.methodMiddlewares
+                                                                                                 ],
+                                                                                                 this.middlewaresOrder);
                 }
 
                 let reqId = `${id}-${generateId(6)}`;
@@ -180,69 +168,10 @@ function methodBuilder(method: string)
                 // // Body
 
                 // // Path
-                // var resUrl: string = url;
-                // if (pPath)
-                // {
-                //     for (var k in pPath)
-                //     {
-                //         if (pPath.hasOwnProperty(k))
-                //         {
-                //             resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
-                //         }
-                //     }
-                // }
-
+                
                 // // QueryObject
-                // var queryString: string = "";
-                // if (pQueryObject)
-                // {
-                //     pQueryObject
-                //         .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                //         .forEach(p =>
-                //         {
-                //             var value = args[p.parameterIndex];
-
-                //             if(pTransforms && pTransforms[p.parameterIndex])
-                //             {
-                //                 value = pTransforms[p.parameterIndex](value);
-                //             }
-
-                //             // if the value is a instance of Object, we stringify it
-                //             if (value instanceof Object)
-                //             {
-                //                 queryString += (queryString.length > 0 ? "&" : "") + param(value)
-                //                                           .replace(/&&/g, "&")
-                //                                           .replace(/%5B%5D/g, "")
-                //                                           .replace(/%5D/g, "")
-                //                                           .replace(/%5B/g, ".")
-                //                                           .replace(/\.(\d+)\./g, "%5B$1%5D.");
-                //             }
-                //         });
-
-                //     queryString = queryString.replace(/\w+=(&|$)/g, "")
-                //                              .replace(/(&|\?)$/g, "");
-                // }
 
                 // // Query
-                // var params = new HttpParams({fromString: queryString});
-                // if (pQuery)
-                // {
-                //     pQuery
-                //         .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                //         .forEach(p =>
-                //         {
-                //             var key = p.key;
-                //             var value = args[p.parameterIndex];
-
-                //             // if the value is a instance of Object, we stringify it
-                //             if (value instanceof Object)
-                //             {
-                //                 value = JSON.stringify(value);
-                //             }
-
-                //             params = params.append(key, value);
-                //         });
-                // }
 
                 // // Headers
                 // // set class default headers
@@ -256,16 +185,7 @@ function methodBuilder(method: string)
                 //     }
                 // }
                 // // set parameter specific headers
-                // if (pHeader)
-                // {
-                //     for (var k in pHeader)
-                //     {
-                //         if (pHeader.hasOwnProperty(k))
-                //         {
-                //             headers = headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
-                //         }
-                //     }
-                // }
+                
 
                 // PRODUCES MIDDLEWARE
                 // var reportProgress = descriptor.reportProgress || false;
@@ -283,15 +203,6 @@ function methodBuilder(method: string)
                 // }
 
                 // // Request options
-                // let req: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId> = new HttpRequest<any>(method,
-                //                                                                                         this.baseUrl + this.getBaseUrl() + resUrl,
-                //                                                                                         body,
-                //                                                                                         {
-                //                                                                                              headers,
-                //                                                                                              params,
-                //                                                                                              responseType,
-                //                                                                                              reportProgress
-                //                                                                                         });
 
                 // let cached: boolean = false;
                 // let hashKey: string;
@@ -308,9 +219,6 @@ function methodBuilder(method: string)
                 //         observable = of(cachedResponse);
                 //     }
                 // }
-
-                // // intercept the request
-                // req = this.requestInterceptor(req);
 
                 // if(!cached)
                 // {
@@ -343,15 +251,7 @@ function methodBuilder(method: string)
                 // }
 
                 // //if ignoredInterceptorsService is present clear ignored interceptors
-                // if(isPresent(this.ignoredInterceptorsService) && isPresent(descriptor.disabledInterceptors))
-                // {
-                //     observable = observable!.pipe(map(response =>
-                //     {
-                //         this.ignoredInterceptorsService.clear();
-
-                //         return response;
-                //     }));
-                // }
+                
 
                 // //tries to set response to cache
                 // if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState && !reportProgress)
@@ -372,9 +272,6 @@ function methodBuilder(method: string)
                 //         this.transferState.set(hashKey, res);
                 //     }));
                 // }
-
-                // // intercept the response
-                // observable = this.responseInterceptor(observable!);
 
                 // // transforms response
 

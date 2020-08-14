@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2020-08-13)
+## Version 8.0.0 (2020-08-14)
 
 ### Features
 
@@ -33,6 +33,7 @@
     - `ParametersTransformMetadata` - contains parameters metadata for each decorated method parameters transforms
     - `RestParameters` - contains parameters metadata for each decorated method parameters
     - `RestMethodMiddlewares` - contains rest middleware types that will be used, decorator can add type if it wish to be used
+    - `ParametersMiddlewaresMetadata` - contains metadata for middleware types for parameters
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 - added new constants for *Http Header* names
     - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header
@@ -50,6 +51,7 @@
 - added new `not` function that helps creating `NotType` which will remove specified middleware type from middlewares
 - added new `getType` function that gets underlying `Type` for `Type` and `NotType`
 - added new `isNotType` function that gets indication whether is provided `Type` of `NotType`
+- added new `ParametersTransformsObj` interface that defines object for parameter transforms
 - added middlewares to process request and response
     - `ReportProgressMiddleware` - middleware that is used for handling report progress setting, if not set returns only final http response with data
     - `ResponseTypeMiddleware` - middleware that is used for extracting http body and transforming it according to specified response type
@@ -57,6 +59,11 @@
     - `IgnoredInterceptorsMiddleware` - middleware that is used for adding support for ignored interceptors
     - `AdditionalDataMiddleware`- middleware that is used for adding support for additional info to request from decorators
     - `ProducesMiddleware` - middleware that is used for changing response type
+    - `BodyParameterMiddleware` - middleware that is used for adding body to request
+    - `HeaderParameterMiddleware` - middleware that is used for adding header from parameter
+    - `PathParameterMiddleware` - middleware that is used for modifying request URL path
+    - `QueryObjectParameterMiddleware` - middleware that is used for adding query string from query object
+    - `QueryParameterMiddleware` - middleware that is used for adding query string parameters
 
 ### BREAKING CHANGES
 
@@ -66,6 +73,8 @@
 - minimal supported version of `crypto-js` is `4.0.0`
 - changed response type for `getDefaultHeaders` method of `RESTClient`
 - completely refactored library and how it works
+- changed signature of `responseInterceptor` method of `RESTClient`, `Observable` now must return `HttpEvent`
+- changed `RESTClient` constructor parameters
 
 ## Version 7.0.1
 

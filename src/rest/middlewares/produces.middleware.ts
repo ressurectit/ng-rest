@@ -1,4 +1,5 @@
 import {HttpRequest} from '@angular/common/http';
+import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestResponseType} from '../rest.interface';
@@ -31,7 +32,7 @@ export class ProducesMiddleware implements RestMiddleware
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        if(!descriptor.responseType)
+        if(isBlank(descriptor.responseType))
         {
             return next(request);
         }
