@@ -64,6 +64,7 @@
     - `PathParameterMiddleware` - middleware that is used for modifying request URL path
     - `QueryObjectParameterMiddleware` - middleware that is used for adding query string from query object
     - `QueryParameterMiddleware` - middleware that is used for adding query string parameters
+    - `HeadersMiddleware` - middleware that is used for setting custom http headers
 
 ### BREAKING CHANGES
 

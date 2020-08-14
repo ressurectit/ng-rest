@@ -107,7 +107,7 @@ function methodBuilder(method: string)
 
             let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
             let parameters = target.parameters;
-            let parametersMiddlewares: Type<RestMiddleware>[];
+            let parametersMiddlewares: Type<RestMiddleware>[] = [];
 
             if(parameters)
             {
@@ -175,15 +175,7 @@ function methodBuilder(method: string)
 
                 // // Headers
                 // // set class default headers
-                // var headers = new HttpHeaders(this.getDefaultHeaders());
-                // // set method specific headers
-                // for (var k in descriptor.headers)
-                // {
-                //     if (descriptor.headers.hasOwnProperty(k))
-                //     {
-                //         headers = headers.append(k, descriptor.headers[k]);
-                //     }
-                // }
+                
                 // // set parameter specific headers
                 
 
