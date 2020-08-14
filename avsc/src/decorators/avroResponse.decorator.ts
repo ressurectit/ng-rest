@@ -1,4 +1,4 @@
-import {RESTClient, AdditionalInfoPropertyDescriptor} from '@anglr/rest';
+import {RESTClient, AdditionalInfoPropertyDescriptor, RestMethodMiddlewares, AdditionalDataMiddleware} from '@anglr/rest';
 
 import {AvroResponseType} from '../avsc';
 
@@ -9,13 +9,11 @@ import {AvroResponseType} from '../avsc';
  */
 export function AvroResponse(namespace: string, typeName: string)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: AdditionalInfoPropertyDescriptor<AvroResponseType>)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: AdditionalInfoPropertyDescriptor<AvroResponseType> &
+                                                                           RestMethodMiddlewares)
     {
-        if(!descriptor.additionalInfo)
-        {
-            descriptor.additionalInfo = {};
-        }
-
+        descriptor.additionalInfo = descriptor.additionalInfo ?? {};
+        descriptor.middlewareTypes.push(AdditionalDataMiddleware);
         descriptor.additionalInfo.avroResponse =
         {
             name: typeName,

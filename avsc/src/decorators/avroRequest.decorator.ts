@@ -12,11 +12,7 @@ export function AvroRequest(namespace: string, typeName: string)
     return function(_target: RESTClient, _propertyKey: string, descriptor: AdditionalInfoPropertyDescriptor<AvroRequestType> &
                                                                            RestMethodMiddlewares)
     {
-        if(!descriptor.additionalInfo)
-        {
-            descriptor.additionalInfo = {};
-        }
-
+        descriptor.additionalInfo = descriptor.additionalInfo ?? {};
         descriptor.middlewareTypes.push(AdditionalDataMiddleware);
         descriptor.additionalInfo.avroRequest =
         {
