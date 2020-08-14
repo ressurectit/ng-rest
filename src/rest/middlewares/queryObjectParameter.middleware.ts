@@ -78,7 +78,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
 
             params.keys().forEach(key =>
             {
-                dictionary[key] = params[key];
+                dictionary[key] = params.get(key);
             });
 
             request = request.clone(
