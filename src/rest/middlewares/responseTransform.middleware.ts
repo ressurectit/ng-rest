@@ -27,7 +27,7 @@ export class ResponseTransformMiddleware implements RestMiddleware
                _target: any,
                _methodName: string,
                descriptor: RestResponseTransform,
-               _args: any[],
+               args: any[],
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
@@ -36,6 +36,10 @@ export class ResponseTransformMiddleware implements RestMiddleware
             return next(request);
         }
 
-        return descriptor.responseTransform.call(this, next(request));
+        return descriptor.responseTransform.apply(this,
+                                                  [
+                                                      next(request),
+                                                      ...args
+                                                  ]);
     }
 }

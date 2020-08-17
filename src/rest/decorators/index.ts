@@ -10,3 +10,4 @@ export * from './produces.decorator';
 export * from './progressIndicatorGroup.decorator';
 export * from './reportProgress.decorator';
 export * from './responseTransform.decorator';
+export * from './acceptAny.decorator';
