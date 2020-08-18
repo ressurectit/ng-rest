@@ -11,3 +11,4 @@ export * from './queryObjectParameter.middleware';
 export * from './headerParameter.middleware';
 export * from './headers.middleware';
 export * from './cache.middleware';
+export * from './logger.middleware';

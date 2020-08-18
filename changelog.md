@@ -68,6 +68,7 @@
     - `QueryParameterMiddleware` - middleware that is used for adding query string parameters
     - `HeadersMiddleware` - middleware that is used for setting custom http headers
     - `CacheMiddleware` - middleware that is used for storing and restoring response from cache
+    - `LoggerMiddleware` - middleware that is used for logging requests and responses
 
 ### BREAKING CHANGES
 

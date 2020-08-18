@@ -1,7 +1,7 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpRequest, HttpEvent} from '@angular/common/http';
 import {isBlank, isFunction, generateId} from '@jscrpt/common';
-import {SERVER_BASE_URL} from '@anglr/common';
+import {HTTP_REQUEST_BASE_URL} from '@anglr/common';
 import {Observable} from "rxjs";
 
 import {RestMethod, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware, BuildMiddlewaresFn} from './rest.interface';
@@ -21,7 +21,7 @@ import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 export abstract class RESTClient
 {
     constructor(protected http: HttpClient,
-                @Optional() @Inject(SERVER_BASE_URL) protected baseUrl?: string,
+                @Optional() @Inject(HTTP_REQUEST_BASE_URL) protected baseUrl?: string,
                 protected injector?: Injector,
                 @Inject(REST_MIDDLEWARES_ORDER) protected middlewaresOrder?: Type<RestMiddleware>[],
                 @Inject(REST_METHOD_MIDDLEWARES) protected methodMiddlewares?: Type<RestMiddleware>[])

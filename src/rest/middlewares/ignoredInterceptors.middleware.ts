@@ -8,7 +8,7 @@ import {RestMiddleware, ɵRESTClient, RestDisabledInterceptors} from '../rest.in
 
 interface ɵIgnoredInterceptor
 {
-    ignoredInterceptorsService?: IgnoredInterceptorsService;
+    ɵIgnoredInterceptorsService?: IgnoredInterceptorsService;
 }
 
 /**
@@ -38,9 +38,9 @@ export class IgnoredInterceptorsMiddleware implements RestMiddleware
                request: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        this.ignoredInterceptorsService = this.ignoredInterceptorsService ?? this.injector.get(IgnoredInterceptorsService, null);
+        this.ɵIgnoredInterceptorsService = this.ɵIgnoredInterceptorsService ?? this.injector.get(IgnoredInterceptorsService, null);
 
-        if(isBlank(this.ignoredInterceptorsService) || isBlank(descriptor.disabledInterceptors))
+        if(isBlank(this.ɵIgnoredInterceptorsService) || isBlank(descriptor.disabledInterceptors))
         {
             return next(request);
         }
@@ -50,10 +50,10 @@ export class IgnoredInterceptorsMiddleware implements RestMiddleware
 
         descriptor.disabledInterceptors.forEach(interceptorType =>
         {
-            this.ignoredInterceptorsService.addInterceptor(interceptorType, request.additionalInfo);
+            this.ɵIgnoredInterceptorsService.addInterceptor(interceptorType, request.additionalInfo);
         });
 
-        let clear = () => this.ignoredInterceptorsService.clear();
+        let clear = () => this.ɵIgnoredInterceptorsService.clear();
 
         return next(request)
             .pipe(tap(clear, clear, clear));
