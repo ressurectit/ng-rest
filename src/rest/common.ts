@@ -201,16 +201,6 @@ function methodBuilder(method: string)
                 // let fromState = false;
 
                 // //tries to get response from cache
-                // if(isPresent(descriptor.getCachedResponse))
-                // {
-                //     let cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(req);
-
-                //     if (isPresent(cachedResponse))
-                //     {
-                //         cached = true;
-                //         observable = of(cachedResponse);
-                //     }
-                // }
 
                 // if(!cached)
                 // {
@@ -246,10 +236,6 @@ function methodBuilder(method: string)
                 
 
                 // //tries to set response to cache
-                // if(isPresent(descriptor.saveResponseToCache) && !cached && !fromState && !reportProgress)
-                // {
-                //     observable = observable!.pipe(map(response => descriptor.saveResponseToCache(req, response)));
-                // }
 
                 // // RESPONSETYPEMIDDLEWARE transform the obserable in accordance to the @Produces decorator
 

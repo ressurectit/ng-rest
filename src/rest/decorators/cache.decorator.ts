@@ -1,8 +1,9 @@
 import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {isPresent} from '@jscrpt/common';
 
-import {RESTClient} from '../rest/common';
-import {RestCaching} from './rest.interface';
+import {RestCaching, RestMethodMiddlewares} from '../rest.interface';
+import {RESTClient} from '../common';
+import {CacheMiddleware} from '../middlewares';
 
 //Object storing response cache itself
 //It caches request urls to response data
@@ -13,8 +14,11 @@ var responseCache: {[key: string]: HttpResponse<any>} = {};
  */
 export function Cache()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestCaching)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestCaching &
+                                                                           RestMethodMiddlewares)
     {
+        descriptor.middlewareTypes.push(CacheMiddleware);
+
         descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any>|null =>
         {
             if(isPresent(responseCache[request.urlWithParams]))

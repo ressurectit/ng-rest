@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2020-08-17)
+## Version 8.0.0 (2020-08-18)
 
 ### Features
 
@@ -67,6 +67,7 @@
     - `QueryObjectParameterMiddleware` - middleware that is used for adding query string from query object
     - `QueryParameterMiddleware` - middleware that is used for adding query string parameters
     - `HeadersMiddleware` - middleware that is used for setting custom http headers
+    - `CacheMiddleware` - middleware that is used for storing and restoring response from cache
 
 ### BREAKING CHANGES
 

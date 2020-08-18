@@ -1,7 +1,7 @@
 import {Type} from '@angular/core';
 
 import {RestMiddleware} from './rest.interface';
-import {ReportProgressMiddleware, ResponseTypeMiddleware, IgnoredInterceptorsMiddleware, ResponseTransformMiddleware, AdditionalDataMiddleware, ProducesMiddleware, BodyParameterMiddleware, PathParameterMiddleware, QueryObjectParameterMiddleware, QueryParameterMiddleware, HeaderParameterMiddleware, HeadersMiddleware} from './middlewares';
+import {ReportProgressMiddleware, ResponseTypeMiddleware, IgnoredInterceptorsMiddleware, ResponseTransformMiddleware, AdditionalDataMiddleware, ProducesMiddleware, BodyParameterMiddleware, PathParameterMiddleware, QueryObjectParameterMiddleware, QueryParameterMiddleware, HeaderParameterMiddleware, HeadersMiddleware, CacheMiddleware} from './middlewares';
 
 /**
  * Definition of basic default array of rest middlewares order
@@ -19,6 +19,7 @@ export const BASIC_DEFAULT_REST_MIDDLEWARES_ORDER: Type<RestMiddleware>[] =
     IgnoredInterceptorsMiddleware,
     ResponseTransformMiddleware,
     ResponseTypeMiddleware,
+    CacheMiddleware,
     ReportProgressMiddleware
 ];
 
