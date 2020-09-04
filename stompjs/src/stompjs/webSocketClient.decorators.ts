@@ -1,6 +1,5 @@
 import {StompConfig} from "@stomp/stompjs";
-import {isBlank, isPresent, isFunction, extend} from "@jscrpt/common";
-import {ParameterTransform as ParameterTransformRest} from '@anglr/rest';
+import {isBlank, isPresent, isFunction, extend, isJsObject} from "@jscrpt/common";
 
 import {WebSocketClient} from "./webSocketClient";
 import {WebSocketClientPublic, SubscribeMetadata, WebSocketClientOptions} from "./webSocketClient.interface.internal";
@@ -275,9 +274,25 @@ export function ParameterTransform(methodName?: string)
 {
     return function(target: WebSocketClient, propertyKey: string, parameterIndex: number)
     {
-        return ParameterTransformRest(methodName)(target as any, propertyKey, parameterIndex);
+        if(isBlank(methodName))
+        {
+            methodName = `${propertyKey}ParameterTransform`;
+        }
+        
+        if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
+        {
+            let func = target[methodName!];
+            let metadataKey = `${propertyKey}_ParameterTransforms`;
+            
+            if (!isPresent(target[metadataKey]) || !isJsObject(target[metadataKey]))
+            {
+                target[metadataKey] = {};
+            }
+            
+            target[metadataKey][parameterIndex] = func;
+        }
     };
-};
+}
 
 /**
  * Creates param decorator using name of parameter to be created
