@@ -1,9 +1,13 @@
 # Changelog
 
-## Version 8.0.0 (2020-10-12)
+## Version 8.0.0 (2020-12-09)
 
 ### Features
 
+- added *subpackage* `@anglr/rest/moment`
+- package `@anglr/rest/moment`
+    - added new `MomentRestDateApi` as `RestDateApi` implementation using moment js
+    - added new `MOMENT_REST_DATE_API` as provider for `REST_DATE_API` using moment js implementation
 - added *subpackage* `@anglr/rest/avsc`
 - package `@anglr/rest/avsc`
     - you need to have avro schemas available to make it working
@@ -18,6 +22,9 @@
         - `customAcceptContentTypeHeader` - value passed to custom Accept header and Content-Type header
     - added new `AvroRequestType`, `AvroResponseType`, `AvroRequestObj`, `AvroResponseObj` interfaces which enables easier definition of *additional data* available in interceptor
     - added new `AvroAdapterInterceptor` interceptor, which allows AVRO request and response processing, it works together with `AvroRequest`, `AvroResponse` decorators which tells this interceptor that request or response should be processed and provides information about type
+- added new `RestDateApi` used for working with date types in rest
+- added new `QueryStringSerializer` which is used for serialization of objects into *query string*
+- added new `REST_DATE_API` injection token used for injecting RestDateApi implementation
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 - added new `AcceptAny` decorator, which sets `Accept` http header to `*/*`
 - added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
@@ -76,6 +83,8 @@
 - minimal supported version of `@jscrpt/common` is `1.2.0`
 - minimal supported version of `@anglr/common` is `8.0.0`
 - minimal supported version of `crypto-js` is `4.0.0`
+- removed `jquery-param` as dependency
+- added new dependency `moment` for `@anglr/rest/moment`
 - changed response type for `getDefaultHeaders` method of `RESTClient`
 - completely refactored library and how it works
 - changed signature of `responseInterceptor` method of `RESTClient`, `Observable` now must return `HttpEvent`

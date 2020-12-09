@@ -1,8 +1,13 @@
 import {HttpRequest, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import param from 'jquery-param';
+import {QueryStringSerializer} from '../queryStringSerializer';
 
 import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+
+interface ɵQueryStringSerializer
+{
+    ɵQueryStringSerializer?: QueryStringSerializer;
+}
 
 /**
  * Middleware that is used for adding query string from query object
@@ -22,7 +27,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: ɵRESTClient & ɵQueryStringSerializer,
                _id: string,
                target: RestParameters,
                methodName: string,
@@ -32,6 +37,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
         let parameters = target.parameters;
+        this.ɵQueryStringSerializer = this.ɵQueryStringSerializer ?? this.injector.get(QueryStringSerializer);
 
         let pQueryObject: KeyIndex[] = null;
         let pTransforms: ParametersTransformsObj = null;
@@ -45,6 +51,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
         if (pQueryObject)
         {
             let queryString: string = "";
+            let queryStrings: string[] = [];
 
             pQueryObject
                 .filter(p => args[p.parameterIndex]) // filter out optional parameters
@@ -57,20 +64,10 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
                         value = pTransforms[p.parameterIndex].bind(this)(value);
                     }
 
-                    // if the value is a instance of Object, we stringify it
-                    if (value instanceof Object)
-                    {
-                        queryString += (queryString.length > 0 ? "&" : "") + param(value)
-                            .replace(/&&/g, "&")
-                            .replace(/%5B%5D/g, "")
-                            .replace(/%5D/g, "")
-                            .replace(/%5B/g, ".")
-                            .replace(/\.(\d+)\./g, "%5B$1%5D.");
-                    }
+                    queryStrings.push(this.ɵQueryStringSerializer.serializeObject(value));
                 });
 
-            queryString = queryString.replace(/\w+=(&|$)/g, "")
-                                     .replace(/(&|\?)$/g, "");
+            queryString = queryStrings.join('&');
 
             let params: HttpParams = new HttpParams({fromString: queryString});
             let requestParams: HttpParams = request.params;

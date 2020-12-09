@@ -305,3 +305,21 @@ export interface BuildMiddlewaresFn
      */
     (this: ɵRestMethod, middlewares: Type<RestMiddleware>[], middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
 }
+
+/**
+ * Definition of RestDateApi used for testing whether value is date and for serialization
+ */
+export interface RestDateApi<TDate = any>
+{
+    /**
+     * Tests whether provided value is date
+     * @param value - Value to be tested
+     */
+    isDate(value: any): value is TDate|Date;
+
+    /**
+     * Serialize date into string representation of date
+     * @param value - Value to be serialized
+     */
+    toString(value: TDate|Date): string;
+}
