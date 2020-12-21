@@ -12,3 +12,4 @@ export * from './reportProgress.decorator';
 export * from './responseTransform.decorator';
 export * from './acceptAny.decorator';
 export * from './cache.decorator';
+export * from './textContentType.decorator';

@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2020-12-09)
+## Version 8.0.0 (2020-12-21)
 
 ### Features
 
@@ -27,6 +27,7 @@
 - added new `REST_DATE_API` injection token used for injecting RestDateApi implementation
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 - added new `AcceptAny` decorator, which sets `Accept` http header to `*/*`
+- added new `TextContentType` decorator, which sets `Content-Type` http header to `text/plain`
 - added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
 - added new `REST_METHOD_MIDDLEWARES` injection token used for injecting array of rest middleware types that defines order of rest middlewares
 - added new `REST_MIDDLEWARES_ORDER` injection token used for injecting array of rest middleware types that are default for each rest method
