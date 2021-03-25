@@ -1,0 +1,8 @@
+{
+    "name": "@anglr/rest-date-fns",
+    "module": "./dist/es5/date-fns/index.js",
+    "esm2015": "./dist/es2015/date-fns/index.js",
+    "esm5": "./dist/es5/date-fns/index.js",
+    "typings": "./index.d.ts",
+    "sideEffects": false
+}

@@ -7,12 +7,13 @@
     "typings": "./rest.d.ts",
     "sideEffects": false,
     "scripts": {
-        "build": "npm run build:rest && npm run build:stompjs && npm run build:avsc && npm run build:moment",
+        "build": "npm run build:rest && npm run build:stompjs && npm run build:avsc && npm run build:moment && npm run build:date-fns",
         "build:rest": "ngc -p tsconfig.es5.json && ngc -p tsconfig.es2015.json",
         "build:stompjs": "ngc -p stompjs/tsconfig.es5.json && ngc -p stompjs/tsconfig.es2015.json",
         "build:avsc": "ngc -p avsc/tsconfig.es5.json && ngc -p avsc/tsconfig.es2015.json",
         "build:moment": "ngc -p moment/tsconfig.es5.json && ngc -p moment/tsconfig.es2015.json",
-        "clean": "rimraf dist tests **/tsdoc-metadata.json src/**/*.d.ts src/**/*.d.ts.map stompjs/**/*.d.ts stompjs/**/*.d.ts.map avsc/**/*.d.ts avsc/**/*.d.ts.map moment/**/*.d.ts moment/**/*.d.ts.map */*.metadata.json ./*.metadata.json ./*.d.ts ./*d.ts.map */dist",
+        "build:date-fns": "ngc -p date-fns/tsconfig.es5.json && ngc -p date-fns/tsconfig.es2015.json",
+        "clean": "rimraf dist tests **/tsdoc-metadata.json src/**/*.d.ts src/**/*.d.ts.map stompjs/**/*.d.ts stompjs/**/*.d.ts.map avsc/**/*.d.ts avsc/**/*.d.ts.map moment/**/*.d.ts moment/**/*.d.ts.map date-fns/**/*.d.ts date-fns/**/*.d.ts.map */*.metadata.json ./*.metadata.json ./*.d.ts ./*d.ts.map */dist",
         "clean:duplicates": "rimraf */dist/*/src",
         "clean:deps": "rimraf package-lock.json node_modules",
         "clean:all": "npm run clean && npm run clean:deps",
@@ -26,7 +27,7 @@
         "deploy": "npm publish --loglevel error",
         "deploy:next": "npm publish --tag next --loglevel error",
         "doc": "path-exists docs && npm run doc:generate || echo \"No docs generated!\"",
-        "doc:generate": "npm run doc:generate:rest && npm run doc:generate:stompjs && npm run doc:generate:avsc && npm run doc:generate:moment",
+        "doc:generate": "npm run doc:generate:rest && npm run doc:generate:stompjs && npm run doc:generate:avsc && npm run doc:generate:moment && npm run doc:generate:date-fns",
         "doc:save": "cd docs && git add . && git commit -m \"INT: updated API docs ng-rest\" && git push && cd ..",
         "doc:generate:rest": "rimraf docs/content/api/ng-rest && npm run doc:json:rest && npm run doc:md:rest",
         "doc:json:rest": "api-extractor run --local --verbose",
@@ -39,7 +40,10 @@
         "doc:md:avsc": "api-documenter markdown -i avsc/temp -o docs/content/api/ng-rest-avsc && rimraf avsc/temp",
         "doc:generate:moment": "rimraf docs/content/api/ng-rest-moment && npm run doc:json:moment && npm run doc:md:moment",
         "doc:json:moment": "api-extractor run --local --verbose -c moment/api-extractor.json",
-        "doc:md:moment": "api-documenter markdown -i moment/temp -o docs/content/api/ng-rest-moment && rimraf moment/temp"
+        "doc:md:moment": "api-documenter markdown -i moment/temp -o docs/content/api/ng-rest-moment && rimraf moment/temp",
+        "doc:generate:date-fns": "rimraf docs/content/api/ng-rest-date-fns && npm run doc:json:date-fns && npm run doc:md:date-fns",
+        "doc:json:date-fns": "api-extractor run --local --verbose -c date-fns/api-extractor.json",
+        "doc:md:date-fns": "api-documenter markdown -i date-fns/temp -o docs/content/api/ng-rest-date-fns && rimraf date-fns/temp"
     },
     "repository": {
         "type": "git",
@@ -59,6 +63,7 @@
         "@anglr/common": ">=8.0.0-beta",
         "crypto-js": "^4.0.0",
         "moment": "^2.29.1",
+        "date-fns": "^2.19.0",
         "@stomp/stompjs": "^5.4.2",
         "sockjs-client": "^1.3.0",
         "avsc": "^5.4.21"
@@ -71,6 +76,7 @@
         "@jscrpt/common": ">=1.2.0-beta.20201113143549",
         "@anglr/common": ">=8.0.0-beta.20200818063648",
         "moment": "^2.29.1",
+        "date-fns": "^2.19.0",
         "avsc": "^5.4.21",
         "@anglr/types": "1.1.18",
         "@types/node": "11.11.1",

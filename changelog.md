@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2020-12-21)
+## Version 8.0.0 (2021-03-25)
 
 ### Features
 
@@ -8,6 +8,10 @@
 - package `@anglr/rest/moment`
     - added new `MomentRestDateApi` as `RestDateApi` implementation using moment js
     - added new `MOMENT_REST_DATE_API` as provider for `REST_DATE_API` using moment js implementation
+- added *subpackage* `@anglr/rest/date-fns`
+- package `@anglr/rest/date-fns`
+    - added new `DateFnsRestDateApi` as `RestDateApi` implementation using date-fns
+    - added new `DATE_FNS_REST_DATE_API` as provider for `REST_DATE_API` using date-fns implementation
 - added *subpackage* `@anglr/rest/avsc`
 - package `@anglr/rest/avsc`
     - you need to have avro schemas available to make it working
