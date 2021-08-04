@@ -8,7 +8,11 @@ Angular HTTP client to consume RESTful services. Built on `@angular/http` with T
 - [Description](#description)
 - [Installation](#installation)
 - [Usage](#usage)
-- [API](#api)
+- [API](https://ressurectit.github.io/#/content/api/ng-rest/rest)
+- [API AVSC](https://ressurectit.github.io/#/content/api/ng-rest-avsc/rest-avsc)
+- [API Date FNS](https://ressurectit.github.io/#/content/api/ng-rest-date-fns/rest-date-fns)
+- [API Moment](https://ressurectit.github.io/#/content/api/ng-rest-moment/rest-moment)
+- [API StompJs](https://ressurectit.github.io/#/content/api/ng-rest-stompjs/rest-stompjs)
 
 ## Description
 
