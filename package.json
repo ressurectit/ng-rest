@@ -27,7 +27,7 @@
         "deploy": "npm publish --loglevel error",
         "deploy:next": "npm publish --tag next --loglevel error",
         "doc": "path-exists docs && npm run doc:generate || echo \"No docs generated!\"",
-        "doc:generate": "npm run doc:generate:rest && npm run doc:generate:stompjs && npm run doc:generate:avsc && npm run doc:generate:moment && npm run doc:generate:date-fns",
+        "doc:generate": "npm run doc:generate:rest && npm run doc:generate:stompjs && npm run doc:generate:avsc && npm run doc:generate:moment && npm run doc:generate:date-fns && npm run doc:save",
         "doc:save": "cd docs && git add . && git commit -m \"INT: updated API docs ng-rest\" && git push && cd ..",
         "doc:generate:rest": "rimraf docs/content/api/ng-rest && npm run doc:json:rest && npm run doc:md:rest",
         "doc:json:rest": "api-extractor run --local --verbose",
