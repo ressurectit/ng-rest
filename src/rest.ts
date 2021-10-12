@@ -1,5 +1,5 @@
 export {ResponseType, LocationHeaderAndJsonResponse, LocationHeaderResponse, BlobAndFilenameResponse} from './rest/responseType';
-export {DELETE, GET, HEAD, POST, PUT, RESTClient} from './rest/common';
+export {DELETE, GET, HEAD, POST, PUT, PATCH, RESTClient} from './rest/common';
 export {RestTransferStateService} from './transferState/restTransferState.service';
 export {AdditionalInfoPropertyDescriptor, ParametersMetadata, RestCaching, RestDisabledInterceptors, RestFullHttpResponse, RestHttpHeaders, RestMethod, RestParameters, RestReportProgress, RestResponseTransform, RestResponseType, KeyIndex, ParametersTransformMetadata, RestMiddleware, RestMiddlewareRunMethod, ɵRESTClient, RestMethodMiddlewares, NotType, BuildMiddlewaresFn, ParametersMiddlewaresMetadata, ParametersTransformsObj, RestDateApi} from './rest/rest.interface';
 export {HTTP_HEADER_ACCEPT, HTTP_HEADER_CONTENT_TYPE} from './rest/constants';
