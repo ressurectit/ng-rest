@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2021-03-25)
+## Version 8.0.0 (2021-10-12)
 
 ### Features
 
@@ -47,6 +47,7 @@
 - added new `getType` function that gets underlying `Type` for `Type` and `NotType`
 - added new `isNotType` function that gets indication whether is provided `Type` of `NotType`
 - added new `ParametersTransformsObj` interface that defines object for parameter transforms
+- added new decorator `PATCH` allowin to create *PATCH* http method builder
 - *response transform* now also gets input *arguments*
 - added new types that are used for helping working with metadata stored in *Descriptor*
     - `RestHttpHeaders` - contains additional headers that will be added

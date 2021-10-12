@@ -290,3 +290,9 @@ export var DELETE = methodBuilder("DELETE");
  * @param url - resource url of the method
  */
 export var HEAD = methodBuilder("HEAD");
+
+/**
+ * PATCH method
+ * @param url - resource url of the method
+ */
+export var PATCH = methodBuilder("PATCH");
