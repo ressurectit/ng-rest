@@ -15,6 +15,22 @@ import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 // @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
 
 /**
+ * Function that is used as response transform function
+ */
+export interface ResponseTransformFunc
+{
+    (this: RESTClient, response: Observable<any>, ...args: any[]): Observable<any>;
+}
+
+/**
+ * Function that is used as parameter transform function
+ */
+export interface ParameterTransformFunc
+{
+    (this: RESTClient, response: any): any;
+}
+
+/**
  * Angular RESTClient base class.
  */
 @Injectable()
