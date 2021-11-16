@@ -1,5 +1,5 @@
 import {HttpRequest} from '@angular/common/http';
-import {Dictionary} from '@jscrpt/common';
+import {StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
@@ -45,7 +45,7 @@ export class HeaderParameterMiddleware implements RestMiddleware
 
         if (pHeader)
         {
-            let headers: Dictionary = {};
+            let headers: StringDictionary = {};
 
             for (var k in pHeader)
             {

@@ -1,5 +1,5 @@
 import {HttpRequest} from '@angular/common/http';
-import {Dictionary} from '@jscrpt/common';
+import {StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
@@ -42,7 +42,7 @@ export class QueryParameterMiddleware implements RestMiddleware
             pTransforms = parameters[methodName]?.transforms;
         }
 
-        let params: Dictionary = {};
+        let params: StringDictionary = {};
 
         if (pQuery)
         {

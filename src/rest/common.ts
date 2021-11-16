@@ -17,17 +17,17 @@ import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 /**
  * Function that is used as response transform function
  */
-export interface ResponseTransformFunc
+export interface ResponseTransformFunc<TResponse = any, TTransformedResponse = TResponse>
 {
-    (this: RESTClient, response: Observable<any>, ...args: any[]): Observable<any>;
+    (this: RESTClient, response: Observable<TResponse>, ...args: any[]): Observable<TTransformedResponse>;
 }
 
 /**
  * Function that is used as parameter transform function
  */
-export interface ParameterTransformFunc
+export interface ParameterTransformFunc<TData = any, TTransformedData = TData>
 {
-    (this: RESTClient, response: any): any;
+    (this: RESTClient, data: TData): TTransformedData;
 }
 
 /**

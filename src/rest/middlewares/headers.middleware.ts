@@ -1,5 +1,5 @@
 import {HttpRequest} from '@angular/common/http';
-import {isBlank, Dictionary} from '@jscrpt/common';
+import {isBlank, StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestHttpHeaders} from '../rest.interface';
@@ -36,7 +36,7 @@ export class HeadersMiddleware implements RestMiddleware
             return next(request);
         }
 
-        let headers: Dictionary = {};
+        let headers: StringDictionary = {};
         
         // set method specific headers
         for (let k in descriptor.headers)

@@ -5,6 +5,7 @@ import {StringDictionary, Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {ResponseType} from './responseType';
+import type {ParameterTransformFunc, ResponseTransformFunc} from '../rest/common';
 
 /**
  * Type indicates that it should be removed from array
@@ -70,7 +71,7 @@ export interface RestResponseTransform extends TypedPropertyDescriptor<any>
     /**
      * Response transform function
      */
-    responseTransform?: Function;
+    responseTransform?: ResponseTransformFunc;
 }
 
 /**
@@ -191,7 +192,7 @@ export interface ParametersMetadata
  */
 export interface ParametersTransformsObj
 {
-    [parameterIndex: number]: <TData = any, TRansformedData = TData>(data: TData) => TRansformedData;
+    [parameterIndex: number]: ParameterTransformFunc;
 }
 
 /**
