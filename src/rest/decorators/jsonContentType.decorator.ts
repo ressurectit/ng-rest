@@ -12,7 +12,7 @@ export function JsonContentType()
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
                                                                            RestMethodMiddlewares)
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, {"content-type": "application/json"});
+        descriptor.headers = extend(descriptor.headers ?? {}, {'content-type': 'application/json'});
         descriptor.middlewareTypes.push(HeadersMiddleware);
 
         return descriptor;

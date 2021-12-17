@@ -30,7 +30,7 @@ export class BodyParameterMiddleware implements RestMiddleware
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        let parameters = target.parameters;
+        const parameters = target.parameters;
 
         let pBody: KeyIndex[] = null;
         let pTransforms: ParametersTransformsObj = null;

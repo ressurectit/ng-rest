@@ -1,14 +1,14 @@
-import {Injector} from "@angular/core";
-import {generateId, extend, isPresent} from "@jscrpt/common";
-import {Logger} from "@anglr/common";
-import {Client} from "@stomp/stompjs";
-import {ReplaySubject, MonoTypeOperatorFunction, Observable} from "rxjs";
-import {tap} from "rxjs/operators";
+import {Injector} from '@angular/core';
+import {Logger} from '@anglr/common';
+import {generateId, extend, isPresent} from '@jscrpt/common';
+import {Client} from '@stomp/stompjs';
+import {tap} from 'rxjs/operators';
+import {ReplaySubject, MonoTypeOperatorFunction, Observable} from 'rxjs';
 
-import {WebSocketClientResponse, StatusQueueResponse, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware} from "./webSocketClient.interface";
-import {WebSocketClientResponseOptions, SubscriptionMetadata, WebSocketClientOptions} from "./webSocketClient.interface.internal";
-import {RequestType, QueueCorrelationPosition} from "./webSocketClient.types";
-import {getCache, storeToCache} from "./webSocketClinet.cache";
+import {WebSocketClientResponse, StatusQueueResponse, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware} from './webSocketClient.interface';
+import {WebSocketClientResponseOptions, SubscriptionMetadata, WebSocketClientOptions} from './webSocketClient.interface.internal';
+import {RequestType, QueueCorrelationPosition} from './webSocketClient.types';
+import {getCache, storeToCache} from './webSocketClinet.cache';
 
 const DEFAULT_STATUS_MAPPING = (value: any) => value;
 
@@ -93,7 +93,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
         }
 
         this._published = true;
-        let options = this._getOptions(this._options.options);
+        const options = this._getOptions(this._options.options);
         let body = this._options.body;
 
         if(options.cacheResponse)
@@ -113,7 +113,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
 
         if(options.cacheResponse)
         {
-            let cache = getCache(this._cacheKey);
+            const cache = getCache(this._cacheKey);
 
             if(cache)
             {
@@ -145,7 +145,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
 
             Object.keys(this._outputMetadata).forEach(name =>
             {
-                let metadata = this._outputMetadata[name];
+                const metadata = this._outputMetadata[name];
 
                 if(metadata.subscription)
                 {
@@ -170,7 +170,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
     {
         Object.keys(this._options.subscribe).forEach(name =>
         {
-            let subject = new ReplaySubject<any>();
+            const subject = new ReplaySubject<any>();
 
             this.output[name] = subject
                 .asObservable()
@@ -182,15 +182,15 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
             };
         });
 
-        let publishOptions = this._getOptions(this._options.options);
+        const publishOptions = this._getOptions(this._options.options);
 
         await this._active;
 
         Object.keys(this._options.subscribe).forEach(name =>
         {
-            let metadata = this._options.subscribe[name];
-            let outputMetadata = this._outputMetadata[name];
-            let options = this._getOptions(metadata.options);
+            const metadata = this._options.subscribe[name];
+            const outputMetadata = this._outputMetadata[name];
+            const options = this._getOptions(metadata.options);
 
             outputMetadata.subscription = this._wsClient.subscribe(this._generateQueuePublishUrl(options.subscribeQueuePrefix, metadata.queueName, options), data =>
             {
@@ -217,7 +217,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
                         statusData = {};
                     }
 
-                    let status: StatusQueueResponse = options.statusQueueMapping ? options.statusQueueMapping(statusData) : DEFAULT_STATUS_MAPPING(statusData);
+                    const status: StatusQueueResponse = options.statusQueueMapping ? options.statusQueueMapping(statusData) : DEFAULT_STATUS_MAPPING(statusData);
                     // status.original = data;
 
                     this._handleStatusMiddlewares.forEach(middleware =>
@@ -278,7 +278,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
      */
     private _generateSuffix(options: WebSocketClientOptions): string
     {
-        let suffix = "";
+        let suffix = '';
 
         if(options.sessionIdSuffix)
         {
@@ -308,9 +308,9 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
      */
     private _handleResult: (name: string) => MonoTypeOperatorFunction<any> = name =>
     {
-        let metadata = this._options.subscribe[name];
-        let options = this._getOptions(metadata.options);
-        let publishOptions = jsDevMode && this._getOptions(this._options.options);
+        const metadata = this._options.subscribe[name];
+        const options = this._getOptions(metadata.options);
+        const publishOptions = jsDevMode && this._getOptions(this._options.options);
 
         return (source: Observable<any>) =>
         {

@@ -11,7 +11,7 @@ function paramBuilder(paramName: keyof ParametersMetadata, middleware: Type<Rest
     {
         return function(target: RESTClient & RestParameters, propertyKey: string, parameterIndex: number)
         {
-            let paramObj: KeyIndex =
+            const paramObj: KeyIndex =
             {
                 key: key,
                 parameterIndex: parameterIndex

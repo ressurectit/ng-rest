@@ -33,7 +33,7 @@ export class ResponseTypeMiddleware implements RestMiddleware
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        let responseType = descriptor.responseType ?? ResponseType.Json;
+        const responseType = descriptor.responseType ?? ResponseType.Json;
         let observable = next(request);
 
         // transform the obserable in accordance to the @Produces decorator
@@ -56,8 +56,8 @@ export class ResponseTypeMiddleware implements RestMiddleware
                 {
                     observable = observable.pipe(map((res: HttpResponse<any>) =>
                     {
-                        let contentDisposition = res.headers.get("content-disposition");
-                        let filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
+                        const contentDisposition = res.headers.get("content-disposition");
+                        const filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
 
                         return <any>{
                             filename: filename,
@@ -71,9 +71,9 @@ export class ResponseTypeMiddleware implements RestMiddleware
                 {
                     observable = observable!.pipe(map((res: HttpResponse<any>) =>
                     {
-                        let headerValue = res.headers.get("location");
-                        let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                        let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+                        const headerValue = res.headers.get("location");
+                        const baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
+                        const url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
                         return <any>{
                             location: headerValue,
@@ -87,9 +87,9 @@ export class ResponseTypeMiddleware implements RestMiddleware
                 {
                     observable = observable!.pipe(map((res: HttpResponse<any>) =>
                     {
-                        let headerValue = res.headers.get("location");
-                        let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                        let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+                        const headerValue = res.headers.get("location");
+                        const baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
+                        const url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
                         return <any>{
                             location: headerValue,

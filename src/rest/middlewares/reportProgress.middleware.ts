@@ -1,7 +1,7 @@
-import {AdditionalInfo} from '@anglr/common';
 import {HttpRequest, HttpEventType} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {AdditionalInfo} from '@anglr/common';
 import {filter} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 import {RestMiddleware, ɵRESTClient, RestReportProgress} from '../rest.interface';
 

@@ -1,7 +1,7 @@
 import {HttpRequest, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {QueryStringSerializer} from '../queryStringSerializer';
 
+import {QueryStringSerializer} from '../queryStringSerializer';
 import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 interface ɵQueryStringSerializer
@@ -36,7 +36,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        let parameters = target.parameters;
+        const parameters = target.parameters;
         this.ɵQueryStringSerializer = this.ɵQueryStringSerializer ?? this.injector.get(QueryStringSerializer);
 
         let pQueryObject: KeyIndex[] = null;
@@ -51,7 +51,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
         if (pQueryObject)
         {
             let queryString: string = "";
-            let queryStrings: string[] = [];
+            const queryStrings: string[] = [];
 
             pQueryObject
                 .filter(p => args[p.parameterIndex]) // filter out optional parameters
@@ -69,12 +69,12 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
 
             queryString = queryStrings.join('&');
 
-            let params: HttpParams = new HttpParams({fromString: queryString});
+            const params: HttpParams = new HttpParams({fromString: queryString});
             let requestParams: HttpParams = request.params;
 
             params.keys().forEach(key =>
             {
-                let newValues = params.getAll(key);
+                const newValues = params.getAll(key);
 
                 newValues.forEach((value, index) =>
                 {

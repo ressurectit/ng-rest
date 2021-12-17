@@ -7,7 +7,7 @@ import {CacheMiddleware} from '../middlewares';
 
 //Object storing response cache itself
 //It caches request urls to response data
-var responseCache: {[key: string]: HttpResponse<any>} = {};
+const responseCache: {[key: string]: HttpResponse<any>} = {};
 
 /**
  * Results of requests are cached in javascript memory

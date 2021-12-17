@@ -31,7 +31,7 @@ export class HeaderParameterMiddleware implements RestMiddleware
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        let parameters = target.parameters;
+        const parameters = target.parameters;
 
         let pHeader: KeyIndex[] = null;
         //TODO: add support for param transform
@@ -45,7 +45,7 @@ export class HeaderParameterMiddleware implements RestMiddleware
 
         if (pHeader)
         {
-            let headers: StringDictionary = {};
+            const headers: StringDictionary = {};
 
             for (var k in pHeader)
             {

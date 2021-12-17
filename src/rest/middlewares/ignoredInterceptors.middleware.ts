@@ -53,7 +53,7 @@ export class IgnoredInterceptorsMiddleware implements RestMiddleware
             this.ɵIgnoredInterceptorsService.addInterceptor(interceptorType, request.additionalInfo);
         });
 
-        let clear = () => this.ɵIgnoredInterceptorsService.clear();
+        const clear = () => this.ɵIgnoredInterceptorsService.clear();
 
         return next(request)
             .pipe(tap(clear, clear, clear));

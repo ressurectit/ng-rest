@@ -1,8 +1,8 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpRequest, HttpEvent} from '@angular/common/http';
-import {isBlank, isFunction, generateId} from '@jscrpt/common';
 import {HTTP_REQUEST_BASE_URL} from '@anglr/common';
-import {Observable} from "rxjs";
+import {isBlank, isFunction, generateId} from '@jscrpt/common';
+import {Observable} from 'rxjs';
 
 import {RestMethod, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware, BuildMiddlewaresFn} from './rest.interface';
 import {buildMiddlewares} from './utils';
@@ -44,7 +44,7 @@ export abstract class RESTClient
     {
         if(isBlank(baseUrl))
         {
-            this.baseUrl = "";
+            this.baseUrl = '';
         }
     }
 
@@ -53,7 +53,7 @@ export abstract class RESTClient
      */
     protected getBaseUrl(): string
     {
-        return "";
+        return '';
     };
 
     /**
@@ -281,34 +281,34 @@ function methodBuilder(method: string)
  * GET method
  * @param url - resource url of the method
  */
-export var GET = methodBuilder("GET");
+export var GET = methodBuilder('GET');
 
 /**
  * POST method
  * @param url - resource url of the method
  */
-export var POST = methodBuilder("POST");
+export var POST = methodBuilder('POST');
 
 /**
  * PUT method
  * @param url - resource url of the method
  */
-export var PUT = methodBuilder("PUT");
+export var PUT = methodBuilder('PUT');
 
 /**
  * DELETE method
  * @param url - resource url of the method
  */
-export var DELETE = methodBuilder("DELETE");
+export var DELETE = methodBuilder('DELETE');
 
 /**
  * HEAD method
  * @param url - resource url of the method
  */
-export var HEAD = methodBuilder("HEAD");
+export var HEAD = methodBuilder('HEAD');
 
 /**
  * PATCH method
  * @param url - resource url of the method
  */
-export var PATCH = methodBuilder("PATCH");
+export var PATCH = methodBuilder('PATCH');

@@ -1,6 +1,6 @@
-import {IMessage} from "@stomp/stompjs";
+import {IMessage} from '@stomp/stompjs';
 
-import {SubscriptionMetadata} from "./webSocketClient.interface.internal";
+import {SubscriptionMetadata} from './webSocketClient.interface.internal';
 
 /**
  * Cache for current connection

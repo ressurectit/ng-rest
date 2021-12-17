@@ -12,7 +12,7 @@ export function AcceptAny()
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
                                                                            RestMethodMiddlewares)
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, {"accept": "*/*"});
+        descriptor.headers = extend(descriptor.headers ?? {}, {'accept': '*/*'});
         descriptor.middlewareTypes.push(HeadersMiddleware);
 
         return descriptor;

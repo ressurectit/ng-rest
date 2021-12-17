@@ -1,14 +1,14 @@
-import {ValueProvider, FactoryProvider, Injector} from "@angular/core";
-import {HttpHeaders, HttpErrorResponse} from "@angular/common/http";
-import {isPresent} from "@jscrpt/common";
-import {Logger, LOGGER, ProgressIndicatorService} from "@anglr/common";
-import {IMessage} from "@stomp/stompjs";
-import {Observable} from "rxjs";
-import {map, filter} from "rxjs/operators";
+import {ValueProvider, FactoryProvider, Injector} from '@angular/core';
+import {HttpHeaders, HttpErrorResponse} from '@angular/common/http';
+import {Logger, LOGGER, ProgressIndicatorService} from '@anglr/common';
+import {isPresent} from '@jscrpt/common';
+import {IMessage} from '@stomp/stompjs';
+import {map, filter} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
-import {DEFAULT_WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, ResponseType, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE, DEFAULT_WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from "./webSocketClient.types";
-import {SubscribeMetadataData, SubscriptionMetadataData} from "./webSocketClient.interface.internal";
-import {SubscribeQueueOptions, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware, StatusQueueResponse, PublishQueueOptions} from "./webSocketClient.interface";
+import {DEFAULT_WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, ResponseType, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE, DEFAULT_WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from './webSocketClient.types';
+import {SubscribeMetadataData, SubscriptionMetadataData} from './webSocketClient.interface.internal';
+import {SubscribeQueueOptions, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware, StatusQueueResponse, PublishQueueOptions} from './webSocketClient.interface';
 
 /**
  * Factory function for creating WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE
@@ -115,19 +115,19 @@ export function WebSocketHandleStatusProgressIndicator(status: StatusQueueRespon
     let logger: Logger = injector.get(LOGGER);
     let progressIndicator: ProgressIndicatorService = injector.get(ProgressIndicatorService);
 
-    if(status.code == "REGISTER")
+    if(status.code == 'REGISTER')
     {
         logger.verbose(`WebSocket: show progress indicator '${status.queue}'`);
         progressIndicator.showProgress();
     }
 
-    if(status.queue == "status" && status.code != "REGISTER" && status.code != "FINAL")
+    if(status.queue == 'status' && status.code != 'REGISTER' && status.code != 'FINAL')
     {
         logger.verbose(`WebSocket: progress indicator message '${name}', '${status.queue}', '${status.description}'`);
         progressIndicator.addMessage(status.description);
     }
 
-    if(status.code == "FINAL" || status.httpStatus >= 400)
+    if(status.code == 'FINAL' || status.httpStatus >= 400)
     {
         logger.verbose(`WebSocket: hide progress indicator '${status.queue}'`);
         progressIndicator.hideProgress();

@@ -16,7 +16,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "strict": true,
-        "strictNullChecks": false,
+        "strictNullChecks": true,
         "esModuleInterop": true,
         "importHelpers": true,
         "newLine": "lf",
@@ -25,11 +25,7 @@
         "baseUrl": "src",
         "paths": 
         {
-            "@anglr/common": ["index.ts"],
-            "@anglr/common/forms": ["../forms/src/index.ts"],
-            "structured-log" : ["../structured-log/src/types/structured-log.typings.ts"],
-            "positions" : ["../positions/src/types/positions.typings.ts"],
-            "store/plugins/expire" : ["../store/src/types/store.typings.ts"],
+            "@anglr/rest": ["index.ts"]
         },
         "lib":
         [

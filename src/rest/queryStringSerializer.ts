@@ -30,9 +30,9 @@ export class QueryStringSerializer<TDate = any>
             return null;
         }
 
-        let queryParams: string[] = [];
+        const queryParams: string[] = [];
 
-        let switchVal = (key: string, val: any) =>
+        const switchVal = (key: string, val: any) =>
         {
             //ignore empty values
             if(isBlank(val) || isFunction(val))
@@ -67,7 +67,7 @@ export class QueryStringSerializer<TDate = any>
 
         Object.keys(obj).forEach(key =>
         {
-            let val = obj[key];
+            const val = obj[key];
 
             switchVal(key, val);
         });
@@ -81,7 +81,7 @@ export class QueryStringSerializer<TDate = any>
      */
     public serializeObjectToParams(obj: object): HttpParams|null
     {
-        let queryString = this.serializeObject(obj);
+        const queryString = this.serializeObject(obj);
 
         if(isBlank(queryString))
         {

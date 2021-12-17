@@ -37,7 +37,7 @@ export class CacheMiddleware implements RestMiddleware
             return next(request);
         }
 
-        let cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(request);
+        const cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(request);
 
         if (isPresent(cachedResponse))
         {

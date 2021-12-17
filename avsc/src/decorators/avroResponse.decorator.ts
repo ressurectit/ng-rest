@@ -1,6 +1,6 @@
 import {RESTClient, AdditionalInfoPropertyDescriptor, RestMethodMiddlewares, AdditionalDataMiddleware} from '@anglr/rest';
 
-import {AvroResponseType} from '../avsc';
+import {AvroResponseType} from '../interceptors/avroAdapter/avroAdapter.interface';
 
 /**
  * Enables AVRO encoding for response object received in body

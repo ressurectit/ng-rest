@@ -12,14 +12,14 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(th
                                                                               middlewares: Type<RestMiddleware>[],
                                                                               middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
 {
-    let usedMiddlewares: Type<RestMiddleware>[] = [];
+    const usedMiddlewares: Type<RestMiddleware>[] = [];
 
     middlewares
         .filter(middleware => !isNotType(middleware))
         .forEach(middleware =>
         {
-            let type: Type<RestMiddleware> = getType(middleware);
-            let index = middlewaresOrder.indexOf(type);
+            const type: Type<RestMiddleware> = getType(middleware);
+            const index = middlewaresOrder.indexOf(type);
 
             //middleware does not have defined order
             if(index < 0)
@@ -35,8 +35,8 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(th
         .filter(middleware => isNotType(middleware))
         .forEach(middleware =>
         {
-            let type: Type<RestMiddleware> = getType(middleware);
-            let index = usedMiddlewares.indexOf(type);
+            const type: Type<RestMiddleware> = getType(middleware);
+            const index = usedMiddlewares.indexOf(type);
 
             if(index < 0)
             {
@@ -46,7 +46,7 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(th
             usedMiddlewares.splice(index, 1);
         });
 
-    let runMethods: RestMiddlewareRunMethod[] = [];
+    const runMethods: RestMiddlewareRunMethod[] = [];
 
     usedMiddlewares.forEach(middleware =>
     {

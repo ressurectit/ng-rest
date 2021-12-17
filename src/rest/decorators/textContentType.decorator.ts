@@ -12,7 +12,7 @@ export function TextContentType()
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
                                                                            RestMethodMiddlewares)
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, {"content-type": "text/plain"});
+        descriptor.headers = extend(descriptor.headers ?? {}, {'content-type': 'text/plain'});
         descriptor.middlewareTypes.push(HeadersMiddleware);
 
         return descriptor;

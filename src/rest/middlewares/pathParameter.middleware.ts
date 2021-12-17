@@ -31,7 +31,7 @@ export class PathParameterMiddleware implements RestMiddleware
                request: HttpRequest<any>,
                next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        let parameters = target.parameters;
+        const parameters = target.parameters;
 
         let pPath: KeyIndex[] = null;
         let pTransforms: ParametersTransformsObj = null;

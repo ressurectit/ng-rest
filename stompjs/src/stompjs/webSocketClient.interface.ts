@@ -1,9 +1,9 @@
-import {Injector} from "@angular/core";
-import {IFrame} from "@stomp/stompjs";
-import {Observable} from "rxjs";
+import {Injector} from '@angular/core';
+import {IFrame} from '@stomp/stompjs';
+import {Observable} from 'rxjs';
 
-import {SubscribeQueueOptionsInternal, PublishQueueOptionsInternal, SubscribeMetadataData, SubscriptionMetadataData} from "./webSocketClient.interface.internal";
-import {ResponseType, RequestType, QueueCorrelationPosition} from "./webSocketClient.types";
+import {SubscribeQueueOptionsInternal, PublishQueueOptionsInternal, SubscribeMetadataData, SubscriptionMetadataData} from './webSocketClient.interface.internal';
+import {ResponseType, RequestType, QueueCorrelationPosition} from './webSocketClient.types';
 
 /**
  * Types of errors that can occurs in WebSocket StompJs connection
