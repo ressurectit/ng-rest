@@ -13,7 +13,7 @@ export function TextContentType()
                                                                            RestMethodMiddlewares)
     {
         descriptor.headers = extend(descriptor.headers ?? {}, {'content-type': 'text/plain'});
-        descriptor.middlewareTypes.push(HeadersMiddleware);
+        descriptor.middlewareTypes?.push(HeadersMiddleware);
 
         return descriptor;
     };

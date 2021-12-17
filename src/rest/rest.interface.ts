@@ -1,11 +1,10 @@
-import {Type, Injector} from '@angular/core';
-import {HttpRequest, HttpResponse, HttpClient, HttpEvent} from '@angular/common/http';
-import {AdditionalInfo} from '@anglr/common';
+import {Type} from '@angular/core';
+import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {StringDictionary, Dictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import {ResponseType} from './responseType';
-import type {ParameterTransformFunc, ResponseTransformFunc} from '../rest/common';
+import type {ParameterTransformFunc, ResponseTransformFunc, RESTClient} from '../rest/common';
 
 /**
  * Type indicates that it should be removed from array
@@ -19,29 +18,6 @@ export class NotType<TType>
 }
 
 /**
- * Represents private defintion of rest client
- */
-export interface ɵRESTClient
-{
-    http: HttpClient;
-    baseUrl?: string;
-    injector?: Injector;
-    middlewaresOrder?: Type<RestMiddleware>[];
-    methodMiddlewares?: Type<RestMiddleware>[];
-    getBaseUrl(): string;
-    getDefaultHeaders(): string | {[name: string]: string | string[]};
-    requestInterceptor(req: HttpRequest<any>): HttpRequest<any>;
-    responseInterceptor<TBody = any>(res: Observable<HttpEvent<TBody>>): Observable<HttpEvent<any>>;
-}
-
-/**
- * Property descriptor that is used for creating decorators that can pass additional info to method
- */
-export interface AdditionalInfoPropertyDescriptor<TAdditional = any> extends TypedPropertyDescriptor<any>, AdditionalInfo<TAdditional>
-{
-}
-
-/**
  * Contains additional headers that will be added
  */
 export interface RestHttpHeaders extends TypedPropertyDescriptor<any>
@@ -49,7 +25,18 @@ export interface RestHttpHeaders extends TypedPropertyDescriptor<any>
     /**
      * Headers defintion to be added
      */
-    headers?: StringDictionary;
+    headers: StringDictionary;
+}
+
+/**
+ * Contains name of progress indicator group for local progress indicator
+ */
+export interface RestProgressIndicatorGroup extends TypedPropertyDescriptor<any>
+{
+    /**
+     * Name of progress indicator group
+     */
+    groupName: string;
 }
 
 /**
@@ -60,7 +47,7 @@ export interface RestResponseType extends TypedPropertyDescriptor<any>
     /**
      * Response type to be set
      */
-    responseType?: ResponseType;
+    responseType: ResponseType;
 }
 
 /**
@@ -71,7 +58,7 @@ export interface RestResponseTransform extends TypedPropertyDescriptor<any>
     /**
      * Response transform function
      */
-    responseTransform?: ResponseTransformFunc;
+    responseTransform: ResponseTransformFunc;
 }
 
 /**
@@ -241,26 +228,8 @@ export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    (this: ɵRESTClient,
+    (this: RESTClient,
      id: string,
-     target: TTarget,
-     methodName: string,
-     descriptor: TDescriptor,
-     args: any[],
-     request: HttpRequest<TRequestBody>,
-     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<TResponseBody>;
-
-    /**
-     * Runs code that is defined for this rest middleware, in this method you can modify request and response
-     * @param id - Unique id that identifies request method
-     * @param target - Prototype of class that are decorators applied to
-     * @param methodName - Name of method that is being modified
-     * @param descriptor - Descriptor of method that is being modified
-     * @param args - Array of arguments passed to called method
-     * @param request - Http request that you can modify
-     * @param next - Used for calling next middleware with modified request
-     */
-    (id: string,
      target: TTarget,
      methodName: string,
      descriptor: TDescriptor,
@@ -293,18 +262,11 @@ export interface BuildMiddlewaresFn
 {
     /**
      * Builds and returns array of middleware run functions
-     * @param middlewares - Array of set middleware types
-     * @param middlewaresOrder - Array of middleware types in order that should be executed
-     */
-    (middlewares: Type<RestMiddleware>[], middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[];
-
-    /**
-     * Builds and returns array of middleware run functions
      * @param this - Instance of RESTClient
      * @param middlewares - Array of set middleware types
      * @param middlewaresOrder - Array of middleware types in order that should be executed
      */
-    (this: ɵRestMethod, middlewares: Type<RestMiddleware>[], middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
+    (this: RESTClient, middlewares: Type<RestMiddleware>[], middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
 }
 
 /**

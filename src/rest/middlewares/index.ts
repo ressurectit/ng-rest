@@ -12,3 +12,4 @@ export * from './headerParameter.middleware';
 export * from './headers.middleware';
 export * from './cache.middleware';
 export * from './logger.middleware';
+export * from './progressIndicatorGroup.middleware';
