@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2021-11-16)
+## Version 8.0.0 (2021-12-17)
 
 ### Features
 
@@ -87,11 +87,15 @@
 
 ### BREAKING CHANGES
 
-- minimal supported version of *Angular* is `10.0.0`
-- minimal supported version of `@jscrpt/common` is `1.2.0`
+- minimal supported version of *Angular* is `13.1.0`
+- minimal supported version of `@jscrpt/common` is `2.2.0`
 - minimal supported version of `@anglr/common` is `8.0.0`
 - minimal supported version of `crypto-js` is `4.0.0`
 - removed `jquery-param` as dependency
+- compiled as *Angular IVY* **only** with new *APF*
+- removed support of *es5* target and using latest package.json features
+- removed dependency `@anglr/types`, all mising types used directly here
+- dropped support of `Node.js <= 12.20`
 - added new dependency `moment` for `@anglr/rest/moment`
 - changed response type for `getDefaultHeaders` method of `RESTClient`
 - completely refactored library and how it works

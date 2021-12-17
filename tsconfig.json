@@ -1,32 +1,42 @@
 {
     "compilerOptions":
     {
-        "target": "es5",
-        "module": "esnext",
+        "target": "es2020",
+        "module": "es2020",
         "moduleResolution": "node",
+        "sourceMap": true,
+        "inlineSources": true,
         "declaration": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "noImplicitReturns": true,
+        "noImplicitOverride": true,
+        "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "strict": true,
         "strictNullChecks": false,
         "esModuleInterop": true,
-        "lib": 
+        "importHelpers": true,
+        "newLine": "lf",
+        "rootDir": ".",
+        "outDir": "es2020",
+        "baseUrl": "src",
+        "paths": 
+        {
+            "@anglr/common": ["index.ts"],
+            "@anglr/common/forms": ["../forms/src/index.ts"],
+            "structured-log" : ["../structured-log/src/types/structured-log.typings.ts"],
+            "positions" : ["../positions/src/types/positions.typings.ts"],
+            "store/plugins/expire" : ["../store/src/types/store.typings.ts"],
+        },
+        "lib":
         [
-            "es2016", 
+            "es2020",
             "dom"
         ],
-        "types":
-        [
-            "crypto-js"
-        ],
-        "typeRoots": 
-        [
-            "node_modules/@anglr/types"
-        ],
-        "plugins": 
+        "plugins":
         [
             {
                 "name": "@angular/language-service"
@@ -35,14 +45,13 @@
     },
     "exclude":
     [
-        "node_modules",
-        "dist",
-        "karma-test-shim.ts"
+        "node_modules"
     ],
-    "angularCompilerOptions": 
+    "angularCompilerOptions":
     {
-        "fullTemplateTypeCheck": true,
         "strictTemplates": true,
-        "enableIvy": false
+        "compilationMode": "partial",
+        "enableResourceInlining": true,
+        "strictInjectionParameters": true
     }
 }
