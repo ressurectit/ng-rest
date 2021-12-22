@@ -26,7 +26,7 @@ export class WebSocketClientPublishCache
      * @param queue - Name of queue for which is response stored
      * @param response - Response to be stored
      */
-    public addToCache(queue: string, response: IMessage)
+    public addToCache(queue: string, response: IMessage): void
     {
         let responses = this._responses[queue];
 
@@ -43,12 +43,12 @@ export class WebSocketClientPublishCache
      * Replays all responses into output queues
      * @param metadata - Metadata containing subjects
      */
-    public replayResponses(metadata: SubscriptionMetadata)
+    public replayResponses(metadata: SubscriptionMetadata): void
     {
         Object.keys(this._responses).forEach(queue =>
         {
-            let meta = metadata[queue];
-            let responses = this._responses[queue];
+            const meta = metadata[queue];
+            const responses = this._responses[queue];
 
             if(!meta || !responses)
             {

@@ -6,7 +6,7 @@
     "sideEffects": false,
     "scripts": {
         "build": "ngc --declaration --declarationDir . --declarationMap && ngc -t es2015 --outDir es2015 && npm run dts:rollup",
-        "dts:rollup": "npm run api -- api-extractor.json && npm run api -- date-fns/api-extractor.json && npm run api -- forms/api-extractor.json && npm run api -- hmr/api-extractor.json && npm run api -- hotkeys/api-extractor.json && npm run api -- material/api-extractor.json && npm run api -- moment/api-extractor.json && npm run api -- numeral/api-extractor.json && npm run api -- positions/api-extractor.json && npm run api -- router/api-extractor.json && npm run api -- store/api-extractor.json && npm run api -- structured-log/api-extractor.json",
+        "dts:rollup": "npm run api -- api-extractor.json && npm run api -- date-fns/api-extractor.json && npm run api -- avsc/api-extractor.json && npm run api -- stompjs/api-extractor.json && npm run api -- moment/api-extractor.json",
         "api": "api-extractor run --local --verbose -c",
         "clean": "rimraf */temp temp es2015 es2020 **/tsdoc-metadata.json src/**/*.d.ts src/**/*.d.ts.map */src/**/*.d.ts */src/**/*.d.ts.map ./*.d.ts ./*.d.ts.map */*.d.ts",
         "clean:deps": "rimraf package-lock.json node_modules",
@@ -22,24 +22,29 @@
         "deploy:next": "npm publish --tag next --loglevel error",
         "lint": "eslint src/**/*.ts",
         "doc": "path-exists docs && npm run doc:generate || echo \"No docs generated!\"",
+        "predoc:generate": "cd docs && git pull && cd ..",
         "doc:generate": "npm run doc:generate:rest && npm run doc:generate:stompjs && npm run doc:generate:avsc && npm run doc:generate:moment && npm run doc:generate:date-fns && npm run doc:save",
         "doc:save": "cd docs && git add . && git commit -m \"INT: updated API docs ng-rest\" && git push && cd ..",
-        "doc:generate:rest": "rimraf docs/content/api/ng-rest && npm run doc:json:rest && npm run doc:md:rest",
-        "doc:json:rest": "api-extractor run --local --verbose",
-        "doc:md:rest": "api-documenter markdown -i temp -o docs/content/api/ng-rest && rimraf temp",
-        "doc:generate:stompjs": "rimraf docs/content/api/ng-rest-stompjs && npm run doc:json:stompjs && npm run doc:md:stompjs",
+        "doc:generate:rest": "rimraf docs/content/api/ng-rest && npm run doc:json:rest && npm run doc:md:rest && npm run doc:api:rest",
+        "doc:json:rest": "api-extractor run --local --verbose -c api-extractor.json",
+        "doc:md:rest": "api-documenter markdown -i temp -o docs/content/api/ng-rest",
+        "doc:api:rest": "copyfiles -u 1 temp/rest.api.md docs/content/api/ng-rest && rimraf temp",
+        "doc:generate:stompjs": "rimraf docs/content/api/ng-rest-stompjs && npm run doc:json:stompjs && npm run doc:md:stompjs && npm run doc:api:stompjs",
         "doc:json:stompjs": "api-extractor run --local --verbose -c stompjs/api-extractor.json",
-        "doc:md:stompjs": "api-documenter markdown -i stompjs/temp -o docs/content/api/ng-rest-stompjs && rimraf stompjs/temp",
-        "doc:generate:avsc": "rimraf docs/content/api/ng-rest-avsc && npm run doc:json:avsc && npm run doc:md:avsc",
+        "doc:md:stompjs": "api-documenter markdown -i stompjs/temp -o docs/content/api/ng-rest-stompjs",
+        "doc:api:stompjs": "copyfiles -u 2 stompjs/temp/common-stompjs.api.md docs/content/api/ng-common-stompjs && rimraf stompjs/temp",
+        "doc:generate:avsc": "rimraf docs/content/api/ng-rest-avsc && npm run doc:json:avsc && npm run doc:md:avsc && npm run doc:api:avsc",
         "doc:json:avsc": "api-extractor run --local --verbose -c avsc/api-extractor.json",
-        "doc:md:avsc": "api-documenter markdown -i avsc/temp -o docs/content/api/ng-rest-avsc && rimraf avsc/temp",
-        "doc:generate:moment": "rimraf docs/content/api/ng-rest-moment && npm run doc:json:moment && npm run doc:md:moment",
+        "doc:md:avsc": "api-documenter markdown -i avsc/temp -o docs/content/api/ng-rest-avsc",
+        "doc:api:avsc": "copyfiles -u 2 avsc/temp/common-avsc.api.md docs/content/api/ng-common-avsc && rimraf avsc/temp",
+        "doc:generate:moment": "rimraf docs/content/api/ng-rest-moment && npm run doc:json:moment && npm run doc:md:moment && npm run doc:api:moment",
         "doc:json:moment": "api-extractor run --local --verbose -c moment/api-extractor.json",
-        "doc:md:moment": "api-documenter markdown -i moment/temp -o docs/content/api/ng-rest-moment && rimraf moment/temp",
+        "doc:md:moment": "api-documenter markdown -i moment/temp -o docs/content/api/ng-rest-moment",
         "doc:api:moment": "copyfiles -u 2 moment/temp/rest-moment.api.md docs/content/api/ng-rest-moment && rimraf moment/temp",
-        "doc:generate:date-fns": "rimraf docs/content/api/ng-rest-date-fns && npm run doc:json:date-fns && npm run doc:md:date-fns",
+        "doc:generate:date-fns": "rimraf docs/content/api/ng-rest-date-fns && npm run doc:json:date-fns && npm run doc:md:date-fns && npm run doc:api:date-fns",
         "doc:json:date-fns": "api-extractor run --local --verbose -c date-fns/api-extractor.json",
-        "doc:md:date-fns": "api-documenter markdown -i date-fns/temp -o docs/content/api/ng-rest-date-fns && rimraf date-fns/temp"
+        "doc:md:date-fns": "api-documenter markdown -i date-fns/temp -o docs/content/api/ng-rest-date-fns",
+        "doc:api:date-fns": "copyfiles -u 2 date-fns/temp/common-date-fns.api.md docs/content/api/ng-common-date-fns && rimraf date-fns/temp"
     },
     "engines": {
         "node": "^12.20.0 || ^14.15.0 || >=16.10.0"
@@ -131,6 +136,22 @@
             "es2015": "./es2015/moment/src/index.js",
             "node": "./es2015/moment/src/index.js",
             "default": "./es2020/moment/src/index.js"
+        },
+        "./avsc": {
+            "types": "./avsc/rest-avsc.d.ts",
+            "esm2020": "./es2020/avsc/src/index.js",
+            "es2020": "./es2020/avsc/src/index.js",
+            "es2015": "./es2015/avsc/src/index.js",
+            "node": "./es2015/avsc/src/index.js",
+            "default": "./es2020/avsc/src/index.js"
+        },
+        "./stompjs": {
+            "types": "./stompjs/rest-stompjs.d.ts",
+            "esm2020": "./es2020/stompjs/src/index.js",
+            "es2020": "./es2020/stompjs/src/index.js",
+            "es2015": "./es2015/stompjs/src/index.js",
+            "node": "./es2015/stompjs/src/index.js",
+            "default": "./es2020/stompjs/src/index.js"
         }
     }
 }

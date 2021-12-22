@@ -43,7 +43,7 @@ export interface WebSocketClientPublic
     /**
      * Destroys created web socket connection
      */
-    destroy();
+    destroy(): void;
 
     /**
      * Returns the base url of WebSocketClient

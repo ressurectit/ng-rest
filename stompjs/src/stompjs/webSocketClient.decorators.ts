@@ -1,4 +1,4 @@
-import {isBlank, isPresent, isFunction, extend, isJsObject} from '@jscrpt/common';
+import {isBlank, isPresent, isFunction, extend, isJsObject, Dictionary} from '@jscrpt/common';
 import {StompConfig} from '@stomp/stompjs';
 
 import {WebSocketClient} from './webSocketClient';
@@ -62,7 +62,7 @@ export function CorrelationBodyProperty(property: string): ClassDecorator
 /**
  * All requests and responses will now use correlation id as part of requet or response queue name
  */
-export function QueueCorrelation(options?: QueueCorrelationOptions): ClassDecorator
+export function QueueCorrelation(options: QueueCorrelationOptions): ClassDecorator
 {
     options = extend(true, <QueueCorrelationOptions>{position: QueueCorrelationPosition.Suffix, replacementKey: 'corrId'}, options);
 
@@ -125,10 +125,11 @@ export function SubscribeQueue(name: string, options?: SubscribeQueueOptions)
         }
 
         let func = null;
+        const trgt = target as unknown as Dictionary;
 
-        if(options && isPresent(options.responseTransform) && isPresent(target[options.responseTransform]) && isFunction(target[options.responseTransform]))
+        if(options && isPresent(options.responseTransform) && isPresent(trgt[options.responseTransform]) && isFunction(trgt[options.responseTransform]))
         {
-            func = target[options.responseTransform];
+            func = trgt[options.responseTransform];
         }
 
         descriptor.subscribeQueue[name] =
@@ -153,10 +154,11 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
 {
     return function(target: WebSocketClient, propertyKey: string, descriptor: any)
     {
-        const pPath = target[`${propertyKey}_Path_parameters`];
-        const pBody = target[`${propertyKey}_Body_parameters`];
-        const pBodyProperty = target[`${propertyKey}_BodyProperty_parameters`];
-        const pTransforms: Function[] = target[`${propertyKey}_ParameterTransforms`];
+        const trgt = target as unknown as Dictionary<any>;
+        const pPath = trgt[`${propertyKey}_Path_parameters`];
+        const pBody = trgt[`${propertyKey}_Body_parameters`];
+        const pBodyProperty = trgt[`${propertyKey}_BodyProperty_parameters`];
+        const pTransforms: Function[] = trgt[`${propertyKey}_ParameterTransforms`];
 
         options = extend(true, {type: RequestType.Json}, options);
 
@@ -195,7 +197,7 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
 
                 for(const x in pBodyProperty)
                 {
-                    if(pBodyProperty.hasOwnProperty(x))
+                    if(pBodyProperty[x])
                     {
                         let bodyProp = args[pBodyProperty[x].parameterIndex];
 
@@ -214,7 +216,7 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
             {
                 for (const x in pPath)
                 {
-                    if (pPath.hasOwnProperty(x))
+                    if (pPath[x])
                     {
                         let param = args[pPath[x].parameterIndex];
 
@@ -240,7 +242,7 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
 
                 if(isPresent(subscribe[name].responseTransformFunc))
                 {
-                    subscribe[name].responseTransformFunc = subscribe[name].responseTransformFunc.bind(this);
+                    subscribe[name].responseTransformFunc = subscribe[name].responseTransformFunc?.bind(this);
                 }
             });
 
@@ -278,18 +280,20 @@ export function ParameterTransform(methodName?: string)
         {
             methodName = `${propertyKey}ParameterTransform`;
         }
+
+        const trgt = target as unknown as Dictionary<any>;
         
-        if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
+        if(isPresent(trgt[methodName]) && isFunction(trgt[methodName]))
         {
-            const func = target[methodName!];
+            const func = trgt[methodName];
             const metadataKey = `${propertyKey}_ParameterTransforms`;
             
-            if (!isPresent(target[metadataKey]) || !isJsObject(target[metadataKey]))
+            if (!isPresent(trgt[metadataKey]) || !isJsObject(trgt[metadataKey]))
             {
-                target[metadataKey] = {};
+                trgt[metadataKey] = {};
             }
             
-            target[metadataKey][parameterIndex] = func;
+            trgt[metadataKey][parameterIndex] = func;
         }
     };
 }
@@ -303,6 +307,7 @@ function paramBuilder(paramName: string)
     {
         return function(target: WebSocketClient, propertyKey: string, parameterIndex: number)
         {
+            const trgt = target as unknown as Dictionary<any>;
             const metadataKey = `${propertyKey}_${paramName}_parameters`;
 
             const paramObj: any =
@@ -311,13 +316,13 @@ function paramBuilder(paramName: string)
                 parameterIndex: parameterIndex
             };
 
-            if (Array.isArray(target[metadataKey]))
+            if (Array.isArray(trgt[metadataKey]))
             {
-                target[metadataKey].push(paramObj);
+                trgt[metadataKey].push(paramObj);
             }
             else
             {
-                target[metadataKey] = [paramObj];
+                trgt[metadataKey] = [paramObj];
             }
         };
     };

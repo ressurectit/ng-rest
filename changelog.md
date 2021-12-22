@@ -24,7 +24,8 @@
         - `fingerprintHeaderName` - name of header used for passing fingerprint of schema
         - `typeHeaderName` - name of header used for passing name of type
         - `customAcceptContentTypeHeader` - value passed to custom Accept header and Content-Type header
-    - added new `AvroRequestType`, `AvroResponseType`, `AvroRequestObj`, `AvroResponseObj` interfaces which enables easier definition of *additional data* available in interceptor
+    - added new `AvroRequestObj`, `AvroResponseObj` interfaces which defines AVRO data available in interceptor
+    - added new `AVRO_REQUEST_DATA`, `AVRO_RESPONSE_DATA` http context tokens for passing AVRO request, response data into interceptor
     - added new `AvroAdapterInterceptor` interceptor, which allows AVRO request and response processing, it works together with `AvroRequest`, `AvroResponse` decorators which tells this interceptor that request or response should be processed and provides information about type
 - added new `RestDateApi` used for working with date types in rest
 - added new `QueryStringSerializer` which is used for serialization of objects into *query string*

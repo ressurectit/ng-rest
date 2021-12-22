@@ -39,12 +39,12 @@ export interface WebSocketClientResponse<TQueue>
     /**
      * Explicitly call publish to queue, can be called only once, if called multiple times, rest of calls do nothing
      */
-    publish();
+    publish(): void;
 
     /**
      * Destroys currently registered listeners for response
      */
-    destroy();
+    destroy(): void;
 }
 
 /**
