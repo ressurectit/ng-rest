@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpParams} from '@angular/common/http';
-import {isBlank, isBoolean, isFunction, isJsObject, isNumber, isString} from '@jscrpt/common';
+import {Dictionary, isBlank, isBoolean, isFunction, isJsObject, isNumber, isString} from '@jscrpt/common';
 
 import {RestDateApi} from './rest.interface';
 import {REST_DATE_API} from './tokens';
@@ -23,7 +23,7 @@ export class QueryStringSerializer<TDate = any>
      * @param obj - Object to be serialized
      * @param keyPrefix - Key prefix to be used
      */
-    public serializeObject(obj: object, keyPrefix: string = ''): string|null
+    public serializeObject(obj: Object, keyPrefix: string = ''): string|null
     {
         if(!isJsObject(obj))
         {
@@ -61,13 +61,13 @@ export class QueryStringSerializer<TDate = any>
             }
             else if(isJsObject(val))
             {
-                queryParams.push(this.serializeObject(val, `${key}.`));
+                queryParams.push(this.serializeObject(val, `${key}.`)!);
             }
-        }
+        };
 
         Object.keys(obj).forEach(key =>
         {
-            const val = obj[key];
+            const val = (obj as Dictionary)[key];
 
             switchVal(key, val);
         });

@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.0 (2021-12-17)
+## Version 8.0.0 (2021-12-22)
 
 ### Features
 
@@ -32,7 +32,6 @@
 - added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
 - added new `AcceptAny` decorator, which sets `Accept` http header to `*/*`
 - added new `TextContentType` decorator, which sets `Content-Type` http header to `text/plain`
-- added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
 - added new `REST_METHOD_MIDDLEWARES` injection token used for injecting array of rest middleware types that defines order of rest middlewares
 - added new `REST_MIDDLEWARES_ORDER` injection token used for injecting array of rest middleware types that are default for each rest method
 - added new `BASIC_DEFAULT_REST_METHOD_MIDDLEWARES` constant with basic default array of rest middlewares order
@@ -41,12 +40,13 @@
 - added new `RestMiddlewareRunMethod` interface, that defines run method signature for *rest middleware*
 - added new `BuildMiddlewaresFn` interface, which is defintion of `buildMiddleware` function type
 - added new `buildMiddleware` function used for building and returning array of middleware run functions
-- added new `ɵRESTClient` interface, which has definition of *private* members of `RESTClient` and makes them available in decorators
 - added new `NotType` type, which indicates that this type should be removed during building middlewares
 - added new `not` function that helps creating `NotType` which will remove specified middleware type from middlewares
 - added new `getType` function that gets underlying `Type` for `Type` and `NotType`
 - added new `isNotType` function that gets indication whether is provided `Type` of `NotType`
 - added new `ParametersTransformsObj` interface that defines object for parameter transforms
+- added new `ResponseTransformFunc` function that is used as response transform function
+- added new `ParameterTransformFunc` function that is used as parameter transform function
 - added new decorator `PATCH` allowin to create *PATCH* http method builder
 - `ResponseTransform` decorator now also takes function or array of functions
 - `ParameterTransform` decorator now also takes function or array of functions
@@ -57,7 +57,6 @@
     - `RestResponseTransform` - contains response transform function to be called
     - `RestDisabledInterceptors` - contains array of interceptor types that will be disabled
     - `RestReportProgress` - contains indication whether report progress
-    - `RestFullHttpResponse` - contains indication whether is response full HttpResponse or just data
     - `RestMethod` - contains data that are stored when REST method is set
     - `RestCaching` - contains methods used for handling 'caching'
     - `KeyIndex` - information about parameter key and index
@@ -74,7 +73,6 @@
     - `ResponseTypeMiddleware` - middleware that is used for extracting http body and transforming it according to specified response type
     - `ResponseTransformMiddleware` - middleware that is used for adding support of response transform
     - `IgnoredInterceptorsMiddleware` - middleware that is used for adding support for ignored interceptors
-    - `AdditionalDataMiddleware`- middleware that is used for adding support for additional info to request from decorators
     - `ProducesMiddleware` - middleware that is used for changing response type
     - `BodyParameterMiddleware` - middleware that is used for adding body to request
     - `HeaderParameterMiddleware` - middleware that is used for adding header from parameter
@@ -84,6 +82,7 @@
     - `HeadersMiddleware` - middleware that is used for setting custom http headers
     - `CacheMiddleware` - middleware that is used for storing and restoring response from cache
     - `LoggerMiddleware` - middleware that is used for logging requests and responses
+    - `ProgressIndicatorGroupMiddleware` - middleware that is used for adding support for progress indicator group passing down to progress interceptor
 
 ### BREAKING CHANGES
 

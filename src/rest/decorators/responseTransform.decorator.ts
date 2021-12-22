@@ -1,4 +1,4 @@
-import {isBlank, isPresent, isFunction, isString} from '@jscrpt/common';
+import {isBlank, isPresent, isFunction, isString, Dictionary} from '@jscrpt/common';
 
 import {RESTClient, ResponseTransformFunc} from '../common';
 import {RestResponseTransform, RestMethodMiddlewares} from '../rest.interface';
@@ -11,20 +11,22 @@ import {ResponseTransformMiddleware} from '../middlewares';
 export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFunc|ResponseTransformFunc[])
 {
     return function(target: RESTClient, propertyKey: string, descriptor: RestResponseTransform &
-                                                                         RestMethodMiddlewares)
+                                                                         RestMethodMiddlewares): TypedPropertyDescriptor<any>
     {
         if(isBlank(methodNameOrFuncs))
         {
             methodNameOrFuncs = `${propertyKey}ResponseTransform`;
         }
 
-        let responseFunctions: ResponseTransformFunc[];
+        let responseFunctions: ResponseTransformFunc[] = [];
 
         if(isString(methodNameOrFuncs))
         {
-            if(isPresent(target[methodNameOrFuncs]) && isFunction(target[methodNameOrFuncs]))
+            const trgt = target as unknown as Dictionary<ResponseTransformFunc>;
+
+            if(isPresent(trgt[methodNameOrFuncs]) && isFunction(trgt[methodNameOrFuncs]))
             {
-                responseFunctions = [target[methodNameOrFuncs]];
+                responseFunctions = [trgt[methodNameOrFuncs]];
             }
         }
         else if(isFunction(methodNameOrFuncs))
@@ -38,7 +40,7 @@ export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFu
 
         if(responseFunctions?.length)
         {
-            descriptor.middlewareTypes.push(ResponseTransformMiddleware);
+            descriptor.middlewareTypes?.push(ResponseTransformMiddleware);
             descriptor.responseTransform = function(this: RESTClient, observable: any, ...args)
             {
                 for(let x = 0; x < responseFunctions.length; x++)

@@ -3,7 +3,8 @@ import {isPresent} from '@jscrpt/common';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {RestMiddleware, ɵRESTClient, RestCaching} from '../rest.interface';
+import type {RESTClient} from '../common';
+import {RestMiddleware, RestCaching} from '../rest.interface';
 
 /**
  * Middleware that is used for storing and restoring response from cache
@@ -23,21 +24,21 @@ export class CacheMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: RESTClient,
                _id: string,
-               _target: any,
+               _target: unknown,
                _methodName: string,
                descriptor: RestCaching,
-               _args: any[],
-               request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
+               _args: unknown[],
+               request: HttpRequest<unknown>,
+               next: (request: HttpRequest<unknown>) => Observable<HttpResponse<unknown>>): Observable<unknown>
     {
         if(!descriptor.getCachedResponse || !descriptor.saveResponseToCache)
         {
             return next(request);
         }
 
-        const cachedResponse: HttpResponse<any> = descriptor.getCachedResponse(request);
+        const cachedResponse: HttpResponse<unknown>|null = descriptor.getCachedResponse(request);
 
         if (isPresent(cachedResponse))
         {

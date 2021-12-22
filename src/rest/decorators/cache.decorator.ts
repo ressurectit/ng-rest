@@ -1,5 +1,5 @@
 import {HttpRequest, HttpResponse} from '@angular/common/http';
-import {isPresent} from '@jscrpt/common';
+import {Dictionary, isPresent} from '@jscrpt/common';
 
 import {RestCaching, RestMethodMiddlewares} from '../rest.interface';
 import {RESTClient} from '../common';
@@ -7,7 +7,7 @@ import {CacheMiddleware} from '../middlewares';
 
 //Object storing response cache itself
 //It caches request urls to response data
-const responseCache: {[key: string]: HttpResponse<any>} = {};
+const responseCache: Dictionary<HttpResponse<any>> = {};
 
 /**
  * Results of requests are cached in javascript memory
@@ -15,9 +15,9 @@ const responseCache: {[key: string]: HttpResponse<any>} = {};
 export function Cache()
 {
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestCaching &
-                                                                           RestMethodMiddlewares)
+                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
     {
-        descriptor.middlewareTypes.push(CacheMiddleware);
+        descriptor.middlewareTypes?.push(CacheMiddleware);
 
         descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any>|null =>
         {

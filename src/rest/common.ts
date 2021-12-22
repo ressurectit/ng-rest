@@ -12,7 +12,6 @@ import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 // @Optional() protected transferState?: RestTransferStateService,
 // @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
 // @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
-// @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
 
 /**
  * Function that is used as response transform function
@@ -177,7 +176,7 @@ function methodBuilder(method: string)
                                                              httpReq,
                                                              request => call(request, ++index));
                     }
-                }
+                };
 
                 return call(httpRequest, 0);
 
@@ -281,34 +280,34 @@ function methodBuilder(method: string)
  * GET method
  * @param url - resource url of the method
  */
-export var GET = methodBuilder('GET');
+export const GET = methodBuilder('GET');
 
 /**
  * POST method
  * @param url - resource url of the method
  */
-export var POST = methodBuilder('POST');
+export const POST = methodBuilder('POST');
 
 /**
  * PUT method
  * @param url - resource url of the method
  */
-export var PUT = methodBuilder('PUT');
+export const PUT = methodBuilder('PUT');
 
 /**
  * DELETE method
  * @param url - resource url of the method
  */
-export var DELETE = methodBuilder('DELETE');
+export const DELETE = methodBuilder('DELETE');
 
 /**
  * HEAD method
  * @param url - resource url of the method
  */
-export var HEAD = methodBuilder('HEAD');
+export const HEAD = methodBuilder('HEAD');
 
 /**
  * PATCH method
  * @param url - resource url of the method
  */
-export var PATCH = methodBuilder('PATCH');
+export const PATCH = methodBuilder('PATCH');

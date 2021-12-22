@@ -2,8 +2,9 @@ import {HttpRequest} from '@angular/common/http';
 import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestResponseType} from '../rest.interface';
+import {RestMiddleware, RestResponseType} from '../rest.interface';
 import {ResponseType} from '../responseType';
+import type {RESTClient} from '../common';
 
 /**
  * Middleware that is used for changing response type
@@ -23,14 +24,14 @@ export class ProducesMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: RESTClient,
                _id: string,
-               _target: any,
+               _target: unknown,
                _methodName: string,
                descriptor: RestResponseType,
-               _args: any[],
-               request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
+               _args: unknown[],
+               request: HttpRequest<unknown>,
+               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
         if(isBlank(descriptor.responseType))
         {

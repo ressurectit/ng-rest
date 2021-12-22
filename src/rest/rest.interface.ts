@@ -47,7 +47,7 @@ export interface RestResponseType extends TypedPropertyDescriptor<any>
     /**
      * Response type to be set
      */
-    responseType: ResponseType;
+    responseType?: ResponseType;
 }
 
 /**
@@ -69,7 +69,7 @@ export interface RestDisabledInterceptors<TType = any> extends TypedPropertyDesc
     /**
      * Array of interceptors types that will be disabled
      */
-    disabledInterceptors?: Type<TType>[];
+    disabledInterceptors: Type<TType>[];
 }
 
 /**
@@ -84,17 +84,6 @@ export interface RestReportProgress extends TypedPropertyDescriptor<any>
 }
 
 /**
- * Contains indication whether is response full HttpResponse or just data
- */
-export interface RestFullHttpResponse extends TypedPropertyDescriptor<any>
-{
-    /**
-     * Indication whether is response full HttpResponse or just data
-     */
-    fullHttpResponse?: boolean;
-}
-
-/**
  * Contains data that are stored when REST method is set
  */
 export interface ɵRestMethod extends TypedPropertyDescriptor<any>
@@ -102,7 +91,7 @@ export interface ɵRestMethod extends TypedPropertyDescriptor<any>
     /**
      * Array of middlewares that are executed for each request
      */
-    middlewares?: RestMiddlewareRunMethod[];
+    middlewares: RestMiddlewareRunMethod[];
 }
 
 /**
@@ -113,7 +102,7 @@ export interface RestMethod extends TypedPropertyDescriptor<any>
     /**
      * Number of parameters that are on the method originaly
      */
-    originalParamsCount?: number;
+    originalParamsCount: number;
 }
 
 /**
@@ -136,14 +125,14 @@ export interface RestCaching extends TypedPropertyDescriptor<any>
      * Gets response from cache
      * @param request - Http request that is tested whether it is in cache
      */
-    getCachedResponse?: (request: HttpRequest<any>) => HttpResponse<any>|null;
+    getCachedResponse: (request: HttpRequest<any>) => HttpResponse<any>|null;
 
     /**
      * Saves response to cache for provided request and returns this response
      * @param request - Request that is identifies response
      * @param response - Response to be cached
      */
-    saveResponseToCache?: (request: HttpRequest<any>, response: HttpResponse<any>) => HttpResponse<any>;
+    saveResponseToCache: (request: HttpRequest<any>, response: HttpResponse<any>) => HttpResponse<any>;
 }
 
 /**
@@ -154,12 +143,12 @@ export interface KeyIndex
     /**
      * Key value that is passed to parameter
      */
-    key?: string;
+    key: string;
 
     /**
      * Index of parameter
      */
-    parameterIndex?: number;
+    parameterIndex: number;
 }
 
 /**
@@ -230,6 +219,25 @@ export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any
      */
     (this: RESTClient,
      id: string,
+     target: TTarget,
+     methodName: string,
+     descriptor: TDescriptor,
+     args: any[],
+     request: HttpRequest<TRequestBody>,
+     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<TResponseBody>;
+
+    /**
+     * Runs code that is defined for this rest middleware, in this method you can modify request and response
+     * @param this - Method is bound to RESTClient
+     * @param id - Unique id that identifies request method
+     * @param target - Prototype of class that are decorators applied to
+     * @param methodName - Name of method that is being modified
+     * @param descriptor - Descriptor of method that is being modified
+     * @param args - Array of arguments passed to called method
+     * @param request - Http request that you can modify
+     * @param next - Used for calling next middleware with modified request
+     */
+    (id: string,
      target: TTarget,
      methodName: string,
      descriptor: TDescriptor,
