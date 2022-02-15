@@ -89,7 +89,7 @@
 
 - minimal supported version of *Angular* is `10.0.0`
 - minimal supported version of `@jscrpt/common` is `1.2.0`
-- minimal supported version of `@anglr/common` is `8.0.0`
+- minimal supported version of `@anglr/common` is `9.0.0`
 - minimal supported version of `crypto-js` is `4.0.0`
 - removed `jquery-param` as dependency
 - added new dependency `moment` for `@anglr/rest/moment`
