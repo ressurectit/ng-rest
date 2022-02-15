@@ -1,4 +1,6 @@
-import {RESTClient, RestMethodMiddlewares} from '@anglr/rest';
+import {RESTClient, AdditionalInfoPropertyDescriptor, RestMethodMiddlewares, AdditionalDataMiddleware} from '@anglr/rest';
+
+import {AvroResponseType} from '../avsc';
 
 /**
  * Enables AVRO encoding for response object received in body
@@ -7,18 +9,16 @@ import {RESTClient, RestMethodMiddlewares} from '@anglr/rest';
  */
 export function AvroResponse(namespace: string, typeName: string)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function(_target: RESTClient, _propertyKey: string, descriptor: AdditionalInfoPropertyDescriptor<AvroResponseType> &
+                                                                           RestMethodMiddlewares)
     {
-
-        //TODO: finish, create middleware used for handling data
-
-        // descriptor.additionalInfo.avroResponse =
-        // {
-        //     name: typeName,
-        //     namespace: namespace
-        // };
-
-        console.log(namespace, typeName);
+        descriptor.additionalInfo = descriptor.additionalInfo ?? {};
+        descriptor.middlewareTypes.push(AdditionalDataMiddleware);
+        descriptor.additionalInfo.avroResponse =
+        {
+            name: typeName,
+            namespace: namespace
+        };
 
         return descriptor;
     };

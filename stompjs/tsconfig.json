@@ -1,0 +1,19 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions":
+    {
+        "baseUrl": ".",
+        "paths":
+        {
+            "@anglr/rest": ["../src/rest"]
+        }
+    },
+    "files":
+    [
+        "public_api.ts"
+    ],
+    "angularCompilerOptions":
+    {
+        "fullTemplateTypeCheck": true
+    }
+}

@@ -12,19 +12,19 @@ import {IgnoredInterceptorsMiddleware} from '../middlewares';
 export function DisableInterceptor<TType>(interceptorType: Type<TType>)
 {
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestDisabledInterceptors<TType> &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+                                                                           RestMethodMiddlewares)
     {
         if(isBlank(interceptorType))
         {
             return descriptor;
         }
 
-        if(!Array.isArray(descriptor.disabledInterceptors))
+        if(!descriptor.disabledInterceptors || !Array.isArray(descriptor.disabledInterceptors))
         {
             descriptor.disabledInterceptors = [];
         }
 
-        descriptor.middlewareTypes?.push(IgnoredInterceptorsMiddleware);
+        descriptor.middlewareTypes.push(IgnoredInterceptorsMiddleware);
         descriptor.disabledInterceptors.push(interceptorType);
 
         return descriptor;

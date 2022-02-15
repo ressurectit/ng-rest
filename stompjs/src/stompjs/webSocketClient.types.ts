@@ -1,6 +1,5 @@
-import {InjectionToken} from '@angular/core';
-
-import {WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware} from './webSocketClient.interface';
+import {InjectionToken} from "@angular/core";
+import {WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware} from "./webSocketClient.interface";
 
 /**
  * Supported Produces response types

@@ -1,38 +1,32 @@
 {
     "compilerOptions":
     {
-        "target": "es2020",
-        "module": "es2020",
+        "target": "es5",
+        "module": "esnext",
         "moduleResolution": "node",
-        "sourceMap": true,
-        "inlineSources": true,
         "declaration": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "noImplicitReturns": true,
-        "noImplicitOverride": true,
-        "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "strict": true,
         "strictNullChecks": false,
         "esModuleInterop": true,
-        "importHelpers": true,
-        "newLine": "lf",
-        "rootDir": ".",
-        "outDir": "es2020",
-        "baseUrl": "src",
-        "paths": 
-        {
-            "@anglr/rest": ["index.ts"]
-        },
-        "lib":
+        "lib": 
         [
-            "es2020",
+            "es2016", 
             "dom"
         ],
-        "plugins":
+        "types":
+        [
+            "crypto-js"
+        ],
+        "typeRoots": 
+        [
+            "node_modules/@anglr/types"
+        ],
+        "plugins": 
         [
             {
                 "name": "@angular/language-service"
@@ -41,13 +35,14 @@
     },
     "exclude":
     [
-        "node_modules"
+        "node_modules",
+        "dist",
+        "karma-test-shim.ts"
     ],
-    "angularCompilerOptions":
+    "angularCompilerOptions": 
     {
+        "fullTemplateTypeCheck": true,
         "strictTemplates": true,
-        "compilationMode": "partial",
-        "enableResourceInlining": true,
-        "strictInjectionParameters": true
+        "enableIvy": false
     }
 }

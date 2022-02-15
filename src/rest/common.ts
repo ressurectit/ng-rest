@@ -1,10 +1,10 @@
 import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpRequest, HttpEvent} from '@angular/common/http';
-import {HTTP_REQUEST_BASE_URL} from '@anglr/common';
 import {isBlank, isFunction, generateId} from '@jscrpt/common';
-import {Observable} from 'rxjs';
+import {HTTP_REQUEST_BASE_URL} from '@anglr/common';
+import {Observable} from "rxjs";
 
-import {RestMethod, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware} from './rest.interface';
+import {RestMethod, ɵRESTClient, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware, BuildMiddlewaresFn} from './rest.interface';
 import {buildMiddlewares} from './utils';
 import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 
@@ -12,6 +12,7 @@ import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 // @Optional() protected transferState?: RestTransferStateService,
 // @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
 // @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
+// @Optional() protected ignoredInterceptorsService?: IgnoredInterceptorsService,
 
 /**
  * Function that is used as response transform function
@@ -36,14 +37,14 @@ export interface ParameterTransformFunc<TData = any, TTransformedData = TData>
 export abstract class RESTClient
 {
     constructor(protected http: HttpClient,
-                protected injector: Injector,
-                @Inject(REST_MIDDLEWARES_ORDER) protected middlewaresOrder: Type<RestMiddleware>[],
-                @Inject(REST_METHOD_MIDDLEWARES) protected methodMiddlewares: Type<RestMiddleware>[],
-                @Optional() @Inject(HTTP_REQUEST_BASE_URL) protected baseUrl?: string)
+                @Optional() @Inject(HTTP_REQUEST_BASE_URL) protected baseUrl?: string,
+                protected injector?: Injector,
+                @Inject(REST_MIDDLEWARES_ORDER) protected middlewaresOrder?: Type<RestMiddleware>[],
+                @Inject(REST_METHOD_MIDDLEWARES) protected methodMiddlewares?: Type<RestMiddleware>[])
     {
         if(isBlank(baseUrl))
         {
-            this.baseUrl = '';
+            this.baseUrl = "";
         }
     }
 
@@ -52,8 +53,8 @@ export abstract class RESTClient
      */
     protected getBaseUrl(): string
     {
-        return '';
-    }
+        return "";
+    };
 
     /**
      * Returns the default headers of RESTClient in a key-value
@@ -61,7 +62,7 @@ export abstract class RESTClient
     protected getDefaultHeaders(): string | {[name: string]: string | string[]}
     {
         return {};
-    }
+    };
 
     /**
      * Request interceptor for all methods, must return new HttpRequest since object is immutable
@@ -120,8 +121,8 @@ function methodBuilder(method: string)
 
             descriptor.middlewareTypes = descriptor.middlewareTypes ?? [];
 
-            const id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
-            const parameters = target.parameters;
+            let id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
+            let parameters = target.parameters;
             let parametersMiddlewares: Type<RestMiddleware>[] = [];
 
             if(parameters)
@@ -129,32 +130,32 @@ function methodBuilder(method: string)
                 parametersMiddlewares = parameters[propertyKey]?.middlewareTypes ?? [];
             }
 
-            descriptor.value = function(this: RESTClient, ...args: any[])
+            descriptor.value = function(this: ɵRESTClient, ...args: any[])
             {
                 //get middlewares definition only during first call
                 if(!descriptor.middlewares)
                 {
-                    descriptor.middlewares = buildMiddlewares.bind(this)([
-                                                                             ...descriptor.middlewareTypes ?? [],
-                                                                             ...parametersMiddlewares,
-                                                                             ...this.methodMiddlewares
-                                                                         ],
-                                                                         this.middlewaresOrder);
+                    descriptor.middlewares = (buildMiddlewares.bind(this) as BuildMiddlewaresFn)([
+                                                                                                     ...descriptor.middlewareTypes ?? [],
+                                                                                                     ...parametersMiddlewares,
+                                                                                                     ...this.methodMiddlewares
+                                                                                                 ],
+                                                                                                 this.middlewaresOrder);
                 }
 
-                const reqId = `${id}-${generateId(6)}`;
+                let reqId = `${id}-${generateId(6)}`;
  
-                const httpRequest = new HttpRequest<any>(method,
-                                                         this.baseUrl + this.getBaseUrl() + url,
-                                                         null,
-                                                         {
-                                                              headers: new HttpHeaders(this.getDefaultHeaders()),
-                                                              responseType: 'json',
-                                                              reportProgress: false
-                                                         });
+                let httpRequest = new HttpRequest<any>(method,
+                                                       this.baseUrl + this.getBaseUrl() + url,
+                                                       null,
+                                                       {
+                                                            headers: new HttpHeaders(this.getDefaultHeaders()),
+                                                            responseType: 'json',
+                                                            reportProgress: false
+                                                       });
 
                 //run all middlewares
-                const call = (httpReq: HttpRequest<any>, index: number): Observable<any> =>
+                let call = (httpReq: HttpRequest<any>, index: number): Observable<any> =>
                 {
                     if(!descriptor.middlewares[index])
                     {
@@ -176,7 +177,7 @@ function methodBuilder(method: string)
                                                              httpReq,
                                                              request => call(request, ++index));
                     }
-                };
+                }
 
                 return call(httpRequest, 0);
 
@@ -280,34 +281,34 @@ function methodBuilder(method: string)
  * GET method
  * @param url - resource url of the method
  */
-export const GET = methodBuilder('GET');
+export var GET = methodBuilder("GET");
 
 /**
  * POST method
  * @param url - resource url of the method
  */
-export const POST = methodBuilder('POST');
+export var POST = methodBuilder("POST");
 
 /**
  * PUT method
  * @param url - resource url of the method
  */
-export const PUT = methodBuilder('PUT');
+export var PUT = methodBuilder("PUT");
 
 /**
  * DELETE method
  * @param url - resource url of the method
  */
-export const DELETE = methodBuilder('DELETE');
+export var DELETE = methodBuilder("DELETE");
 
 /**
  * HEAD method
  * @param url - resource url of the method
  */
-export const HEAD = methodBuilder('HEAD');
+export var HEAD = methodBuilder("HEAD");
 
 /**
  * PATCH method
  * @param url - resource url of the method
  */
-export const PATCH = methodBuilder('PATCH');
+export var PATCH = methodBuilder("PATCH");

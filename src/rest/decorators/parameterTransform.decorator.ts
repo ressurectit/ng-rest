@@ -1,4 +1,4 @@
-import {isBlank, isPresent, isFunction, isString, Dictionary} from '@jscrpt/common';
+import {isBlank, isPresent, isFunction, isString} from '@jscrpt/common';
 
 import {RestParameters} from '../rest.interface';
 import {ParameterTransformFunc, RESTClient} from '../common';
@@ -9,22 +9,20 @@ import {ParameterTransformFunc, RESTClient} from '../common';
  */
 export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransformFunc|ParameterTransformFunc[])
 {
-    return function(target: RESTClient & RestParameters, propertyKey: string, parameterIndex: number): void
+    return function(target: RESTClient & RestParameters, propertyKey: string, parameterIndex: number)
     {
         if(isBlank(methodNameOrFuncs))
         {
             methodNameOrFuncs = `${propertyKey}ParameterTransform`;
         }
 
-        let paramFunctions: ParameterTransformFunc[] = [];
+        let paramFunctions: ParameterTransformFunc[];
 
         if(isString(methodNameOrFuncs))
         {
-            const trgt = target as unknown as Dictionary<ParameterTransformFunc>;
-
-            if(isPresent(trgt[methodNameOrFuncs]) && isFunction(trgt[methodNameOrFuncs]))
+            if(isPresent(target[methodNameOrFuncs]) && isFunction(target[methodNameOrFuncs]))
             {
-                paramFunctions = [trgt[methodNameOrFuncs]];
+                paramFunctions = [target[methodNameOrFuncs]];
             }
         }
         else if(isFunction(methodNameOrFuncs))
@@ -38,11 +36,25 @@ export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransform
 
         if(paramFunctions?.length)
         {
-            target.parameters = target.parameters ?? {};
-            target.parameters[propertyKey] = target.parameters[propertyKey] ?? {};
-            target.parameters[propertyKey].transforms = target.parameters[propertyKey].transforms ?? {};
-            
-            target.parameters[propertyKey].transforms![parameterIndex] = function(this: RESTClient, input: any)
+            //params metadata missing
+            if(isBlank(target.parameters))
+            {
+                target.parameters = {};
+            }
+
+            //params metadata for method missing
+            if(isBlank(target.parameters[propertyKey]))
+            {
+                target.parameters[propertyKey] = {};
+            }
+
+            //parameter transforms object missing
+            if(isBlank(target.parameters[propertyKey].transforms))
+            {
+                target.parameters[propertyKey].transforms = {};
+            }
+
+            target.parameters[propertyKey].transforms[parameterIndex] = function(this: RESTClient, input: any)
             {
                 for(let x = 0; x < paramFunctions.length; x++)
                 {
@@ -53,4 +65,4 @@ export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransform
             };
         }
     };
-}
+};

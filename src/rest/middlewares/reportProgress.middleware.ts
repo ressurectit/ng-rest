@@ -1,9 +1,9 @@
-import {HttpRequest, HttpEventType, HttpResponse} from '@angular/common/http';
-import {filter} from 'rxjs/operators';
+import {AdditionalInfo} from '@anglr/common';
+import {HttpRequest, HttpEventType} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {filter} from 'rxjs/operators';
 
-import {RestMiddleware, RestReportProgress} from '../rest.interface';
-import type {RESTClient} from '../common';
+import {RestMiddleware, ɵRESTClient, RestReportProgress} from '../rest.interface';
 
 /**
  * Middleware that is used for handling report progress setting, if not set returns only final http response with data
@@ -23,14 +23,14 @@ export class ReportProgressMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: RESTClient,
+    public run(this: ɵRESTClient,
                _id: string,
-               _target: unknown,
+               _target: any,
                _methodName: string,
                descriptor: RestReportProgress,
-               _args: unknown[],
-               request: HttpRequest<unknown>,
-               next: (request: HttpRequest<unknown>) => Observable<HttpResponse<unknown>>): Observable<unknown>
+               _args: any[],
+               request: HttpRequest<any> & AdditionalInfo,
+               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
         if(descriptor.reportProgress)
         {

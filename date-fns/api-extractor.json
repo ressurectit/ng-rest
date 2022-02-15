@@ -1,14 +1,12 @@
 {
     "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-    "mainEntryPointFilePath": "./src/index.d.ts",
+    "mainEntryPointFilePath": "<projectFolder>/index.d.ts",
     "bundledPackages": [],
     "compiler":
     {},
     "apiReport":
     {
-        "enabled": true,
-        "reportFolder": "./temp/",
-        "reportTempFolder": "./temp/"
+        "enabled": false
     },
     "docModel":
     {
@@ -16,10 +14,7 @@
     },
     "dtsRollup":
     {
-        "enabled": true,
-        "omitTrimmingComments": true,
-        "untrimmedFilePath": "./<unscopedPackageName>.internal.d.ts",
-        "betaTrimmedFilePath": "./<unscopedPackageName>.d.ts"
+        "enabled": true
     },
     "tsdocMetadata":
     {},
@@ -27,14 +22,6 @@
     {
         "compilerMessageReporting":
         {
-            "TS2307": 
-            {
-                "logLevel": "none"
-            },
-            "TS7016": 
-            {
-                "logLevel": "none"
-            },
             "default":
             {
                 "logLevel": "warning"
@@ -54,10 +41,6 @@
             {
                 "logLevel": "none"
             },
-            "ae-forgotten-export":
-            {
-                "logLevel": "none"
-            },
             "default":
             {
                 "logLevel": "warning"
@@ -65,10 +48,6 @@
         },
         "tsdocMessageReporting":
         {
-            "tsdoc-inline-tag-missing-braces":
-            {
-                "logLevel": "none"
-            },
             "default":
             {
                 "logLevel": "warning"

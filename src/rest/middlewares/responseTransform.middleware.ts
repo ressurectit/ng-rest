@@ -2,8 +2,7 @@ import {HttpRequest} from '@angular/common/http';
 import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import type {RESTClient} from '../common';
-import {RestMiddleware, RestResponseTransform} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestResponseTransform} from '../rest.interface';
 
 /**
  * Middleware that is used for adding support of response transform
@@ -23,14 +22,14 @@ export class ResponseTransformMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: RESTClient,
+    public run(this: ɵRESTClient,
                _id: string,
-               _target: unknown,
+               _target: any,
                _methodName: string,
                descriptor: RestResponseTransform,
-               args: unknown[],
-               request: HttpRequest<unknown>,
-               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
+               args: any[],
+               request: HttpRequest<any>,
+               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
         if(isBlank(descriptor.responseTransform))
         {

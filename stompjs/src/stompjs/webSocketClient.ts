@@ -19,7 +19,7 @@ export abstract class WebSocketClient implements OnDestroy
     /**
      * Instance of opened WebSocket stomp client
      */
-    private _wsClient: Client|null = null;
+    private _wsClient: Client;
 
     /**
      * Session id used for identification of web socket session
@@ -29,7 +29,7 @@ export abstract class WebSocketClient implements OnDestroy
     /**
      * Method that is used for resolving active promise
      */
-    private _activeResolve!: () => void;
+    private _activeResolve: () => void;
 
     /**
      * Subject used for emitting communication errors
@@ -46,7 +46,7 @@ export abstract class WebSocketClient implements OnDestroy
     /**
      * Promise that is resolved when connection is active
      */
-    protected active!: Promise<void>;
+    protected active: Promise<void>;
 
     /**
      * Instance of opened WebSocket stomp client
@@ -60,19 +60,19 @@ export abstract class WebSocketClient implements OnDestroy
                                                {
                                                    onConnect: () =>
                                                    {
-                                                       this.logger.info('WebSocket: client onConnect called');
+                                                       this.logger.info(`WebSocket: client onConnect called`);
 
                                                        this._activeResolve();
                                                    },
                                                    onDisconnect: () =>
                                                    {
-                                                       this.logger.info('WebSocket: client onDisconnect called');
+                                                       this.logger.info(`WebSocket: client onDisconnect called`);
 
                                                        this._resetConnection();
                                                    },
                                                    onStompError: error =>
                                                    {
-                                                       this.logger.error('WebSocket: client onStompError called, \'{@error}\'', error);
+                                                       this.logger.error(`WebSocket: client onStompError called, '{@error}'`, error);
 
                                                        this._resetConnection();
 
@@ -84,7 +84,7 @@ export abstract class WebSocketClient implements OnDestroy
                                                    },
                                                    onWebSocketClose: close =>
                                                    {
-                                                       this.logger.warn('WebSocket: client onWebSocketClose called, \'{@close}\'', close);
+                                                       this.logger.warn(`WebSocket: client onWebSocketClose called, '{@close}'`, close);
 
                                                        this._resetConnection();
 
@@ -92,7 +92,7 @@ export abstract class WebSocketClient implements OnDestroy
                                                    },
                                                    onWebSocketError: error =>
                                                    {
-                                                       this.logger.error('WebSocket: client onWebSocketError called, \'{@error}\'', error);
+                                                       this.logger.error(`WebSocket: client onWebSocketError called, '{@error}'`, error);
 
                                                        this._resetConnection();
 
@@ -136,7 +136,7 @@ export abstract class WebSocketClient implements OnDestroy
     constructor(protected injector: Injector,
                 @Inject(LOGGER) protected logger: Logger)
     {
-        this.logger.verbose('WebSocket: client constructor');
+        this.logger.verbose(`WebSocket: client constructor`);
 
         this._setActivePromise();
     }
@@ -146,7 +146,7 @@ export abstract class WebSocketClient implements OnDestroy
     /**
      * Called when component is destroyed
      */
-    public ngOnDestroy(): void
+    public ngOnDestroy()
     {
         this.destroy();
     }
@@ -156,13 +156,13 @@ export abstract class WebSocketClient implements OnDestroy
     /**
      * Destroys created web socket connection
      */
-    public destroy(): void
+    public destroy()
     {
-        this.logger.verbose('WebSocket: destroying client');
+        this.logger.verbose(`WebSocket: destroying client`);
 
         if(this._wsClient)
         {
-            this.logger.verbose('WebSocket: deactivating client');
+            this.logger.verbose(`WebSocket: deactivating client`);
 
             this._wsClient.deactivate();
             this._wsClient = null;
@@ -178,15 +178,15 @@ export abstract class WebSocketClient implements OnDestroy
      */
     protected getBaseUrl(): string
     {
-        return '';
-    }
+        return "";
+    };
 
     /**
      * Returns prefix for all publish queues
      */
     protected getPublishQueuePrefix(): string
     {
-        return '';
+        return "";
     }
 
     /**
@@ -194,7 +194,7 @@ export abstract class WebSocketClient implements OnDestroy
      */
     protected getSubscribeQueuePrefix(): string
     {
-        return '';
+        return "";
     }
 
     /**
@@ -202,7 +202,7 @@ export abstract class WebSocketClient implements OnDestroy
      */
     protected getCorrelationBodyProperty(): string
     {
-        return '';
+        return null;
     }
 
     /**
@@ -231,14 +231,14 @@ export abstract class WebSocketClient implements OnDestroy
         return {
             webSocketFactory: () =>
             {
-                this.logger.verbose('WebSocket: new connection created');
+                this.logger.verbose(`WebSocket: new connection created`);
 
                 return new SockJS(this.getBaseUrl(), [],
                 <any>
                 {
                     sessionId: () =>
                     {
-                        return this._sessionId;
+                        return this._sessionId
                     },
                     transports: 'websocket',
                     timeout: 30000

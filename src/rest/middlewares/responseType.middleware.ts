@@ -3,9 +3,8 @@ import {isPresent} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 
-import {RestMiddleware, RestResponseType} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestResponseType} from '../rest.interface';
 import {ResponseType} from '../responseType';
-import type {RESTClient} from '../common';
 
 /**
  * Middleware that is used for extracting http body and transforming it according to specified response type
@@ -25,16 +24,16 @@ export class ResponseTypeMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: RESTClient,
+    public run(this: ɵRESTClient,
                _id: string,
-               _target: unknown,
+               _target: any,
                _methodName: string,
                descriptor: RestResponseType,
-               _args: unknown[],
-               request: HttpRequest<unknown>,
-               next: (request: HttpRequest<unknown>) => Observable<HttpResponse<unknown>>): Observable<unknown>
+               _args: any[],
+               request: HttpRequest<any>,
+               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        const responseType = descriptor.responseType ?? ResponseType.Json;
+        let responseType = descriptor.responseType ?? ResponseType.Json;
         let observable = next(request);
 
         // transform the obserable in accordance to the @Produces decorator
@@ -57,8 +56,8 @@ export class ResponseTypeMiddleware implements RestMiddleware
                 {
                     observable = observable.pipe(map((res: HttpResponse<any>) =>
                     {
-                        const contentDisposition = res.headers.get('content-disposition');
-                        const filename = contentDisposition ? contentDisposition.replace(/.*filename="(.+)"/, '$1') : '';
+                        let contentDisposition = res.headers.get("content-disposition");
+                        let filename = contentDisposition ? contentDisposition.replace(/.*filename=\"(.+)\"/, "$1") : "";
 
                         return <any>{
                             filename: filename,
@@ -70,31 +69,31 @@ export class ResponseTypeMiddleware implements RestMiddleware
                 }
                 case ResponseType.LocationHeader:
                 {
-                    observable = observable.pipe(map((res: HttpResponse<any>) =>
+                    observable = observable!.pipe(map((res: HttpResponse<any>) =>
                     {
-                        const headerValue = res.headers.get('location');
-                        const baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                        const url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+                        let headerValue = res.headers.get("location");
+                        let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
+                        let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
-                        return {
+                        return <any>{
                             location: headerValue,
-                            id: isPresent(headerValue) ? headerValue.replace(url, '') : null
-                        } as any;
+                            id: isPresent(headerValue) ? headerValue!.replace(url, "") : null
+                        };
                     }));
 
                     break;
                 }
                 case ResponseType.LocationHeaderAndJson:
                 {
-                    observable = observable.pipe(map((res: HttpResponse<any>) =>
+                    observable = observable!.pipe(map((res: HttpResponse<any>) =>
                     {
-                        const headerValue = res.headers.get('location');
-                        const baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
-                        const url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+                        let headerValue = res.headers.get("location");
+                        let baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
+                        let url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
                         return <any>{
                             location: headerValue,
-                            id: isPresent(headerValue) ? headerValue.replace(url, '') : null,
+                            id: isPresent(headerValue) ? headerValue!.replace(url, "") : null,
                             data: res.body
                         };
                     }));

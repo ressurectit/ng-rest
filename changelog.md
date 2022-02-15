@@ -1,6 +1,106 @@
 # Changelog
 
+## Version 9.0.0 (2022-02-15)
+
+### Features
+
+- added *subpackage* `@anglr/rest/moment`
+- package `@anglr/rest/moment`
+    - added new `MomentRestDateApi` as `RestDateApi` implementation using moment js
+    - added new `MOMENT_REST_DATE_API` as provider for `REST_DATE_API` using moment js implementation
+- added *subpackage* `@anglr/rest/date-fns`
+- package `@anglr/rest/date-fns`
+    - added new `DateFnsRestDateApi` as `RestDateApi` implementation using date-fns
+    - added new `DATE_FNS_REST_DATE_API` as provider for `REST_DATE_API` using date-fns implementation
+- added *subpackage* `@anglr/rest/avsc`
+- package `@anglr/rest/avsc`
+    - you need to have avro schemas available to make it working
+    - added new `AvroAdapterSchemaProvider` service interface for obtaining AVRO schemas
+    - added new `AVRO_ADAPTER_SCHEMA_PROVIDER` *injection token* for obtaining `AvroAdapterSchemaProvider` with default provider set to dummy `NoAvroAdapterSchemaProviderService`
+    - added new `AvroRequest` decorator which enables AVRO processing of request (requires `AvroAdapterInterceptor` to work)
+    - added new `AvroResponse` decorator which enables AVRO processing of response (requires `AvroAdapterInterceptor` to work)
+    - added new `AvroAdapterInterceptorOptions` which provides options for `AvroAdapterInterceptor`
+        - `disabled` - indication whether this interceptor is disabled
+        - `fingerprintHeaderName` - name of header used for passing fingerprint of schema
+        - `typeHeaderName` - name of header used for passing name of type
+        - `customAcceptContentTypeHeader` - value passed to custom Accept header and Content-Type header
+    - added new `AvroRequestType`, `AvroResponseType`, `AvroRequestObj`, `AvroResponseObj` interfaces which enables easier definition of *additional data* available in interceptor
+    - added new `AvroAdapterInterceptor` interceptor, which allows AVRO request and response processing, it works together with `AvroRequest`, `AvroResponse` decorators which tells this interceptor that request or response should be processed and provides information about type
+- added new `RestDateApi` used for working with date types in rest
+- added new `QueryStringSerializer` which is used for serialization of objects into *query string*
+- added new `REST_DATE_API` injection token used for injecting RestDateApi implementation
+- added new `ProgressIndicatorGroup` decorator, which allows definition of progress indicator group name for service
+- added new `AcceptAny` decorator, which sets `Accept` http header to `*/*`
+- added new `TextContentType` decorator, which sets `Content-Type` http header to `text/plain`
+- added new `AdditionalInfoPropertyDescriptor`, which allows definition of decorator that will fill `additionalInfo`
+- added new `REST_METHOD_MIDDLEWARES` injection token used for injecting array of rest middleware types that defines order of rest middlewares
+- added new `REST_MIDDLEWARES_ORDER` injection token used for injecting array of rest middleware types that are default for each rest method
+- added new `BASIC_DEFAULT_REST_METHOD_MIDDLEWARES` constant with basic default array of rest middlewares order
+- added new `BASIC_DEFAULT_REST_MIDDLEWARES_ORDER` constant with basic defaut array of rest middlewares used for each rest method
+- added new `RestMiddleware` interface, that is used for definition of *rest middleware* classes, that are used for building request and processing response
+- added new `RestMiddlewareRunMethod` interface, that defines run method signature for *rest middleware*
+- added new `BuildMiddlewaresFn` interface, which is defintion of `buildMiddleware` function type
+- added new `buildMiddleware` function used for building and returning array of middleware run functions
+- added new `ɵRESTClient` interface, which has definition of *private* members of `RESTClient` and makes them available in decorators
+- added new `NotType` type, which indicates that this type should be removed during building middlewares
+- added new `not` function that helps creating `NotType` which will remove specified middleware type from middlewares
+- added new `getType` function that gets underlying `Type` for `Type` and `NotType`
+- added new `isNotType` function that gets indication whether is provided `Type` of `NotType`
+- added new `ParametersTransformsObj` interface that defines object for parameter transforms
+- added new decorator `PATCH` allowin to create *PATCH* http method builder
+- `ResponseTransform` decorator now also takes function or array of functions
+- `ParameterTransform` decorator now also takes function or array of functions
+- *response transform* now also gets input *arguments*
+- added new types that are used for helping working with metadata stored in *Descriptor*
+    - `RestHttpHeaders` - contains additional headers that will be added
+    - `RestResponseType` - contains response type that will be set
+    - `RestResponseTransform` - contains response transform function to be called
+    - `RestDisabledInterceptors` - contains array of interceptor types that will be disabled
+    - `RestReportProgress` - contains indication whether report progress
+    - `RestFullHttpResponse` - contains indication whether is response full HttpResponse or just data
+    - `RestMethod` - contains data that are stored when REST method is set
+    - `RestCaching` - contains methods used for handling 'caching'
+    - `KeyIndex` - information about parameter key and index
+    - `ParametersMetadata` - metadata for parameters
+    - `ParametersTransformMetadata` - contains parameters metadata for each decorated method parameters transforms
+    - `RestParameters` - contains parameters metadata for each decorated method parameters
+    - `RestMethodMiddlewares` - contains rest middleware types that will be used, decorator can add type if it wish to be used
+    - `ParametersMiddlewaresMetadata` - contains metadata for middleware types for parameters
+- added new constants for *Http Header* names
+    - `HTTP_HEADER_CONTENT_TYPE` for *Content-Type* header
+    - `HTTP_HEADER_ACCEPT` for *Accept* header
+- added middlewares to process request and response
+    - `ReportProgressMiddleware` - middleware that is used for handling report progress setting, if not set returns only final http response with data
+    - `ResponseTypeMiddleware` - middleware that is used for extracting http body and transforming it according to specified response type
+    - `ResponseTransformMiddleware` - middleware that is used for adding support of response transform
+    - `IgnoredInterceptorsMiddleware` - middleware that is used for adding support for ignored interceptors
+    - `AdditionalDataMiddleware`- middleware that is used for adding support for additional info to request from decorators
+    - `ProducesMiddleware` - middleware that is used for changing response type
+    - `BodyParameterMiddleware` - middleware that is used for adding body to request
+    - `HeaderParameterMiddleware` - middleware that is used for adding header from parameter
+    - `PathParameterMiddleware` - middleware that is used for modifying request URL path
+    - `QueryObjectParameterMiddleware` - middleware that is used for adding query string from query object
+    - `QueryParameterMiddleware` - middleware that is used for adding query string parameters
+    - `HeadersMiddleware` - middleware that is used for setting custom http headers
+    - `CacheMiddleware` - middleware that is used for storing and restoring response from cache
+    - `LoggerMiddleware` - middleware that is used for logging requests and responses
+
+### BREAKING CHANGES
+
+- minimal supported version of *Angular* is `10.0.0`
+- minimal supported version of `@jscrpt/common` is `1.2.0`
+- minimal supported version of `@anglr/common` is `8.0.0`
+- minimal supported version of `crypto-js` is `4.0.0`
+- removed `jquery-param` as dependency
+- added new dependency `moment` for `@anglr/rest/moment`
+- changed response type for `getDefaultHeaders` method of `RESTClient`
+- completely refactored library and how it works
+- changed signature of `responseInterceptor` method of `RESTClient`, `Observable` now must return `HttpEvent`
+- changed `RESTClient` constructor parameters
+
 ## Version 8.0.0 (2021-12-22)
+
+**DEPRECATED VERSION**
 
 ### Features
 

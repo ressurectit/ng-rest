@@ -1,8 +1,7 @@
 import {HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
-import type {RESTClient} from '../common';
-import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 /**
  * Middleware that is used for adding body to request
@@ -22,19 +21,19 @@ export class BodyParameterMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: RESTClient,
+    public run(this: ɵRESTClient,
                _id: string,
                target: RestParameters,
                methodName: string,
-               _descriptor: unknown,
-               args: unknown[],
-               request: HttpRequest<unknown>,
-               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
+               _descriptor: any,
+               args: any[],
+               request: HttpRequest<any>,
+               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        const parameters = target.parameters;
+        let parameters = target.parameters;
 
-        let pBody: KeyIndex[]|undefined;
-        let pTransforms: ParametersTransformsObj|undefined;
+        let pBody: KeyIndex[] = null;
+        let pTransforms: ParametersTransformsObj = null;
 
         if(parameters)
         {

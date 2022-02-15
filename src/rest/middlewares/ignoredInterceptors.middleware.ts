@@ -1,10 +1,15 @@
-import {HttpContext, HttpRequest} from '@angular/common/http';
-import {IGNORED_INTERCEPTORS} from '@anglr/common';
+import {HttpRequest} from '@angular/common/http';
+import {IgnoredInterceptorsService, AdditionalInfo, IgnoredInterceptorId} from '@anglr/common';
 import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
-import {RestMiddleware, RestDisabledInterceptors} from '../rest.interface';
-import type {RESTClient} from '../common';
+import {RestMiddleware, ɵRESTClient, RestDisabledInterceptors} from '../rest.interface';
+
+interface ɵIgnoredInterceptor
+{
+    ɵIgnoredInterceptorsService?: IgnoredInterceptorsService;
+}
 
 /**
  * Middleware that is used for adding support for ignored interceptors
@@ -24,25 +29,33 @@ export class IgnoredInterceptorsMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: RESTClient,
-               _id: string,
-               _target: unknown,
+    public run(this: ɵRESTClient & ɵIgnoredInterceptor,
+               id: string,
+               _target: any,
                _methodName: string,
                descriptor: RestDisabledInterceptors,
-               _args: unknown[],
-               request: HttpRequest<unknown>,
-               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
+               _args: any[],
+               request: HttpRequest<any> & AdditionalInfo<IgnoredInterceptorId>,
+               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
     {
-        if(isBlank(descriptor.disabledInterceptors))
+        this.ɵIgnoredInterceptorsService = this.ɵIgnoredInterceptorsService ?? this.injector.get(IgnoredInterceptorsService, null);
+
+        if(isBlank(this.ɵIgnoredInterceptorsService) || isBlank(descriptor.disabledInterceptors))
         {
             return next(request);
         }
 
-        request = request.clone(
+        request.additionalInfo = request.additionalInfo ?? {};
+        request.additionalInfo.requestId = id;
+
+        descriptor.disabledInterceptors.forEach(interceptorType =>
         {
-            context: new HttpContext().set(IGNORED_INTERCEPTORS, descriptor.disabledInterceptors)
+            this.ɵIgnoredInterceptorsService.addInterceptor(interceptorType, request.additionalInfo);
         });
 
-        return next(request);
+        let clear = () => this.ɵIgnoredInterceptorsService.clear();
+
+        return next(request)
+            .pipe(tap(clear, clear, clear));
     }
 }

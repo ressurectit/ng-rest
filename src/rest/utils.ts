@@ -1,7 +1,6 @@
 import {Type} from '@angular/core';
 
-import type {RESTClient} from './common';
-import {RestMiddleware, RestMiddlewareRunMethod, NotType, BuildMiddlewaresFn} from './rest.interface';
+import {RestMiddleware, RestMiddlewareRunMethod, NotType, ɵRestMethod, BuildMiddlewaresFn} from './rest.interface';
 
 /**
  * Builds and returns array of middleware run functions
@@ -9,18 +8,18 @@ import {RestMiddleware, RestMiddlewareRunMethod, NotType, BuildMiddlewaresFn} fr
  * @param middlewares - Array of set middleware types
  * @param middlewaresOrder - Array of middleware types in order that should be executed
  */
-export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(this: RESTClient,
+export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(this: ɵRestMethod,
                                                                               middlewares: Type<RestMiddleware>[],
                                                                               middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
 {
-    const usedMiddlewares: Type<RestMiddleware>[] = [];
+    let usedMiddlewares: Type<RestMiddleware>[] = [];
 
     middlewares
         .filter(middleware => !isNotType(middleware))
         .forEach(middleware =>
         {
-            const type: Type<RestMiddleware> = getType(middleware);
-            const index = middlewaresOrder.indexOf(type);
+            let type: Type<RestMiddleware> = getType(middleware);
+            let index = middlewaresOrder.indexOf(type);
 
             //middleware does not have defined order
             if(index < 0)
@@ -36,8 +35,8 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(th
         .filter(middleware => isNotType(middleware))
         .forEach(middleware =>
         {
-            const type: Type<RestMiddleware> = getType(middleware);
-            const index = usedMiddlewares.indexOf(type);
+            let type: Type<RestMiddleware> = getType(middleware);
+            let index = usedMiddlewares.indexOf(type);
 
             if(index < 0)
             {
@@ -47,7 +46,7 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(th
             usedMiddlewares.splice(index, 1);
         });
 
-    const runMethods: RestMiddlewareRunMethod[] = [];
+    let runMethods: RestMiddlewareRunMethod[] = [];
 
     usedMiddlewares.forEach(middleware =>
     {
@@ -55,7 +54,7 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(th
     });
 
     return runMethods;
-};
+}
 
 /**
  * Creates NotType from Type, this type will be removed from middlewares

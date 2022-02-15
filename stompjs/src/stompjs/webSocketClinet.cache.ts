@@ -1,6 +1,6 @@
-import {IMessage} from '@stomp/stompjs';
+import {IMessage} from "@stomp/stompjs";
 
-import {SubscriptionMetadata} from './webSocketClient.interface.internal';
+import {SubscriptionMetadata} from "./webSocketClient.interface.internal";
 
 /**
  * Cache for current connection
@@ -26,7 +26,7 @@ export class WebSocketClientPublishCache
      * @param queue - Name of queue for which is response stored
      * @param response - Response to be stored
      */
-    public addToCache(queue: string, response: IMessage): void
+    public addToCache(queue: string, response: IMessage)
     {
         let responses = this._responses[queue];
 
@@ -43,12 +43,12 @@ export class WebSocketClientPublishCache
      * Replays all responses into output queues
      * @param metadata - Metadata containing subjects
      */
-    public replayResponses(metadata: SubscriptionMetadata): void
+    public replayResponses(metadata: SubscriptionMetadata)
     {
         Object.keys(this._responses).forEach(queue =>
         {
-            const meta = metadata[queue];
-            const responses = this._responses[queue];
+            let meta = metadata[queue];
+            let responses = this._responses[queue];
 
             if(!meta || !responses)
             {

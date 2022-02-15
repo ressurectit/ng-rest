@@ -10,10 +10,10 @@ import {HeadersMiddleware} from '../middlewares';
 export function TextContentType()
 {
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+                                                                           RestMethodMiddlewares)
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, {'content-type': 'text/plain'});
-        descriptor.middlewareTypes?.push(HeadersMiddleware);
+        descriptor.headers = extend(descriptor.headers ?? {}, {"content-type": "text/plain"});
+        descriptor.middlewareTypes.push(HeadersMiddleware);
 
         return descriptor;
     };
