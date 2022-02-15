@@ -10,10 +10,10 @@ import {ProducesMiddleware} from '../middlewares';
 export function Produces(producesDef: ResponseType)
 {
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestResponseType &
-                                                                           RestMethodMiddlewares)
+                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
     {
         descriptor.responseType = producesDef;
-        descriptor.middlewareTypes.push(ProducesMiddleware);
+        descriptor.middlewareTypes?.push(ProducesMiddleware);
 
         return descriptor;
     };

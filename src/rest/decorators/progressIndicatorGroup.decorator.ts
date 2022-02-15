@@ -1,8 +1,8 @@
-import {LocalProgressIndicatorName} from '@anglr/common';
+import {isPresent} from '@jscrpt/common';
 
 import {RESTClient} from '../common';
-import {AdditionalInfoPropertyDescriptor, RestMethodMiddlewares} from '../rest.interface';
-import {AdditionalDataMiddleware} from '../middlewares';
+import {ProgressIndicatorGroupMiddleware} from '../middlewares';
+import {RestMethodMiddlewares, RestProgressIndicatorGroup} from '../rest.interface';
 
 /**
  * Allows to specify progress indicator group for displaying local progress indicator
@@ -10,16 +10,14 @@ import {AdditionalDataMiddleware} from '../middlewares';
  */
 export function ProgressIndicatorGroup(name: string)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: AdditionalInfoPropertyDescriptor<LocalProgressIndicatorName> &
-                                                                           RestMethodMiddlewares)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: Partial<RestProgressIndicatorGroup> &
+                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
     {
-        if(!descriptor.additionalInfo)
+        if(isPresent(name))
         {
-            descriptor.additionalInfo = {};
+            descriptor.middlewareTypes?.push(ProgressIndicatorGroupMiddleware);
+            descriptor.groupName = name;
         }
-
-        descriptor.middlewareTypes.push(AdditionalDataMiddleware);
-        descriptor.additionalInfo.progressGroupName = name;
 
         return descriptor;
     };

@@ -15,17 +15,17 @@ export class AvroAdapterInterceptorOptions
     /**
      * Name of header used for passing fingerprint of schema
      */
-    public fingerprintHeaderName: string;
+    public fingerprintHeaderName?: string;
 
     /**
      * Name of header used for passing name of type
      */
-    public typeHeaderName: string;
+    public typeHeaderName?: string;
 
     /**
      * Value passed to custom Accept header and Content-Type header
      */
-    public customAcceptContentTypeHeader: string;
+    public customAcceptContentTypeHeader?: string;
 
     //######################### constructor #########################
     

@@ -1,5 +1,31 @@
 # Changelog
 
+## Version 10.0.0 (2022-02-15)
+
+### Features
+
+- added new `ResponseTransformFunc` function that is used as response transform function
+- added new `ParameterTransformFunc` function that is used as parameter transform function
+- added middlewares to process request and response
+    - `ProgressIndicatorGroupMiddleware` - middleware that is used for adding support for progress indicator group passing down to progress interceptor
+- package `@anglr/rest/avsc`
+    - added new `AVRO_REQUEST_DATA`, `AVRO_RESPONSE_DATA` http context tokens for passing AVRO request, response data into interceptor
+
+### BREAKING CHANGES
+
+- minimal supported version of *Angular* is `13.1.0`
+- minimal supported version of `@jscrpt/common` is `2.2.0`
+- minimal supported version of `@anglr/common` is `10.0.0`
+- compiled as *Angular IVY* **only** with new *APF*
+- removed support of *es5* target and using latest package.json features
+- removed dependency `@anglr/types`, all mising types used directly here
+- dropped support of `Node.js <= 12.20`
+- removed `AdditionalDataMiddleware` now using `HttpContext` for passing additional data with `HttpRequest`
+- removed `RestFullHttpResponse` type which was not doing anything
+- removed `ɵRESTClient` which is no longer needed, updated typings
+- removed `AdditionalInfoPropertyDescriptor` now using `HttpContext` for passing additional data with `HttpRequest`
+- removed `AvroRequestType`, `AvroResponseType` now using `AVRO_REQUEST_DATA`, `AVRO_RESPONSE_DATA` http context tokens
+
 ## Version 9.0.0 (2022-02-15)
 
 ### Features

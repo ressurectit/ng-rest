@@ -1,11 +1,11 @@
-import {StompConfig} from "@stomp/stompjs";
-import {isBlank, isPresent, isFunction, extend, isJsObject} from "@jscrpt/common";
+import {isBlank, isPresent, isFunction, extend, isJsObject, Dictionary} from '@jscrpt/common';
+import {StompConfig} from '@stomp/stompjs';
 
-import {WebSocketClient} from "./webSocketClient";
-import {WebSocketClientPublic, SubscribeMetadata, WebSocketClientOptions} from "./webSocketClient.interface.internal";
-import {ResponseType, RequestType, QueueCorrelationPosition, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from "./webSocketClient.types";
-import {WebSocketClientResponse, SubscribeQueueOptions, PublishQueueOptions, QueueCorrelationOptions} from "./webSocketClient.interface";
-import {WebSocketClientResponseContext} from "./webSocketClient.context";
+import {WebSocketClient} from './webSocketClient';
+import {WebSocketClientPublic, SubscribeMetadata, WebSocketClientOptions} from './webSocketClient.interface.internal';
+import {ResponseType, RequestType, QueueCorrelationPosition, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from './webSocketClient.types';
+import {WebSocketClientResponse, SubscribeQueueOptions, PublishQueueOptions, QueueCorrelationOptions} from './webSocketClient.interface';
+import {WebSocketClientResponseContext} from './webSocketClient.context';
 
 /**
  * Sets StompJs to use WebSocket instead of SockJS
@@ -62,7 +62,7 @@ export function CorrelationBodyProperty(property: string): ClassDecorator
 /**
  * All requests and responses will now use correlation id as part of requet or response queue name
  */
-export function QueueCorrelation(options?: QueueCorrelationOptions): ClassDecorator
+export function QueueCorrelation(options: QueueCorrelationOptions): ClassDecorator
 {
     options = extend(true, <QueueCorrelationOptions>{position: QueueCorrelationPosition.Suffix, replacementKey: 'corrId'}, options);
 
@@ -125,10 +125,11 @@ export function SubscribeQueue(name: string, options?: SubscribeQueueOptions)
         }
 
         let func = null;
+        const trgt = target as unknown as Dictionary;
 
-        if(options && isPresent(options.responseTransform) && isPresent(target[options.responseTransform]) && isFunction(target[options.responseTransform]))
+        if(options && isPresent(options.responseTransform) && isPresent(trgt[options.responseTransform]) && isFunction(trgt[options.responseTransform]))
         {
-            func = target[options.responseTransform];
+            func = trgt[options.responseTransform];
         }
 
         descriptor.subscribeQueue[name] =
@@ -153,17 +154,18 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
 {
     return function(target: WebSocketClient, propertyKey: string, descriptor: any)
     {
-        let pPath = target[`${propertyKey}_Path_parameters`];
-        let pBody = target[`${propertyKey}_Body_parameters`];
-        let pBodyProperty = target[`${propertyKey}_BodyProperty_parameters`];
-        let pTransforms: Function[] = target[`${propertyKey}_ParameterTransforms`];
+        const trgt = target as unknown as Dictionary<any>;
+        const pPath = trgt[`${propertyKey}_Path_parameters`];
+        const pBody = trgt[`${propertyKey}_Body_parameters`];
+        const pBodyProperty = trgt[`${propertyKey}_BodyProperty_parameters`];
+        const pTransforms: Function[] = trgt[`${propertyKey}_ParameterTransforms`];
 
         options = extend(true, {type: RequestType.Json}, options);
 
         function publishMethod(this: WebSocketClientPublic, ...args: any[]): WebSocketClientResponse<any>
         {
             // build default class options
-            let clientBaseOptions: WebSocketClientOptions =
+            const clientBaseOptions: WebSocketClientOptions =
             {
                 correlationBodyProperty: this.getCorrelationBodyProperty(),
                 publishQueuePrefix: this.getPublishQueuePrefix(),
@@ -193,9 +195,9 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
                     body = {};
                 }
 
-                for(let x in pBodyProperty)
+                for(const x in pBodyProperty)
                 {
-                    if(pBodyProperty.hasOwnProperty(x))
+                    if(pBodyProperty[x])
                     {
                         let bodyProp = args[pBodyProperty[x].parameterIndex];
 
@@ -212,9 +214,9 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
             // Path
             if (pPath)
             {
-                for (let x in pPath)
+                for (const x in pPath)
                 {
-                    if (pPath.hasOwnProperty(x))
+                    if (pPath[x])
                     {
                         let param = args[pPath[x].parameterIndex];
 
@@ -223,7 +225,7 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
                             param = pTransforms[pPath[x].parameterIndex].bind(this)(param);
                         }
 
-                        name = name.replace("{" + pPath[x].key + "}", param);
+                        name = name.replace('{' + pPath[x].key + '}', param);
                     }
                 }
             }
@@ -236,11 +238,11 @@ export function PublishQueue(name: string, options?: PublishQueueOptions)
             //bind response transform to this
             Object.keys(descriptor.subscribeQueue).forEach(name =>
             {
-                let subscribe: SubscribeMetadata = descriptor.subscribeQueue;
+                const subscribe: SubscribeMetadata = descriptor.subscribeQueue;
 
                 if(isPresent(subscribe[name].responseTransformFunc))
                 {
-                    subscribe[name].responseTransformFunc = subscribe[name].responseTransformFunc.bind(this);
+                    subscribe[name].responseTransformFunc = subscribe[name].responseTransformFunc?.bind(this);
                 }
             });
 
@@ -278,18 +280,20 @@ export function ParameterTransform(methodName?: string)
         {
             methodName = `${propertyKey}ParameterTransform`;
         }
+
+        const trgt = target as unknown as Dictionary<any>;
         
-        if(isPresent(target[methodName!]) && isFunction(target[methodName!]))
+        if(isPresent(trgt[methodName]) && isFunction(trgt[methodName]))
         {
-            let func = target[methodName!];
-            let metadataKey = `${propertyKey}_ParameterTransforms`;
+            const func = trgt[methodName];
+            const metadataKey = `${propertyKey}_ParameterTransforms`;
             
-            if (!isPresent(target[metadataKey]) || !isJsObject(target[metadataKey]))
+            if (!isPresent(trgt[metadataKey]) || !isJsObject(trgt[metadataKey]))
             {
-                target[metadataKey] = {};
+                trgt[metadataKey] = {};
             }
             
-            target[metadataKey][parameterIndex] = func;
+            trgt[metadataKey][parameterIndex] = func;
         }
     };
 }
@@ -303,21 +307,22 @@ function paramBuilder(paramName: string)
     {
         return function(target: WebSocketClient, propertyKey: string, parameterIndex: number)
         {
-            let metadataKey = `${propertyKey}_${paramName}_parameters`;
+            const trgt = target as unknown as Dictionary<any>;
+            const metadataKey = `${propertyKey}_${paramName}_parameters`;
 
-            let paramObj: any =
+            const paramObj: any =
             {
                 key: key,
                 parameterIndex: parameterIndex
             };
 
-            if (Array.isArray(target[metadataKey]))
+            if (Array.isArray(trgt[metadataKey]))
             {
-                target[metadataKey].push(paramObj);
+                trgt[metadataKey].push(paramObj);
             }
             else
             {
-                target[metadataKey] = [paramObj];
+                trgt[metadataKey] = [paramObj];
             }
         };
     };
@@ -327,16 +332,16 @@ function paramBuilder(paramName: string)
  * Path variable of a method's url, type: string
  * @param key - Path key to bind value
  */
-export const Path = paramBuilder("Path");
+export const Path = paramBuilder('Path');
 
 /**
  * Body of a REST method, json stringify applied
  * Only one body per method!
  */
-export const Body = paramBuilder("Body")("Body");
+export const Body = paramBuilder('Body')('Body');
 
 /**
  * Value of parameter is assigned to body property with specified name
  * @param key - Name of property for this value
  */
-export const BodyProperty = paramBuilder("BodyProperty");
+export const BodyProperty = paramBuilder('BodyProperty');

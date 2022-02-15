@@ -1,14 +1,14 @@
-import {ValueProvider, FactoryProvider, Injector} from "@angular/core";
-import {HttpHeaders, HttpErrorResponse} from "@angular/common/http";
-import {isPresent} from "@jscrpt/common";
-import {Logger, LOGGER, ProgressIndicatorService} from "@anglr/common";
-import {IMessage} from "@stomp/stompjs";
-import {Observable} from "rxjs";
-import {map, filter} from "rxjs/operators";
+import {ValueProvider, FactoryProvider, Injector} from '@angular/core';
+import {HttpHeaders, HttpErrorResponse} from '@angular/common/http';
+import {Logger, LOGGER, ProgressIndicatorService} from '@anglr/common';
+import {isPresent} from '@jscrpt/common';
+import {IMessage} from '@stomp/stompjs';
+import {map, filter} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
-import {DEFAULT_WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, ResponseType, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE, DEFAULT_WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from "./webSocketClient.types";
-import {SubscribeMetadataData, SubscriptionMetadataData} from "./webSocketClient.interface.internal";
-import {SubscribeQueueOptions, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware, StatusQueueResponse, PublishQueueOptions} from "./webSocketClient.interface";
+import {DEFAULT_WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, ResponseType, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE, DEFAULT_WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from './webSocketClient.types';
+import {SubscribeMetadataData, SubscriptionMetadataData} from './webSocketClient.interface.internal';
+import {SubscribeQueueOptions, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware, StatusQueueResponse, PublishQueueOptions} from './webSocketClient.interface';
 
 /**
  * Factory function for creating WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE
@@ -67,7 +67,7 @@ export function WebSocketHandleFilterNonMatching(source: Observable<any>, metada
     //filter out non matching results
     if(isPresent(options.correlationBodyProperty) && metadata.producesType == ResponseType.Json)
     {
-        source = source.pipe(filter(itm => itm[options.correlationBodyProperty] == correlationId));
+        source = source.pipe(filter(itm => itm[options.correlationBodyProperty!] == correlationId));
     }
 
     return source;
@@ -112,22 +112,22 @@ export const WEB_SOCKET_HANDLE_RESPONSE_TRANSFORM_PROVIDER: ValueProvider =
  */
 export function WebSocketHandleStatusProgressIndicator(status: StatusQueueResponse, _metadata: SubscribeMetadataData, _options: SubscribeQueueOptions, _publishOptions: PublishQueueOptions, _subscriptionMetadata: SubscriptionMetadataData, injector: Injector, _correlationId: string, name: string): void
 {
-    let logger: Logger = injector.get(LOGGER);
-    let progressIndicator: ProgressIndicatorService = injector.get(ProgressIndicatorService);
+    const logger: Logger = injector.get(LOGGER);
+    const progressIndicator: ProgressIndicatorService = injector.get(ProgressIndicatorService);
 
-    if(status.code == "REGISTER")
+    if(status.code == 'REGISTER')
     {
         logger.verbose(`WebSocket: show progress indicator '${status.queue}'`);
         progressIndicator.showProgress();
     }
 
-    if(status.queue == "status" && status.code != "REGISTER" && status.code != "FINAL")
+    if(status.queue == 'status' && status.code != 'REGISTER' && status.code != 'FINAL')
     {
         logger.verbose(`WebSocket: progress indicator message '${name}', '${status.queue}', '${status.description}'`);
-        progressIndicator.addMessage(status.description);
+        progressIndicator.addMessage(status.description!);
     }
 
-    if(status.code == "FINAL" || status.httpStatus >= 400)
+    if(status.code == 'FINAL' || status.httpStatus! >= 400)
     {
         logger.verbose(`WebSocket: hide progress indicator '${status.queue}'`);
         progressIndicator.hideProgress();
@@ -149,17 +149,17 @@ export const WEB_SOCKET_HANDLE_STATUS_PROGRESS_INDICATOR_PROVIDER: ValueProvider
  */
 export function WebSocketHandleStatusErrorComplete(status: StatusQueueResponse, _metadata: SubscribeMetadataData, options: SubscribeQueueOptions, _publishOptions: PublishQueueOptions, subscriptionMetadata: SubscriptionMetadataData, injector: Injector): void
 {
-    let logger: Logger = injector.get(LOGGER);
+    const logger: Logger = injector.get(LOGGER);
 
     if(subscriptionMetadata)
     {
-        if(status.httpStatus >= 400)
+        if(status.httpStatus! >= 400)
         {
             logger.error(`WebSocket: error status code '${status.httpStatus}', response {@status}`, status);
 
             jsDevMode && console.error(`Queue received failure response ${status.queue}`, status);
 
-            let error = new HttpErrorResponse(
+            const error = new HttpErrorResponse(
             {
                 status: status.httpStatus,
                 statusText: status.code,

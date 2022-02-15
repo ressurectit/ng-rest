@@ -1,14 +1,11 @@
 /node_modules
-/dist
+/es2015
+/es2020
 /docs
-/tests
 temp/
-
-/*/dist
 
 package-lock.json
 tsdoc-metadata.json
-*.metadata.json
 *.d.ts
 *.log
 *.bak

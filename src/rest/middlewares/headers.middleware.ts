@@ -1,8 +1,9 @@
 import {HttpRequest} from '@angular/common/http';
-import {isBlank, StringDictionary} from '@jscrpt/common';
+import {isBlank, isPresent, StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestHttpHeaders} from '../rest.interface';
+import type {RESTClient} from '../common';
+import {RestMiddleware, RestHttpHeaders} from '../rest.interface';
 
 /**
  * Middleware that is used for setting custom http headers
@@ -22,26 +23,26 @@ export class HeadersMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: RESTClient,
                _id: string,
-               _target: any,
+               _target: unknown,
                _methodName: string,
                descriptor: RestHttpHeaders,
-               _args: any[],
-               request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
+               _args: unknown[],
+               request: HttpRequest<unknown>,
+               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
         if(isBlank(descriptor.headers))
         {
             return next(request);
         }
 
-        let headers: StringDictionary = {};
+        const headers: StringDictionary = {};
         
         // set method specific headers
-        for (let k in descriptor.headers)
+        for (const k in descriptor.headers)
         {
-            if (descriptor.headers.hasOwnProperty(k))
+            if (isPresent(descriptor.headers[k]))
             {
                 headers[k] = descriptor.headers[k];
             }

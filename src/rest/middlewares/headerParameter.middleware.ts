@@ -1,8 +1,9 @@
 import {HttpRequest} from '@angular/common/http';
-import {StringDictionary} from '@jscrpt/common';
+import {isPresent, StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex} from '../rest.interface';
+import type {RESTClient} from '../common';
+import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 /**
  * Middleware that is used for adding header from parameter
@@ -22,36 +23,42 @@ export class HeaderParameterMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: RESTClient,
                _id: string,
                target: RestParameters,
                methodName: string,
-               _descriptor: any,
+               _descriptor: unknown,
                args: any[],
-               request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
+               request: HttpRequest<unknown>,
+               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
-        let parameters = target.parameters;
+        const parameters = target.parameters;
 
-        let pHeader: KeyIndex[] = null;
-        //TODO: add support for param transform
-        // let pTransforms: ParametersTransformsObj = null;
+        let pHeader: KeyIndex[]|undefined;
+        let pTransforms: ParametersTransformsObj|undefined;
 
         if(parameters)
         {
             pHeader = parameters[methodName]?.header;
-            // pTransforms = parameters[methodName]?.transforms;
+            pTransforms = parameters[methodName]?.transforms;
         }
 
         if (pHeader)
         {
-            let headers: StringDictionary = {};
+            const headers: StringDictionary = {};
 
-            for (var k in pHeader)
+            for (const k in pHeader)
             {
-                if (pHeader.hasOwnProperty(k))
+                if (isPresent(pHeader[k]))
                 {
-                    headers[pHeader[k].key] = args[pHeader[k].parameterIndex];
+                    let value = args[pHeader[k].parameterIndex];
+
+                    if(pTransforms && pTransforms[pHeader[k].parameterIndex])
+                    {
+                        value = pTransforms[pHeader[k].parameterIndex].bind(this)(value);
+                    }
+
+                    headers[pHeader[k].key] = value;
                 }
             }
 

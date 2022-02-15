@@ -1,12 +1,13 @@
 import {HttpRequest, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {QueryStringSerializer} from '../queryStringSerializer';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import type {RESTClient} from '../common';
+import {QueryStringSerializer} from '../queryStringSerializer';
+import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 interface ɵQueryStringSerializer
 {
-    ɵQueryStringSerializer?: QueryStringSerializer;
+    ɵQueryStringSerializer: QueryStringSerializer;
 }
 
 /**
@@ -27,20 +28,21 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient & ɵQueryStringSerializer,
+    public run(this: RESTClient,
                _id: string,
                target: RestParameters,
                methodName: string,
-               _descriptor: any,
+               _descriptor: unknown,
                args: any[],
-               request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
+               request: HttpRequest<unknown>,
+               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
-        let parameters = target.parameters;
-        this.ɵQueryStringSerializer = this.ɵQueryStringSerializer ?? this.injector.get(QueryStringSerializer);
+        const $this = this as unknown as ɵQueryStringSerializer;
+        const parameters = target.parameters;
+        $this.ɵQueryStringSerializer = $this.ɵQueryStringSerializer ?? this.injector.get(QueryStringSerializer);
 
-        let pQueryObject: KeyIndex[] = null;
-        let pTransforms: ParametersTransformsObj = null;
+        let pQueryObject: KeyIndex[]|undefined;
+        let pTransforms: ParametersTransformsObj|undefined;
 
         if(parameters)
         {
@@ -50,8 +52,8 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
 
         if (pQueryObject)
         {
-            let queryString: string = "";
-            let queryStrings: string[] = [];
+            let queryString: string = '';
+            const queryStrings: string[] = [];
 
             pQueryObject
                 .filter(p => args[p.parameterIndex]) // filter out optional parameters
@@ -64,31 +66,39 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
                         value = pTransforms[p.parameterIndex].bind(this)(value);
                     }
 
-                    queryStrings.push(this.ɵQueryStringSerializer.serializeObject(value));
+                    const serializedObj = $this.ɵQueryStringSerializer.serializeObject(value);
+
+                    if(serializedObj)
+                    {
+                        queryStrings.push(serializedObj);
+                    }
                 });
 
             queryString = queryStrings.join('&');
 
-            let params: HttpParams = new HttpParams({fromString: queryString});
+            const params: HttpParams = new HttpParams({fromString: queryString});
             let requestParams: HttpParams = request.params;
 
             params.keys().forEach(key =>
             {
-                let newValues = params.getAll(key);
+                const newValues = params.getAll(key);
 
-                newValues.forEach((value, index) =>
+                if(newValues)
                 {
-                    //first item, set
-                    if(!index)
+                    newValues.forEach((value, index) =>
                     {
-                        requestParams = requestParams.set(key, value);
-                    }
-                    //rest append
-                    else
-                    {
-                        requestParams = requestParams.append(key, value);
-                    }
-                });
+                        //first item, set
+                        if(!index)
+                        {
+                            requestParams = requestParams.set(key, value);
+                        }
+                        //rest append
+                        else
+                        {
+                            requestParams = requestParams.append(key, value);
+                        }
+                    });
+                }
             });
 
             request = request.clone(

@@ -2,7 +2,8 @@ import {HttpRequest} from '@angular/common/http';
 import {StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import type {RESTClient} from '../common';
+import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 /**
  * Middleware that is used for adding query string parameters
@@ -22,19 +23,19 @@ export class QueryParameterMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: RESTClient,
                _id: string,
                target: RestParameters,
                methodName: string,
-               _descriptor: any,
+               _descriptor: unknown,
                args: any[],
-               request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
+               request: HttpRequest<unknown>,
+               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
-        let parameters = target.parameters;
+        const parameters = target.parameters;
 
-        let pQuery: KeyIndex[] = null;
-        let pTransforms: ParametersTransformsObj = null;
+        let pQuery: KeyIndex[]|undefined;
+        let pTransforms: ParametersTransformsObj|undefined;
 
         if(parameters)
         {
@@ -42,7 +43,7 @@ export class QueryParameterMiddleware implements RestMiddleware
             pTransforms = parameters[methodName]?.transforms;
         }
 
-        let params: StringDictionary = {};
+        const params: StringDictionary = {};
 
         if (pQuery)
         {
@@ -50,7 +51,7 @@ export class QueryParameterMiddleware implements RestMiddleware
                 .filter(p => args[p.parameterIndex]) // filter out optional parameters
                 .forEach(p =>
                 {
-                    let key = p.key;
+                    const key = p.key;
                     let value = args[p.parameterIndex];
 
                     if(pTransforms && pTransforms[p.parameterIndex])

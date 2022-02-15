@@ -2,7 +2,8 @@ import {HttpRequest} from '@angular/common/http';
 import {isPresent} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, ɵRESTClient, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import type {RESTClient} from '../common';
+import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
 
 /**
  * Middleware that is used for modifying request URL path
@@ -22,19 +23,19 @@ export class PathParameterMiddleware implements RestMiddleware
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    public run(this: ɵRESTClient,
+    public run(this: RESTClient,
                _id: string,
                target: RestParameters,
                methodName: string,
-               _descriptor: any,
+               _descriptor: unknown,
                args: any[],
-               request: HttpRequest<any>,
-               next: (request: HttpRequest<any>) => Observable<any>): Observable<any>
+               request: HttpRequest<unknown>,
+               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
-        let parameters = target.parameters;
+        const parameters = target.parameters;
 
-        let pPath: KeyIndex[] = null;
-        let pTransforms: ParametersTransformsObj = null;
+        let pPath: KeyIndex[]|undefined;
+        let pTransforms: ParametersTransformsObj|undefined;
 
         if(parameters)
         {
@@ -42,13 +43,13 @@ export class PathParameterMiddleware implements RestMiddleware
             pTransforms = parameters[methodName]?.transforms;
         }
 
-        var url: string = request.url;
+        let url: string = request.url;
 
         if (pPath && isPresent(url))
         {
-            for (var k in pPath)
+            for (const k in pPath)
             {
-                if (pPath.hasOwnProperty(k))
+                if (isPresent(pPath[k]))
                 {
                     let value = args[pPath[k].parameterIndex];
 
@@ -57,7 +58,7 @@ export class PathParameterMiddleware implements RestMiddleware
                         value = pTransforms[pPath[k].parameterIndex].bind(this)(value);
                     }
 
-                    url = url.replace("{" + pPath[k].key + "}", value);
+                    url = url.replace('{' + pPath[k].key + '}', value);
                 }
             }
 

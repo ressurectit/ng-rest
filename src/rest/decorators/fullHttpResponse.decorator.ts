@@ -1,5 +1,5 @@
 import {RESTClient} from '../common';
-import {RestFullHttpResponse, RestMethodMiddlewares} from '../rest.interface';
+import {RestMethodMiddlewares} from '../rest.interface';
 import {not} from '../utils';
 import {ResponseTypeMiddleware} from '../middlewares/responseType.middleware';
 
@@ -8,11 +8,9 @@ import {ResponseTypeMiddleware} from '../middlewares/responseType.middleware';
  */
 export function FullHttpResponse()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestFullHttpResponse &
-                                                                           RestMethodMiddlewares)
+    return function(_target: RESTClient, _propertyKey: string, descriptor: RestMethodMiddlewares): TypedPropertyDescriptor<any>
     {
-        descriptor.fullHttpResponse = true;
-        descriptor.middlewareTypes.push(not(ResponseTypeMiddleware));
+        descriptor.middlewareTypes?.push(not(ResponseTypeMiddleware));
 
         return descriptor;
     };

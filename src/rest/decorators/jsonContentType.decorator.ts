@@ -10,10 +10,10 @@ import {HeadersMiddleware} from '../middlewares';
 export function JsonContentType()
 {
     return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
-                                                                           RestMethodMiddlewares)
+                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, {"content-type": "application/json"});
-        descriptor.middlewareTypes.push(HeadersMiddleware);
+        descriptor.headers = extend(descriptor.headers ?? {}, {'content-type': 'application/json'});
+        descriptor.middlewareTypes?.push(HeadersMiddleware);
 
         return descriptor;
     };

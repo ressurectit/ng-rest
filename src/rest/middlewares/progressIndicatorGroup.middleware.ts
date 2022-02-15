@@ -1,15 +1,15 @@
-import {HttpRequest} from '@angular/common/http';
+import {HttpContext, HttpRequest} from '@angular/common/http';
+import {PROGRESS_INDICATOR_GROUP_NAME} from '@anglr/common';
 import {isBlank} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMiddleware, RestResponseType} from '../rest.interface';
-import {ResponseType} from '../responseType';
+import {RestMiddleware, RestProgressIndicatorGroup} from '../rest.interface';
 import type {RESTClient} from '../common';
 
 /**
- * Middleware that is used for changing response type
+ * Middleware that is used for adding support for progress indicator group passing down to progress interceptor
  */
-export class ProducesMiddleware implements RestMiddleware
+export class ProgressIndicatorGroupMiddleware implements RestMiddleware
 {
     //######################### public methods - implementation of RestMiddleware #########################
 
@@ -28,52 +28,19 @@ export class ProducesMiddleware implements RestMiddleware
                _id: string,
                _target: unknown,
                _methodName: string,
-               descriptor: RestResponseType,
+               descriptor: RestProgressIndicatorGroup,
                _args: unknown[],
                request: HttpRequest<unknown>,
                next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
-        if(isBlank(descriptor.responseType))
+        if(isBlank(descriptor.groupName))
         {
             return next(request);
         }
 
-        let responseType: 'json'|'text'|'blob'|'arraybuffer';
-
-        switch(descriptor.responseType)
-        {
-            case ResponseType.Json:
-            case ResponseType.LocationHeaderAndJson:
-            {
-                responseType = 'json';
-
-                break;
-            }
-            case ResponseType.LocationHeader:
-            case ResponseType.Text:
-            {
-                responseType = 'text';
-
-                break;
-            }
-            case ResponseType.Blob:
-            case ResponseType.BlobAndFilename:
-            {
-                responseType = 'blob';
-
-                break;
-            }
-            case ResponseType.ArrayBuffer:
-            {
-                responseType = 'arraybuffer';
-
-                break;
-            }
-        }
-
         request = request.clone(
         {
-            responseType: responseType
+            context: new HttpContext().set(PROGRESS_INDICATOR_GROUP_NAME, descriptor.groupName)
         });
 
         return next(request);

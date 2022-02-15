@@ -1,9 +1,9 @@
-import {Injector} from "@angular/core";
-import {IFrame} from "@stomp/stompjs";
-import {Observable} from "rxjs";
+import {Injector} from '@angular/core';
+import {IFrame} from '@stomp/stompjs';
+import {Observable} from 'rxjs';
 
-import {SubscribeQueueOptionsInternal, PublishQueueOptionsInternal, SubscribeMetadataData, SubscriptionMetadataData} from "./webSocketClient.interface.internal";
-import {ResponseType, RequestType, QueueCorrelationPosition} from "./webSocketClient.types";
+import {SubscribeQueueOptionsInternal, PublishQueueOptionsInternal, SubscribeMetadataData, SubscriptionMetadataData} from './webSocketClient.interface.internal';
+import {ResponseType, RequestType, QueueCorrelationPosition} from './webSocketClient.types';
 
 /**
  * Types of errors that can occurs in WebSocket StompJs connection
@@ -39,12 +39,12 @@ export interface WebSocketClientResponse<TQueue>
     /**
      * Explicitly call publish to queue, can be called only once, if called multiple times, rest of calls do nothing
      */
-    publish();
+    publish(): void;
 
     /**
      * Destroys currently registered listeners for response
      */
-    destroy();
+    destroy(): void;
 }
 
 /**

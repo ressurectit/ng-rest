@@ -1,10 +1,10 @@
-import {Injector} from "@angular/core";
-import {Logger} from "@anglr/common";
-import {Client, StompConfig, StompSubscription} from "@stomp/stompjs";
-import {Observable, Subject} from "rxjs";
+import {Injector} from '@angular/core';
+import {Logger} from '@anglr/common';
+import {Client, StompConfig, StompSubscription} from '@stomp/stompjs';
+import {Observable, Subject} from 'rxjs';
 
 import {ResponseType} from './webSocketClient.types';
-import {PublishQueueOptions, QueueCorrelationOptions, SubscribeQueueOptions} from "./webSocketClient.interface";
+import {PublishQueueOptions, QueueCorrelationOptions, SubscribeQueueOptions} from './webSocketClient.interface';
 
 /**
  * Interface that is used for accessing private, protected and public members of WebSocketClient
@@ -43,7 +43,7 @@ export interface WebSocketClientPublic
     /**
      * Destroys created web socket connection
      */
-    destroy();
+    destroy(): void;
 
     /**
      * Returns the base url of WebSocketClient
