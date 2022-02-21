@@ -9,12 +9,15 @@ import {HeadersMiddleware} from '../middlewares';
  */
 export function TextContentType()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
+                                                                                       RestMethodMiddlewares |
+                                                                                       TDecorated): TypedPropertyDescriptor<any>
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, {'content-type': 'text/plain'});
-        descriptor.middlewareTypes?.push(HeadersMiddleware);
+        const descr = descriptor as RestHttpHeaders & RestMethodMiddlewares;
 
-        return descriptor;
+        descr.headers = extend(descr.headers ?? {}, {'content-type': 'text/plain'});
+        descr.middlewareTypes?.push(HeadersMiddleware);
+
+        return descr;
     };
 }

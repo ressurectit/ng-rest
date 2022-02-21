@@ -10,15 +10,18 @@ import {RestMethodMiddlewares, RestProgressIndicatorGroup} from '../rest.interfa
  */
 export function ProgressIndicatorGroup(name: string)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: Partial<RestProgressIndicatorGroup> &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: Partial<RestProgressIndicatorGroup> &
+                                                                                       RestMethodMiddlewares |
+                                                                                       TDecorated): TypedPropertyDescriptor<any>
     {
+        const descr = descriptor as Partial<RestProgressIndicatorGroup> & RestMethodMiddlewares;
+
         if(isPresent(name))
         {
-            descriptor.middlewareTypes?.push(ProgressIndicatorGroupMiddleware);
-            descriptor.groupName = name;
+            descr.middlewareTypes?.push(ProgressIndicatorGroupMiddleware);
+            descr.groupName = name;
         }
 
-        return descriptor;
+        return descr;
     };
 }

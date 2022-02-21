@@ -10,12 +10,15 @@ import {HeadersMiddleware} from '../middlewares';
  */
 export function Headers(headersDef: StringDictionary)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
+                                                                                       RestMethodMiddlewares |
+                                                                                       TDecorated): TypedPropertyDescriptor<any>
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, headersDef);
-        descriptor.middlewareTypes?.push(HeadersMiddleware);
+        const descr = descriptor as RestHttpHeaders & RestMethodMiddlewares;
 
-        return descriptor;
+        descr.headers = extend(descr.headers ?? {}, headersDef);
+        descr.middlewareTypes?.push(HeadersMiddleware);
+
+        return descr;
     };
 }

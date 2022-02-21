@@ -109,16 +109,19 @@ function methodBuilder(method: string)
 {
     return function(url: string)
     {
-        return function(target: RESTClient & RestParameters, propertyKey: string, descriptor: RestMethod &
-                                                                                              ɵRestMethod &
-                                                                                              RestMethodMiddlewares)
+        return function<TDecorated>(target: RESTClient & RestParameters, propertyKey: string, descriptor: RestMethod &
+                                                                                                          ɵRestMethod &
+                                                                                                          RestMethodMiddlewares |
+                                                                                                          TDecorated)
         {
-            if(isFunction(descriptor.value))
+            const descr = descriptor as RestMethod & ɵRestMethod & RestMethodMiddlewares;
+
+            if(isFunction(descr.value))
             {
-                descriptor.originalParamsCount = descriptor.value.length;
+                descr.originalParamsCount = descr.value.length;
             }
 
-            descriptor.middlewareTypes = descriptor.middlewareTypes ?? [];
+            descr.middlewareTypes = descr.middlewareTypes ?? [];
 
             const id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
             const parameters = target.parameters;
@@ -129,13 +132,13 @@ function methodBuilder(method: string)
                 parametersMiddlewares = parameters[propertyKey]?.middlewareTypes ?? [];
             }
 
-            descriptor.value = function(this: RESTClient, ...args: any[])
+            descr.value = function(this: RESTClient, ...args: any[])
             {
                 //get middlewares definition only during first call
-                if(!descriptor.middlewares)
+                if(!descr.middlewares)
                 {
-                    descriptor.middlewares = buildMiddlewares.bind(this)([
-                                                                             ...descriptor.middlewareTypes ?? [],
+                    descr.middlewares = buildMiddlewares.bind(this)([
+                                                                             ...descr.middlewareTypes ?? [],
                                                                              ...parametersMiddlewares,
                                                                              ...this.methodMiddlewares
                                                                          ],
@@ -156,7 +159,7 @@ function methodBuilder(method: string)
                 //run all middlewares
                 const call = (httpReq: HttpRequest<any>, index: number): Observable<any> =>
                 {
-                    if(!descriptor.middlewares[index])
+                    if(!descr.middlewares[index])
                     {
                         httpReq = this.requestInterceptor(httpReq);
 
@@ -168,10 +171,10 @@ function methodBuilder(method: string)
                     }
                     else
                     {
-                        return descriptor.middlewares[index](reqId,
+                        return descr.middlewares[index](reqId,
                                                              target,
                                                              propertyKey,
-                                                             descriptor,
+                                                             descr,
                                                              args,
                                                              httpReq,
                                                              request => call(request, ++index));
@@ -195,8 +198,8 @@ function methodBuilder(method: string)
                 
 
                 // PRODUCES MIDDLEWARE
-                // var reportProgress = descriptor.reportProgress || false;
-                // var fullHttpResponse = descriptor.fullHttpResponse || false;
+                // var reportProgress = descr.reportProgress || false;
+                // var fullHttpResponse = descr.fullHttpResponse || false;
 
                 // //append server headers
                 // if(isPresent(this.serverCookieHeader))
@@ -271,7 +274,7 @@ function methodBuilder(method: string)
                 // return observable;
             };
 
-            return descriptor;
+            return descr;
         };
     };
 }

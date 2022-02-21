@@ -9,12 +9,15 @@ import {ProducesMiddleware} from '../middlewares';
  */
 export function Produces(producesDef: ResponseType)
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestResponseType &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestResponseType &
+                                                                                       RestMethodMiddlewares |
+                                                                                       TDecorated): TypedPropertyDescriptor<any>
     {
-        descriptor.responseType = producesDef;
-        descriptor.middlewareTypes?.push(ProducesMiddleware);
+        const descr = descriptor as RestResponseType & RestMethodMiddlewares;
 
-        return descriptor;
+        descr.responseType = producesDef;
+        descr.middlewareTypes?.push(ProducesMiddleware);
+
+        return descr;
     };
 }

@@ -8,10 +8,12 @@ import {ResponseTypeMiddleware} from '../middlewares/responseType.middleware';
  */
 export function FullHttpResponse()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestMethodMiddlewares | TDecorated): TypedPropertyDescriptor<any>
     {
-        descriptor.middlewareTypes?.push(not(ResponseTypeMiddleware));
+        const descr = descriptor as RestMethodMiddlewares;
 
-        return descriptor;
+        descr.middlewareTypes?.push(not(ResponseTypeMiddleware));
+
+        return descr;
     };
 }

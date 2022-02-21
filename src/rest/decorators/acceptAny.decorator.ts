@@ -9,12 +9,15 @@ import {HeadersMiddleware} from '../middlewares';
  */
 export function AcceptAny()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestHttpHeaders &
+                                                                                       RestMethodMiddlewares |
+                                                                                       TDecorated): TypedPropertyDescriptor<any>
     {
-        descriptor.headers = extend(descriptor.headers ?? {}, {'accept': '*/*'});
-        descriptor.middlewareTypes?.push(HeadersMiddleware);
+        const descr = descriptor as RestHttpHeaders & RestMethodMiddlewares;
 
-        return descriptor;
+        descr.headers = extend(descr.headers ?? {}, {'accept': '*/*'});
+        descr.middlewareTypes?.push(HeadersMiddleware);
+
+        return descr;
     };
 }

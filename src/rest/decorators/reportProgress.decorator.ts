@@ -8,12 +8,15 @@ import {ResponseTypeMiddleware} from '../middlewares/responseType.middleware';
  */
 export function ReportProgress()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestReportProgress &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestReportProgress &
+                                                                                       RestMethodMiddlewares |
+                                                                                       TDecorated): TypedPropertyDescriptor<any>
     {
-        descriptor.reportProgress = true;
-        descriptor.middlewareTypes?.push(not(ResponseTypeMiddleware));
+        const descr = descriptor as RestReportProgress & RestMethodMiddlewares;
 
-        return descriptor;
+        descr.reportProgress = true;
+        descr.middlewareTypes?.push(not(ResponseTypeMiddleware));
+
+        return descr;
     };
 }

@@ -23,7 +23,8 @@
         "lint": "eslint src/**/*.ts",
         "doc": "path-exists docs && npm run doc:generate || echo \"No docs generated!\"",
         "predoc:generate": "cd docs && git pull && cd ..",
-        "doc:generate": "npm run doc:generate:rest && npm run doc:generate:stompjs && npm run doc:generate:avsc && npm run doc:generate:moment && npm run doc:generate:date-fns && npm run doc:save",
+        "postdoc:generate": "npm run doc:save",
+        "doc:generate": "npm run doc:generate:rest && npm run doc:generate:stompjs && npm run doc:generate:avsc && npm run doc:generate:moment && npm run doc:generate:date-fns",
         "doc:save": "cd docs && git add . && git commit -m \"INT: updated API docs ng-rest\" && git push && cd ..",
         "doc:generate:rest": "rimraf docs/content/api/ng-rest && npm run doc:json:rest && npm run doc:md:rest && npm run doc:api:rest",
         "doc:json:rest": "api-extractor run --local --verbose -c api-extractor.json",
@@ -53,6 +54,11 @@
         "type": "git",
         "url": "https://github.com/ressurectit/ng-rest.git"
     },
+    "keywords": [
+        "angular",
+        "ng",
+        "rest"
+    ],
     "author": "kukjevov",
     "license": "MIT",
     "bugs": {

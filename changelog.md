@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 10.0.1 (2022-02-21)
+
+### Bug Fixes
+
+- fixed all method decorators, which were not applicable to methods
+
 ## Version 10.0.0 (2022-02-15)
 
 ### Features

@@ -10,9 +10,12 @@ import {ResponseTransformMiddleware} from '../middlewares';
  */
 export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFunc|ResponseTransformFunc[])
 {
-    return function(target: RESTClient, propertyKey: string, descriptor: RestResponseTransform &
-                                                                         RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(target: RESTClient, propertyKey: string, descriptor: RestResponseTransform &
+                                                                                     RestMethodMiddlewares |
+                                                                                     TDecorated): TypedPropertyDescriptor<any>
     {
+        const descr = descriptor as RestResponseTransform & RestMethodMiddlewares;
+
         if(isBlank(methodNameOrFuncs))
         {
             methodNameOrFuncs = `${propertyKey}ResponseTransform`;
@@ -40,8 +43,8 @@ export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFu
 
         if(responseFunctions?.length)
         {
-            descriptor.middlewareTypes?.push(ResponseTransformMiddleware);
-            descriptor.responseTransform = function(this: RESTClient, observable: any, ...args)
+            descr.middlewareTypes?.push(ResponseTransformMiddleware);
+            descr.responseTransform = function(this: RESTClient, observable: any, ...args)
             {
                 for(let x = 0; x < responseFunctions.length; x++)
                 {
@@ -52,6 +55,6 @@ export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFu
             };
         }
 
-        return descriptor;
+        return descr;
     };
 }

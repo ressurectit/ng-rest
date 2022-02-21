@@ -14,12 +14,15 @@ const responseCache: Dictionary<HttpResponse<any>> = {};
  */
 export function Cache()
 {
-    return function(_target: RESTClient, _propertyKey: string, descriptor: RestCaching &
-                                                                           RestMethodMiddlewares): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestCaching &
+                                                                                       RestMethodMiddlewares |
+                                                                                       TDecorated): TypedPropertyDescriptor<any>
     {
-        descriptor.middlewareTypes?.push(CacheMiddleware);
+        const descr = descriptor as RestCaching & RestMethodMiddlewares;
 
-        descriptor.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any>|null =>
+        descr.middlewareTypes?.push(CacheMiddleware);
+
+        descr.getCachedResponse = (request: HttpRequest<any>): HttpResponse<any>|null =>
         {
             if(isPresent(responseCache[request.urlWithParams]))
             {
@@ -29,13 +32,13 @@ export function Cache()
             return null;
         };
         
-        descriptor.saveResponseToCache = (request: HttpRequest<any>, response: HttpResponse<any>): HttpResponse<any> =>
+        descr.saveResponseToCache = (request: HttpRequest<any>, response: HttpResponse<any>): HttpResponse<any> =>
         {
             responseCache[request.urlWithParams] = response;
             
             return response;
         };
         
-        return descriptor;
+        return descr;
     };
 }
