@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 10.0.2 (2022-02-22)
+
+### Bug Fixes
+
+- fixed typings, not using rolled up typings for now
+
 ## Version 10.0.1 (2022-02-21)
 
 ### Bug Fixes

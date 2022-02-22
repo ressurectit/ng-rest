@@ -5,7 +5,7 @@
     "type": "module",
     "sideEffects": false,
     "scripts": {
-        "build": "ngc --declaration --declarationDir . --declarationMap && ngc -t es2015 --outDir es2015 && npm run dts:rollup",
+        "build": "ngc --declaration --declarationDir . --declarationMap && ngc -t es2015 --outDir es2015",
         "dts:rollup": "npm run api -- api-extractor.json && npm run api -- date-fns/api-extractor.json && npm run api -- avsc/api-extractor.json && npm run api -- stompjs/api-extractor.json && npm run api -- moment/api-extractor.json",
         "api": "api-extractor run --local --verbose -c",
         "clean": "rimraf */temp temp es2015 es2020 **/tsdoc-metadata.json src/**/*.d.ts src/**/*.d.ts.map */src/**/*.d.ts */src/**/*.d.ts.map ./*.d.ts ./*.d.ts.map */*.d.ts",
@@ -45,7 +45,7 @@
         "doc:generate:date-fns": "rimraf docs/content/api/ng-rest-date-fns && npm run doc:json:date-fns && npm run doc:md:date-fns && npm run doc:api:date-fns",
         "doc:json:date-fns": "api-extractor run --local --verbose -c date-fns/api-extractor.json",
         "doc:md:date-fns": "api-documenter markdown -i date-fns/temp -o docs/content/api/ng-rest-date-fns",
-        "doc:api:date-fns": "copyfiles -u 2 date-fns/temp/common-date-fns.api.md docs/content/api/ng-common-date-fns && rimraf date-fns/temp"
+        "doc:api:date-fns": "copyfiles -u 2 date-fns/temp/rest-date-fns.api.md docs/content/api/ng-rest-date-fns && rimraf date-fns/temp"
     },
     "engines": {
         "node": "^12.20.0 || ^14.15.0 || >=16.10.0"
@@ -114,13 +114,13 @@
     "es2020": "./es2020/src/index.js",
     "es2015": "./es2015/src/index.js",
     "module": "./es2015/src/index.js",
-    "typings": "./rest.d.ts",
+    "typings": "./src/index.d.ts",
     "exports": {
         "./package.json": {
             "default": "./package.json"
         },
         ".": {
-            "types": "./rest.d.ts",
+            "types": "./src/index.d.ts",
             "esm2020": "./es2020/src/index.js",
             "es2020": "./es2020/src/index.js",
             "es2015": "./es2015/src/index.js",
@@ -128,7 +128,7 @@
             "default": "./es2020/src/index.js"
         },
         "./date-fns": {
-            "types": "./date-fns/rest-date-fns.d.ts",
+            "types": "./date-fns/src/index.d.ts",
             "esm2020": "./es2020/date-fns/src/index.js",
             "es2020": "./es2020/date-fns/src/index.js",
             "es2015": "./es2015/date-fns/src/index.js",
@@ -136,7 +136,7 @@
             "default": "./es2020/date-fns/src/index.js"
         },
         "./moment": {
-            "types": "./moment/rest-moment.d.ts",
+            "types": "./moment/src/index.d.ts",
             "esm2020": "./es2020/moment/src/index.js",
             "es2020": "./es2020/moment/src/index.js",
             "es2015": "./es2015/moment/src/index.js",
@@ -144,7 +144,7 @@
             "default": "./es2020/moment/src/index.js"
         },
         "./avsc": {
-            "types": "./avsc/rest-avsc.d.ts",
+            "types": "./avsc/src/index.d.ts",
             "esm2020": "./es2020/avsc/src/index.js",
             "es2020": "./es2020/avsc/src/index.js",
             "es2015": "./es2015/avsc/src/index.js",
@@ -152,7 +152,7 @@
             "default": "./es2020/avsc/src/index.js"
         },
         "./stompjs": {
-            "types": "./stompjs/rest-stompjs.d.ts",
+            "types": "./stompjs/src/index.d.ts",
             "esm2020": "./es2020/stompjs/src/index.js",
             "es2020": "./es2020/stompjs/src/index.js",
             "es2015": "./es2015/stompjs/src/index.js",
