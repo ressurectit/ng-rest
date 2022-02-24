@@ -1,6 +1,5 @@
 import {Type} from '@angular/core';
 
-import type {RESTClient} from './common';
 import {RestMiddleware, RestMiddlewareRunMethod, NotType, BuildMiddlewaresFn} from './rest.interface';
 
 /**
@@ -9,8 +8,7 @@ import {RestMiddleware, RestMiddlewareRunMethod, NotType, BuildMiddlewaresFn} fr
  * @param middlewares - Array of set middleware types
  * @param middlewaresOrder - Array of middleware types in order that should be executed
  */
-export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(this: RESTClient,
-                                                                              middlewares: Type<RestMiddleware>[],
+export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(middlewares: Type<RestMiddleware>[],
                                                                               middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
 {
     const usedMiddlewares: Type<RestMiddleware>[] = [];
@@ -51,7 +49,7 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(th
 
     usedMiddlewares.forEach(middleware =>
     {
-        runMethods.push(new middleware().run.bind(this));
+        runMethods.push(new middleware().run);
     });
 
     return runMethods;

@@ -225,25 +225,6 @@ export interface RestMiddlewareRunMethod<TRequestBody = any, TResponseBody = any
      args: any[],
      request: HttpRequest<TRequestBody>,
      next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<TResponseBody>;
-
-    /**
-     * Runs code that is defined for this rest middleware, in this method you can modify request and response
-     * @param this - Method is bound to RESTClient
-     * @param id - Unique id that identifies request method
-     * @param target - Prototype of class that are decorators applied to
-     * @param methodName - Name of method that is being modified
-     * @param descriptor - Descriptor of method that is being modified
-     * @param args - Array of arguments passed to called method
-     * @param request - Http request that you can modify
-     * @param next - Used for calling next middleware with modified request
-     */
-    (id: string,
-     target: TTarget,
-     methodName: string,
-     descriptor: TDescriptor,
-     args: any[],
-     request: HttpRequest<TRequestBody>,
-     next: <TNextRequestBody = any, TNextResponseBody = any>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<TResponseBody>;
 }
 
 /**
@@ -274,7 +255,7 @@ export interface BuildMiddlewaresFn
      * @param middlewares - Array of set middleware types
      * @param middlewaresOrder - Array of middleware types in order that should be executed
      */
-    (this: RESTClient, middlewares: Type<RestMiddleware>[], middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
+    (middlewares: Type<RestMiddleware>[], middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
 }
 
 /**

@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 11.0.0 (2022-02-24)
+
+### Bug Fixes
+
+- fixed problem with keeping `this` bound to *Middlewares*, causing *Injector has already been destroyed* after HRM reloading
+
+### BREAKING CHANGES
+
+- updated `RestMiddlewareRunMethod`, now holds only function signature with `this`
+- updated `BuildMiddlewaresFn`, removed `this` from function signature
+
 ## Version 10.0.2 (2022-02-22)
 
 ### Bug Fixes

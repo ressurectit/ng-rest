@@ -137,12 +137,12 @@ function methodBuilder(method: string)
                 //get middlewares definition only during first call
                 if(!descr.middlewares)
                 {
-                    descr.middlewares = buildMiddlewares.bind(this)([
-                                                                             ...descr.middlewareTypes ?? [],
-                                                                             ...parametersMiddlewares,
-                                                                             ...this.methodMiddlewares
-                                                                         ],
-                                                                         this.middlewaresOrder);
+                    descr.middlewares = buildMiddlewares([
+                                                             ...descr.middlewareTypes ?? [],
+                                                             ...parametersMiddlewares,
+                                                             ...this.methodMiddlewares
+                                                         ],
+                                                         this.middlewaresOrder);
                 }
 
                 const reqId = `${id}-${generateId(6)}`;
@@ -171,7 +171,8 @@ function methodBuilder(method: string)
                     }
                     else
                     {
-                        return descr.middlewares[index](reqId,
+                        return descr.middlewares[index].call(this,
+                                                             reqId,
                                                              target,
                                                              propertyKey,
                                                              descr,
