@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 11.0.1 (2022-04-07)
+
+### Bug Fixes
+
+- fixed missing exports for `RestProgressIndicatorGroup` and `ProgressIndicatorGroupMiddleware`
+
 ## Version 11.0.0 (2022-02-24)
 
 ### Bug Fixes
