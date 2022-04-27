@@ -3,6 +3,7 @@ export * from './baseUrl.decorator';
 export * from './cache.decorator';
 export * from './defaultHeaders.decorator';
 export * from './disableInterceptor.decorator';
+export * from './disableMiddleware.decorator';
 export * from './fullHttpResponse.decorator';
 export * from './headers.decorator';
 export * from './jsonContentType.decorator';

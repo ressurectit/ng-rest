@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 11.1.0 (2022-04-27)
+
+### Features
+
+- new `DisableMiddleware` decorator, that allows disabling of specified middleware
+
 ## Version 11.0.1 (2022-04-07)
 
 ### Bug Fixes
