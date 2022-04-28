@@ -8,8 +8,7 @@ import moment from 'moment';
 export class MomentRestDateApi implements RestDateApi<moment.Moment>
 {
     /**
-     * Tests whether provided value is date
-     * @param value - Value to be tested
+     * @inheritdoc
      */
     public isDate(value: any): value is moment.Moment|Date
     {
@@ -17,11 +16,18 @@ export class MomentRestDateApi implements RestDateApi<moment.Moment>
     }
 
     /**
-     * Serialize date into string representation of date
-     * @param value - Value to be serialized
+     * @inheritdoc
      */
     public toString(value: moment.Moment|Date): string
     {
         return moment(value).format('YYYY-MM-DD');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public isBeforeNow(tested: moment.Moment): boolean
+    {
+        return tested.isBefore(moment());
     }
 }

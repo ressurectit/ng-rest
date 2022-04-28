@@ -1,4 +1,5 @@
 export * from './acceptAny.decorator';
+export * from './advancedCache.decorator';
 export * from './baseUrl.decorator';
 export * from './cache.decorator';
 export * from './defaultHeaders.decorator';

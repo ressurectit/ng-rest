@@ -136,6 +136,22 @@ export interface RestCaching extends TypedPropertyDescriptor<any>
 }
 
 /**
+ * Contains data that are used for advanced cache service
+ */
+export interface RestAdvancedCaching extends TypedPropertyDescriptor<any>
+{
+    /**
+     * Gets response from cache
+     */
+    key: string;
+
+    /**
+     * Relative definition of 'date' for setting validity of cache, example +2d, +12h
+     */
+    validUntil?: string;
+}
+
+/**
  * Information about parameter key and index
  */
 export interface KeyIndex
@@ -274,4 +290,10 @@ export interface RestDateApi<TDate = any>
      * @param value - Value to be serialized
      */
     toString(value: TDate|Date): string;
+
+    /**
+     * Tests whether tested date is before now
+     * @param tested - Tested date
+     */
+    isBeforeNow(tested: TDate): boolean;
 }

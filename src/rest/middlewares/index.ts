@@ -1,3 +1,4 @@
+export * from './advancedCache.middleware';
 export * from './reportProgress.middleware';
 export * from './responseType.middleware';
 export * from './responseTransform.middleware';

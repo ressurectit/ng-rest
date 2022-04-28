@@ -1,6 +1,6 @@
 import {RestDateApi} from '@anglr/rest';
 import {isDate} from '@jscrpt/common';
-import {format} from 'date-fns';
+import {format, isBefore} from 'date-fns';
 
 /**
  * RestDateApi implementation using date-fns
@@ -8,8 +8,7 @@ import {format} from 'date-fns';
 export class DateFnsRestDateApi implements RestDateApi<Date>
 {
     /**
-     * Tests whether provided value is date
-     * @param value - Value to be tested
+     * @inheritdoc
      */
     public isDate(value: any): value is Date
     {
@@ -17,11 +16,18 @@ export class DateFnsRestDateApi implements RestDateApi<Date>
     }
 
     /**
-     * Serialize date into string representation of date
-     * @param value - Value to be serialized
+     * @inheritdoc
      */
     public toString(value: Date): string
     {
         return format(value, 'yyyy-MM-dd');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public isBeforeNow(tested: Date): boolean
+    {
+        return isBefore(tested, new Date());
     }
 }

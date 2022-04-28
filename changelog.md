@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 11.2.0 (2022-04-27)
+## Version 11.2.0 (2022-04-28)
 
 ### Features
 
@@ -8,6 +8,25 @@
 - new `MockLogger` interface, that is service for logging mock responses
     - method `logResponse` logs mock response
 - new `MockLoggerMiddleware` middleware, that is used for logging responses for mock usages
+- new `AdvancedCacheItem` interface, that is advanced cache item
+    - property `response` cached http response
+    - property `validUntil` validity date for cache
+- new `AdvancedCacheItemOptions` type, that are options for advanced cache item
+- new `AdvancedCacheService` service, that allows advanced caching of http responses
+    - method `clearCache` clears cache either for specified key, or whole cache
+    - method `add` adds response to advanced cache
+    - method `get` gets http response from cache, or null if it does not exists
+    - method `updateCache` updates existing cache items, if not exists it does nothing
+- new `RestAdvancedCaching` interface, contains data that are used for advanced cache service
+- new `AdvancedCache` decorator, results of requests are cached in advanced cachce service
+- new `AdvancedCacheMiddleware` middleware, that is used for storing and restoring response from advanced cache service
+- updated `RestDateApi` interface
+    - method `isBeforeNow` tests whether tested date is before now
+- subpackage @anglr/rest/date-fns
+    - updated `DateFnsRestDateApi` to correspond with new `RestDateApi` interface
+- subpackage @anglr/rest/moment
+    - updated `MomentRestDateApi` to correspond with new `RestDateApi` interface
+
 
 ## Version 11.1.0 (2022-04-27)
 
