@@ -1,6 +1,6 @@
 import {RestAdvancedCaching, RestMethodMiddlewares} from '../rest.interface';
 import {RESTClient} from '../common';
-import {CacheMiddleware} from '../middlewares';
+import {AdvancedCacheMiddleware} from '../middlewares';
 
 /**
  * Name of default key if not specified custom one
@@ -22,7 +22,7 @@ export function AdvancedCache(key?: string|null, validUntil?: string)
         descr.key = key ?? DEFAULT_KEY;
         descr.validUntil = validUntil;
 
-        descr.middlewareTypes?.push(CacheMiddleware);
+        descr.middlewareTypes?.push(AdvancedCacheMiddleware);
         
         return descr;
     };
