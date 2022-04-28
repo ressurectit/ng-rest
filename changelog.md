@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 11.2.0 (2022-04-27)
+
+### Features
+
+- new `REST_MOCK_LOGGER` injection token used for injecting MockLogger used for logging responses for mocks
+- new `MockLogger` interface, that is service for logging mock responses
+    - method `logResponse` logs mock response
+- new `MockLoggerMiddleware` middleware, that is used for logging responses for mock usages
+
 ## Version 11.1.0 (2022-04-27)
 
 ### Features

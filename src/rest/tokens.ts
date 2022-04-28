@@ -2,6 +2,7 @@ import {InjectionToken, Type} from '@angular/core';
 
 import {RestDateApi, RestMiddleware} from './rest.interface';
 import {BASIC_DEFAULT_REST_MIDDLEWARES_ORDER, BASIC_DEFAULT_REST_METHOD_MIDDLEWARES} from './defaults';
+import {MockLogger} from './services/mockLogger/mockLogger.interface';
 
 /**
  * Injection token used for injecting array of rest middleware types that defines order of rest middlewares
@@ -17,3 +18,8 @@ export const REST_METHOD_MIDDLEWARES: InjectionToken<Type<RestMiddleware>[]> = n
  * Injection token used for injecting RestDateApi implementation
  */
 export const REST_DATE_API: InjectionToken<RestDateApi> = new InjectionToken<RestDateApi>('REST_DATE_API');
+
+/**
+ * Injection token used for injecting MockLogger used for logging responses for mocks
+ */
+export const REST_MOCK_LOGGER: InjectionToken<MockLogger> = new InjectionToken<MockLogger>('REST_MOCK_LOGGER');
