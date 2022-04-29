@@ -2,6 +2,7 @@ export * from './acceptAny.decorator';
 export * from './advancedCache.decorator';
 export * from './baseUrl.decorator';
 export * from './cache.decorator';
+export * from './clearAdvancedCache.decorator';
 export * from './defaultHeaders.decorator';
 export * from './disableInterceptor.decorator';
 export * from './disableMiddleware.decorator';

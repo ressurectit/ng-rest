@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 11.2.0 (2022-04-28)
+## Version 11.2.0 (2022-04-29)
 
 ### Features
 
@@ -18,8 +18,14 @@
     - method `get` gets http response from cache, or null if it does not exists
     - method `updateCache` updates existing cache items, if not exists it does nothing
 - new `RestAdvancedCaching` interface, contains data that are used for advanced cache service
+    - extends `RestClearAdvancedCaching`
+    - property `validUntil` relative definition of 'date' for setting validity of cache, example +2d, +12h
+- new `RestClearAdvancedCaching` interface, contains data that are used for clearing advanced cache service
+    - property `key` key to stored cache item
 - new `AdvancedCache` decorator, results of requests are cached in advanced cachce service
 - new `AdvancedCacheMiddleware` middleware, that is used for storing and restoring response from advanced cache service
+- new `ClearAdvancedCacheMiddleware` middleware, that is used for clearing advanced cache for specific key
+- new `ClearAdvancedCache` decorator, that clears advanced cache for key when call is successful
 - updated `RestDateApi` interface
     - method `isBeforeNow` tests whether tested date is before now
 - subpackage @anglr/rest/date-fns

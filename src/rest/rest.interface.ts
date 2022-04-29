@@ -136,15 +136,21 @@ export interface RestCaching extends TypedPropertyDescriptor<any>
 }
 
 /**
- * Contains data that are used for advanced cache service
+ * Contains data that are used for clearing advanced cache service
  */
-export interface RestAdvancedCaching extends TypedPropertyDescriptor<any>
+export interface RestClearAdvancedCaching extends TypedPropertyDescriptor<any>
 {
     /**
-     * Gets response from cache
+     * Key to stored cache item
      */
     key: string;
+}
 
+/**
+ * Contains data that are used for advanced cache service
+ */
+export interface RestAdvancedCaching extends RestClearAdvancedCaching
+{
     /**
      * Relative definition of 'date' for setting validity of cache, example +2d, +12h
      */
