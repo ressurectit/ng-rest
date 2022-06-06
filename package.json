@@ -78,6 +78,8 @@
         "@angular/core": "^14.0.0-rc.3",
         "@angular/common": "^14.0.0-rc.3",
         "@angular/platform-browser": "^14.0.0-rc.3",
+        "@angular/animations": "^14.0.0-rc.3",
+        "@angular/forms": "^14.0.0-rc.3",
         "rxjs": "^6.6.7",
         "@jscrpt/common": "^2.2.0",
         "@anglr/common": "^11.2.0",
