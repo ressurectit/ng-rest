@@ -1,24 +1,21 @@
-import {Type} from '@angular/core';
-
-import {RestMiddleware, RestMiddlewareRunMethod, NotType, BuildMiddlewaresFn} from './rest.interface';
+import {RestMiddleware, RestMiddlewareRunMethod, NotType, BuildMiddlewaresFn, RestMiddlewareType, RestMiddlewareOrderType} from './rest.interface';
 
 /**
  * Builds and returns array of middleware run functions
- * @param this - Instance of RESTClient
  * @param middlewares - Array of set middleware types
  * @param middlewaresOrder - Array of middleware types in order that should be executed
  */
-export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(middlewares: Type<RestMiddleware>[],
-                                                                              middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
+export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(middlewares: RestMiddlewareType<RestMiddleware>[],
+                                                                              middlewaresOrder: RestMiddlewareOrderType<string>[]): RestMiddlewareRunMethod[]
 {
-    const usedMiddlewares: Type<RestMiddleware>[] = [];
+    const usedMiddlewares: RestMiddlewareType<RestMiddleware>[] = [];
 
     middlewares
         .filter(middleware => !isNotType(middleware))
         .forEach(middleware =>
         {
-            const type: Type<RestMiddleware> = getType(middleware);
-            const index = middlewaresOrder.indexOf(type);
+            const type: RestMiddlewareType<RestMiddleware> = getType(middleware);
+            const index = middlewaresOrder.findIndex(itm => itm == type || type.id == itm);
 
             //middleware does not have defined order
             if(index < 0)
@@ -34,8 +31,8 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(mi
         .filter(middleware => isNotType(middleware))
         .forEach(middleware =>
         {
-            const type: Type<RestMiddleware> = getType(middleware);
-            const index = usedMiddlewares.indexOf(type);
+            const type: RestMiddlewareType<RestMiddleware> = getType(middleware);
+            const index = middlewaresOrder.findIndex(itm => itm == type || type.id == itm);
 
             if(index < 0)
             {
@@ -59,16 +56,16 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(mi
  * Creates NotType from Type, this type will be removed from middlewares
  * @param type - Type that will be set as NotType
  */
-export function not(type: Type<RestMiddleware>): Type<RestMiddleware>
+export function not(type: RestMiddlewareType<RestMiddleware>): RestMiddlewareType<RestMiddleware>
 {
-    return new NotType<RestMiddleware>(type) as any;
+    return new NotType<RestMiddleware>(type) as unknown as RestMiddlewareType<RestMiddleware>;
 }
 
 /**
  * Gets underlying type for Type and NotType
  * @param type - Type that is going to be used for extraction
  */
-export function getType<TType>(type: Type<TType>): Type<TType>
+export function getType<TType extends RestMiddleware>(type: RestMiddlewareType<TType>): RestMiddlewareType<TType>
 {
     if(type instanceof NotType)
     {
@@ -82,7 +79,7 @@ export function getType<TType>(type: Type<TType>): Type<TType>
  * Tests whether is provided type NotType
  * @param type - Type to be tested for NotType
  */
-export function isNotType<TType>(type: Type<TType>): boolean
+export function isNotType<TType extends RestMiddleware>(type: RestMiddlewareType<TType>): boolean
 {
     return type instanceof NotType;
 }

@@ -11,6 +11,13 @@ import type {RESTClient} from '../common';
  */
 export class ProgressIndicatorGroupMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'ProgressIndicatorGroupMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

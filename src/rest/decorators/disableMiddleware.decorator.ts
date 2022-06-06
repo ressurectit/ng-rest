@@ -1,11 +1,12 @@
-import {Type} from '@angular/core';
 import {not, RESTClient, RestMethodMiddlewares, RestMiddleware} from '@anglr/rest';
+
+import {RestMiddlewareType} from '../rest.interface';
 
 /**
  * Allows disabling of specified middleware
  * @param middleware - Middleware that will be disabled
  */
-export function DisableMiddleware(middleware: Type<RestMiddleware>)
+export function DisableMiddleware(middleware: RestMiddlewareType<RestMiddleware>)
 {
     return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestMethodMiddlewares |
                                                                                        TDecorated): TypedPropertyDescriptor<any>

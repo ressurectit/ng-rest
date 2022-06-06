@@ -16,6 +16,13 @@ interface ɵAdvancedCache
  */
 export class ClearAdvancedCacheMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'ClearAdvancedCacheMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

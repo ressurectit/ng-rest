@@ -15,6 +15,13 @@ interface ɵQueryStringSerializer
  */
 export class QueryObjectParameterMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'QueryObjectParameterMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

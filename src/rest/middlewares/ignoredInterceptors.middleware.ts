@@ -11,6 +11,13 @@ import type {RESTClient} from '../common';
  */
 export class IgnoredInterceptorsMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'IgnoredInterceptorsMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

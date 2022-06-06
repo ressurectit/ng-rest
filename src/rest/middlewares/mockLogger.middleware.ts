@@ -16,34 +16,11 @@ interface ɵMockLogger
  * Middleware that is used for logging responses for mock usages
  * 
  * @example
- * Change providers for `REST_MIDDLEWARES_ORDER` and `REST_METHOD_MIDDLEWARES` that way, that you add `...jsDevMode ? [MockLoggerMiddleware] : [],` before `ReportProgressMiddleware` for `REST_MIDDLEWARES_ORDER` and you add `...jsDevMode ? [MockLoggerMiddleware] : []` to `REST_METHOD_MIDDLEWARES`
+ * Change providers for `REST_METHOD_MIDDLEWARES` that way, that you add `...jsDevMode ? [MockLoggerMiddleware] : []` to `REST_METHOD_MIDDLEWARES`
  * 
  * For example
  * 
  * ```ts
- * <ValueProvider>
- *  {
- *      provide: REST_MIDDLEWARES_ORDER,
- *      useValue:
- *      [
- *          BodyParameterMiddleware,
- *          PathParameterMiddleware,
- *          QueryObjectParameterMiddleware,
- *          QueryParameterMiddleware,
- *          HeadersMiddleware,
- *          HeaderParameterMiddleware,
- *          ClientErrorHandlingMiddleware,
- *          ProducesMiddleware,
- *          LoggerMiddleware,
- *          IgnoredInterceptorsMiddleware,
- *          ProgressIndicatorGroupMiddleware,
- *          ResponseTransformMiddleware,
- *          ResponseTypeMiddleware,
- *          CacheMiddleware,
- *          ...jsDevMode ? [MockLoggerMiddleware] : [],
- *          ReportProgressMiddleware,
- *      ]
- *  },
  *  <ValueProvider>
  *  {
  *      provide: REST_METHOD_MIDDLEWARES,
@@ -52,7 +29,6 @@ interface ɵMockLogger
  *          LoggerMiddleware,
  *          ResponseTypeMiddleware,
  *          ReportProgressMiddleware,
- *          ClientErrorHandlingMiddleware,
  *          ...jsDevMode ? [MockLoggerMiddleware] : [],
  *      ]
  *  },
@@ -60,6 +36,13 @@ interface ɵMockLogger
  */
 export class MockLoggerMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'MockLoggerMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

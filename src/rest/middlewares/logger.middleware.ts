@@ -16,6 +16,13 @@ interface ɵLogger
  */
 export class LoggerMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'LoggerMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

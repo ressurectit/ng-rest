@@ -12,6 +12,13 @@ import type {RESTClient} from '../common';
  */
 export class ResponseTypeMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'ResponseTypeMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

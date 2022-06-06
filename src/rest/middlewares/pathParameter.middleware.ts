@@ -10,6 +10,13 @@ import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from 
  */
 export class PathParameterMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'PathParameterMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

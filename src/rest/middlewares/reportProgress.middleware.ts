@@ -10,6 +10,13 @@ import type {RESTClient} from '../common';
  */
 export class ReportProgressMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'ReportProgressMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

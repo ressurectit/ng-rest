@@ -10,6 +10,13 @@ import {RestMiddleware, RestHttpHeaders} from '../rest.interface';
  */
 export class HeadersMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'HeadersMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

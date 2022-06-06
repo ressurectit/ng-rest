@@ -1,5 +1,71 @@
 # Changelog
 
+## Version 12.0.0 (2022-06-06)
+
+### Features
+
+- all middlewares are now *treeshakeable* if not used
+- new `middlewareTypes` type, that contains array of middleware names that are built-in
+- new `RestMiddlewareType` type, that represents definition of type that implements `RestMiddleware`
+- new `RestMiddlewareOrderType` type, that represents definition of type that is used for definition of order of middlewares
+- updated `BASIC_DEFAULT_REST_MIDDLEWARES_ORDER` constant
+    - now is treeshakable
+    - contains all built-in middlewares
+    - now is of type `RestMiddlewareOrderType[]`
+- updated `REST_MIDDLEWARES_ORDER` injection token
+    - now injects type `RestMiddlewareOrderType[]`
+- updated `AdvancedCacheMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `BodyParameterMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `CacheMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `ClearAdvancedCacheMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `HeaderParameterMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `HeadersMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `IgnoredInterceptorsMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `LoggerMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `MockLoggerMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `PathParameterMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `ProducesMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `ProgressIndicatorGroupMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `QueryObjectParameterMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `QueryParameterMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `ReportProgressMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `ResponseTransformMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- updated `ResponseTypeMiddleware` middleware, now middleware type has *static* `id` to correspond with `RestMiddlewareType<RestMiddleware>`
+- new `@anglr/datetime` dependency version `3.0.0`
+- new `@anglr/rest/datetime` subpackage
+- subpackage `@anglr/rest/datetime`
+    - new `DatetimeRestDateApi` service, that is `RestDateApi` implementation using `@anglr/datetime`
+    - new `DATETIME_REST_DATE_API` injection token used as provider for RestDateApi using datetime
+
+### BREAKING CHANGES
+
+- minimal supported version of `@angular` is `14.0.0`
+- minimal supported version of `@anglr/common` is `11.2.0`
+- dropped support of `NodeJs` version `12`
+- removed subpackage `@anglr/rest/date-fns` in favor of `@anglr/datetime`
+- removed subpackage `@anglr/rest/moment` in favor of `@anglr/datetime`
+- removed `date-fns` dependency
+- removed `moment` dependency
+- updated `REST_METHOD_MIDDLEWARES` injection token
+    - now injects type `RestMiddlewareType<RestMiddleware>[]`
+- updated `BASIC_DEFAULT_REST_METHOD_MIDDLEWARES` constant
+    - now is of type `RestMiddlewareType<RestMiddleware>[]`
+- updated `buildMiddlewares` function, now using new *middlewares* and *middlewareOrder* types
+- updated `not` function, now using middleware type `RestMiddlewareType<RestMiddleware>`
+- updated `getType` function, now using middleware type `RestMiddlewareType<RestMiddleware>`
+- updated `isNotType` function, now using middleware type `RestMiddlewareType<RestMiddleware>`
+- updated `DisableMiddleware` decorator, now using middleware type `RestMiddlewareType<RestMiddleware>`
+- updated `NotType` class
+    - new constructor type `RestMiddlewareType`
+    - new generic constraint `TType extends RestMiddleware`
+- updated `RestMethodMiddlewares` interface
+    - `middlewareTypes` is now of type `RestMiddlewareType<RestMiddleware>[]`
+- updated `ParametersMiddlewaresMetadata` interface
+    - `middlewareTypes` is now of type `RestMiddlewareType<RestMiddleware>[]`
+- updated `BuildMiddlewaresFn` interface
+    - parameter `middlewares` is now of type `RestMiddlewareType<RestMiddleware>[]`
+    - parameter `middlewaresOrder` is now of type `RestMiddlewareOrderType[]`
+
 ## Version 11.2.0 (2022-04-29)
 
 ### Features
@@ -28,9 +94,9 @@
 - new `ClearAdvancedCache` decorator, that clears advanced cache for key when call is successful
 - updated `RestDateApi` interface
     - method `isBeforeNow` tests whether tested date is before now
-- subpackage @anglr/rest/date-fns
+- subpackage `@anglr/rest/date-fns`
     - updated `DateFnsRestDateApi` to correspond with new `RestDateApi` interface
-- subpackage @anglr/rest/moment
+- subpackage `@anglr/rest/moment`
     - updated `MomentRestDateApi` to correspond with new `RestDateApi` interface
 
 

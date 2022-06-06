@@ -1,9 +1,0 @@
-{
-    "name": "@anglr/rest-date-fns",
-    "sideEffects": false,
-    "module": "../es2015/date-fns/src/index.js",
-    "es2015": "../es2015/date-fns/src/index.js",
-    "es2020": "../es2020/date-fns/src/index.js",
-    "esm2020": "../es2020/date-fns/src/index.js",
-    "typings": "./src/index.d.ts"
-  }

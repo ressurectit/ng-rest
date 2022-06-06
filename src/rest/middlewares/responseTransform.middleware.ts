@@ -10,6 +10,13 @@ import {RestMiddleware, RestResponseTransform} from '../rest.interface';
  */
 export class ResponseTransformMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'ResponseTransformMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

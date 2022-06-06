@@ -11,6 +11,13 @@ import {RestMiddleware, RestCaching} from '../rest.interface';
  */
 export class CacheMiddleware implements RestMiddleware
 {
+    //######################### public static properties #########################
+
+    /**
+     * String identification of middleware
+     */
+    public static id: string = 'CacheMiddleware';
+
     //######################### public methods - implementation of RestMiddleware #########################
 
     /**

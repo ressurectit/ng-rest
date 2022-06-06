@@ -7,12 +7,22 @@ import {ResponseType} from './responseType';
 import type {ParameterTransformFunc, ResponseTransformFunc, RESTClient} from '../rest/common';
 
 /**
+ * Definition of type that implements `RestMiddleware`
+ */
+export type RestMiddlewareType<TType extends RestMiddleware> = Type<TType>&{id: string};
+
+/**
+ * Definition of type that is used for definition of order of middlewares
+ */
+export type RestMiddlewareOrderType<TMiddlewareTypes extends string> = Type<RestMiddleware>|TMiddlewareTypes;
+
+/**
  * Type indicates that it should be removed from array
  */
-export class NotType<TType>
+export class NotType<TType extends RestMiddleware>
 {
     //######################### constructor #########################
-    constructor(public ɵtype: Type<TType>)
+    constructor(public ɵtype: RestMiddlewareType<TType>)
     {
     }
 }
@@ -113,7 +123,7 @@ export interface RestMethodMiddlewares extends TypedPropertyDescriptor<any>
     /**
      * Array of rest middleware types that will be used
      */
-    middlewareTypes?: Type<RestMiddleware>[];
+    middlewareTypes?: RestMiddlewareType<RestMiddleware>[];
 }
 
 /**
@@ -209,7 +219,7 @@ export interface ParametersMiddlewaresMetadata
     /**
      * Array of rest middleware types that will be used
      */
-    middlewareTypes?: Type<RestMiddleware>[];
+    middlewareTypes?: RestMiddlewareType<RestMiddleware>[];
 }
 
 /**
@@ -273,11 +283,10 @@ export interface BuildMiddlewaresFn
 {
     /**
      * Builds and returns array of middleware run functions
-     * @param this - Instance of RESTClient
      * @param middlewares - Array of set middleware types
      * @param middlewaresOrder - Array of middleware types in order that should be executed
      */
-    (middlewares: Type<RestMiddleware>[], middlewaresOrder: Type<RestMiddleware>[]): RestMiddlewareRunMethod[]
+    (middlewares: RestMiddlewareType<RestMiddleware>[], middlewaresOrder: RestMiddlewareOrderType<string>[]): RestMiddlewareRunMethod[]
 }
 
 /**

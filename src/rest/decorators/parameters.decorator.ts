@@ -1,11 +1,10 @@
-import {Type} from '@angular/core';
 import {isPresent} from '@jscrpt/common';
 
-import {ParametersMetadata, RestParameters, KeyIndex, RestMiddleware} from '../rest.interface';
+import {ParametersMetadata, RestParameters, KeyIndex, RestMiddleware, RestMiddlewareType} from '../rest.interface';
 import {RESTClient} from '../common';
 import {BodyParameterMiddleware, PathParameterMiddleware, QueryParameterMiddleware, QueryObjectParameterMiddleware, HeaderParameterMiddleware} from '../middlewares';
 
-function paramBuilder(paramName: keyof ParametersMetadata, middleware: Type<RestMiddleware>)
+function paramBuilder(paramName: keyof ParametersMetadata, middleware: RestMiddlewareType<RestMiddleware>)
 {
     return function(key: string)
     {
