@@ -65,6 +65,9 @@
 - updated `BuildMiddlewaresFn` interface
     - parameter `middlewares` is now of type `RestMiddlewareType<RestMiddleware>[]`
     - parameter `middlewaresOrder` is now of type `RestMiddlewareOrderType[]`
+- updated `RESTClient` class
+    - parameter `methodMiddlewares` is now of type `RestMiddlewareType<RestMiddleware>[]`
+    - parameter `middlewaresOrder` is now of type `RestMiddlewareOrderType[]`
 
 ## Version 11.2.0 (2022-04-29)
 

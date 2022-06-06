@@ -1,10 +1,10 @@
-import {Inject, Optional, Injectable, Injector, Type} from '@angular/core';
+import {Inject, Optional, Injectable, Injector} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpRequest, HttpEvent} from '@angular/common/http';
 import {HTTP_REQUEST_BASE_URL} from '@anglr/common';
 import {isBlank, isFunction, generateId} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
-import {RestMethod, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware} from './rest.interface';
+import {RestMethod, RestParameters, ɵRestMethod, RestMethodMiddlewares, RestMiddleware, RestMiddlewareOrderType, RestMiddlewareType} from './rest.interface';
 import {buildMiddlewares} from './utils';
 import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 
@@ -37,8 +37,8 @@ export abstract class RESTClient
 {
     constructor(protected http: HttpClient,
                 protected injector: Injector,
-                @Inject(REST_MIDDLEWARES_ORDER) protected middlewaresOrder: Type<RestMiddleware>[],
-                @Inject(REST_METHOD_MIDDLEWARES) protected methodMiddlewares: Type<RestMiddleware>[],
+                @Inject(REST_MIDDLEWARES_ORDER) protected middlewaresOrder: RestMiddlewareOrderType<string>[],
+                @Inject(REST_METHOD_MIDDLEWARES) protected methodMiddlewares: RestMiddlewareType<RestMiddleware>[],
                 @Optional() @Inject(HTTP_REQUEST_BASE_URL) protected baseUrl?: string)
     {
         if(isBlank(baseUrl))
@@ -125,7 +125,7 @@ function methodBuilder(method: string)
 
             const id = `${method}-${url}-${target.constructor.name}-${propertyKey}`;
             const parameters = target.parameters;
-            let parametersMiddlewares: Type<RestMiddleware>[] = [];
+            let parametersMiddlewares: RestMiddlewareType<RestMiddleware>[] = [];
 
             if(parameters)
             {
