@@ -1,4 +1,4 @@
-import {RESTClient} from '../common';
+import type {RESTClient} from '../common';
 import {RestMethodMiddlewares} from '../rest.interface';
 import {not} from '../utils';
 import {ResponseTypeMiddleware} from '../middlewares/responseType.middleware';

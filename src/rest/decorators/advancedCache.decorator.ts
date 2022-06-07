@@ -1,5 +1,5 @@
 import {RestAdvancedCaching, RestMethodMiddlewares} from '../rest.interface';
-import {RESTClient} from '../common';
+import type {RESTClient} from '../common';
 import {AdvancedCacheMiddleware} from '../middlewares';
 
 /**

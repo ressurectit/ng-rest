@@ -1,7 +1,7 @@
 import {isPresent} from '@jscrpt/common';
 
 import {ParametersMetadata, RestParameters, KeyIndex, RestMiddleware, RestMiddlewareType} from '../rest.interface';
-import {RESTClient} from '../common';
+import type {RESTClient} from '../common';
 import {BodyParameterMiddleware, PathParameterMiddleware, QueryParameterMiddleware, QueryObjectParameterMiddleware, HeaderParameterMiddleware} from '../middlewares';
 
 function paramBuilder(paramName: keyof ParametersMetadata, middleware: RestMiddlewareType<RestMiddleware>)

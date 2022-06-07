@@ -1,7 +1,7 @@
 import {isBlank, isPresent, isFunction, isString, Dictionary} from '@jscrpt/common';
 
 import {RestParameters} from '../rest.interface';
-import {ParameterTransformFunc, RESTClient} from '../common';
+import type {ParameterTransformFunc, RESTClient} from '../common';
 
 /**
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization

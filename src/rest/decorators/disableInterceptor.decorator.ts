@@ -1,7 +1,7 @@
 import {Type} from '@angular/core';
 import {isBlank} from '@jscrpt/common';
 
-import {RESTClient} from '../common';
+import type {RESTClient} from '../common';
 import {RestDisabledInterceptors, RestMethodMiddlewares} from '../rest.interface';
 import {IgnoredInterceptorsMiddleware} from '../middlewares';
 

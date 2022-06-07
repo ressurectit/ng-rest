@@ -2,7 +2,7 @@ import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {Dictionary, isPresent} from '@jscrpt/common';
 
 import {RestCaching, RestMethodMiddlewares} from '../rest.interface';
-import {RESTClient} from '../common';
+import type {RESTClient} from '../common';
 import {CacheMiddleware} from '../middlewares';
 
 //Object storing response cache itself

@@ -1,6 +1,6 @@
 import {isBlank, isPresent, isFunction, isString, Dictionary} from '@jscrpt/common';
 
-import {RESTClient, ResponseTransformFunc} from '../common';
+import type {RESTClient, ResponseTransformFunc} from '../common';
 import {RestResponseTransform, RestMethodMiddlewares} from '../rest.interface';
 import {ResponseTransformMiddleware} from '../middlewares';
 

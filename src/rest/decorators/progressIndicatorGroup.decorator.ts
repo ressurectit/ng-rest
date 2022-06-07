@@ -1,6 +1,6 @@
 import {isPresent} from '@jscrpt/common';
 
-import {RESTClient} from '../common';
+import type {RESTClient} from '../common';
 import {ProgressIndicatorGroupMiddleware} from '../middlewares';
 import {RestMethodMiddlewares, RestProgressIndicatorGroup} from '../rest.interface';
 

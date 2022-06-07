@@ -1,6 +1,6 @@
 import {extend, StringDictionary} from '@jscrpt/common';
 
-import {RESTClient} from '../common';
+import type {RESTClient} from '../common';
 import {RestHttpHeaders, RestMethodMiddlewares} from '../rest.interface';
 import {HeadersMiddleware} from '../middlewares';
 
