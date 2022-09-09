@@ -11,3 +11,4 @@ export * from './rest/middlewares';
 export * from './rest/utils';
 export * from './rest/queryStringSerializer';
 export * from './rest/middlewareTypes';
+export * from './rest/paramsData.iterator';

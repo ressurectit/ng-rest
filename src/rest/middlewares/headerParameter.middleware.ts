@@ -1,9 +1,11 @@
 import {HttpRequest} from '@angular/common/http';
-import {isPresent, StringDictionary} from '@jscrpt/common';
+import {StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import type {RESTClient} from '../common';
+import {ParamsDataIterator} from '../paramsData.iterator';
 import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import {handleHeaderParam} from '../utils';
 
 /**
  * Middleware that is used for adding header from parameter
@@ -54,19 +56,9 @@ export class HeaderParameterMiddleware implements RestMiddleware
         {
             const headers: StringDictionary = {};
 
-            for (const k in pHeader)
+            for(const data of new ParamsDataIterator(pHeader, pTransforms, args, this))
             {
-                if (isPresent(pHeader[k]))
-                {
-                    let value = args[pHeader[k].parameterIndex];
-
-                    if(pTransforms && pTransforms[pHeader[k].parameterIndex])
-                    {
-                        value = pTransforms[pHeader[k].parameterIndex].bind(this)(value);
-                    }
-
-                    headers[pHeader[k].key] = value;
-                }
+                handleHeaderParam(data, headers);
             }
 
             request = request.clone(

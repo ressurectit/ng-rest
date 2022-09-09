@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 12.1.0 (2022-09-09)
+
+### Features
+
+- new `ParamsDataIterator` class, that is iterator for params data
+- new `ParamsDataIteratorItem` interface, that represents item during iteration of params data
+- new `handleQueryParam` function, that handles query param and fills params dictionary
+- new `handleHeaderParam` function, that handles header param and fills headers dictionary
+- new `handlePathParam` function, that handles path param and return updated url
+- new `handleQueryObjectParam` function, that handles query object param and fills serialized query string array
+- new `mergeQueryObjectParamsWithHttpParams` function, that merges serialized query objects data with existing http params
+
 ## Version 12.0.0 (2022-06-08)
 
 ### Features

@@ -3,7 +3,9 @@ import {isPresent} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import type {RESTClient} from '../common';
+import {ParamsDataIterator} from '../paramsData.iterator';
 import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import {handlePathParam} from '../utils';
 
 /**
  * Middleware that is used for modifying request URL path
@@ -54,19 +56,9 @@ export class PathParameterMiddleware implements RestMiddleware
 
         if (pPath && isPresent(url))
         {
-            for (const k in pPath)
+            for(const data of new ParamsDataIterator(pPath, pTransforms, args, this))
             {
-                if (isPresent(pPath[k]))
-                {
-                    let value = args[pPath[k].parameterIndex];
-
-                    if(pTransforms && pTransforms[pPath[k].parameterIndex])
-                    {
-                        value = pTransforms[pPath[k].parameterIndex].bind(this)(value);
-                    }
-
-                    url = url.replace('{' + pPath[k].key + '}', value);
-                }
+                url = handlePathParam(data, url);
             }
 
             request = request.clone(

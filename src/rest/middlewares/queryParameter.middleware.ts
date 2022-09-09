@@ -3,7 +3,9 @@ import {StringDictionary} from '@jscrpt/common';
 import {Observable} from 'rxjs';
 
 import type {RESTClient} from '../common';
+import {ParamsDataIterator} from '../paramsData.iterator';
 import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import {handleQueryParam} from '../utils';
 
 /**
  * Middleware that is used for adding query string parameters
@@ -50,30 +52,14 @@ export class QueryParameterMiddleware implements RestMiddleware
             pTransforms = parameters[methodName]?.transforms;
         }
 
-        const params: StringDictionary = {};
-
         if (pQuery)
         {
-            pQuery
-                .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                .forEach(p =>
-                {
-                    const key = p.key;
-                    let value = args[p.parameterIndex];
+            const params: StringDictionary = {};
 
-                    if(pTransforms && pTransforms[p.parameterIndex])
-                    {
-                        value = pTransforms[p.parameterIndex].bind(this)(value);
-                    }
-
-                    // if the value is a instance of Object, we stringify it
-                    if (value instanceof Object)
-                    {
-                        value = JSON.stringify(value);
-                    }
-
-                    params[key] = value;
-                });
+            for(const data of new ParamsDataIterator(pQuery, pTransforms, args, this))
+            {
+                handleQueryParam(data, params);
+            }
 
             request = request.clone(
             {

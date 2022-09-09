@@ -2,8 +2,10 @@ import {HttpRequest, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import type {RESTClient} from '../common';
+import {ParamsDataIterator} from '../paramsData.iterator';
 import {QueryStringSerializer} from '../queryStringSerializer';
 import {RestMiddleware, RestParameters, KeyIndex, ParametersTransformsObj} from '../rest.interface';
+import {handleQueryObjectParam, mergeQueryObjectParamsWithHttpParams} from '../utils';
 
 interface ɵQueryStringSerializer
 {
@@ -59,54 +61,14 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
 
         if (pQueryObject)
         {
-            let queryString: string = '';
             const queryStrings: string[] = [];
 
-            pQueryObject
-                .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                .forEach(p =>
-                {
-                    let value = args[p.parameterIndex];
-
-                    if(pTransforms && pTransforms[p.parameterIndex])
-                    {
-                        value = pTransforms[p.parameterIndex].bind(this)(value);
-                    }
-
-                    const serializedObj = $this.ɵQueryStringSerializer.serializeObject(value);
-
-                    if(serializedObj)
-                    {
-                        queryStrings.push(serializedObj);
-                    }
-                });
-
-            queryString = queryStrings.join('&');
-
-            const params: HttpParams = new HttpParams({fromString: queryString});
-            let requestParams: HttpParams = request.params;
-
-            params.keys().forEach(key =>
+            for(const data of new ParamsDataIterator(pQueryObject, pTransforms, args, this))
             {
-                const newValues = params.getAll(key);
+                handleQueryObjectParam(data, queryStrings, $this.ɵQueryStringSerializer);
+            }
 
-                if(newValues)
-                {
-                    newValues.forEach((value, index) =>
-                    {
-                        //first item, set
-                        if(!index)
-                        {
-                            requestParams = requestParams.set(key, value);
-                        }
-                        //rest append
-                        else
-                        {
-                            requestParams = requestParams.append(key, value);
-                        }
-                    });
-                }
-            });
+            const requestParams: HttpParams = mergeQueryObjectParamsWithHttpParams(queryStrings, request.params);
 
             request = request.clone(
             {
