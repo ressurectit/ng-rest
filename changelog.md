@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 12.1.1 (2022-09-14)
+
+### Bug Fixes
+
+- fixed problem with missing transforms and getting param data from index out of array in `ParamsDataIterator`
+
 ## Version 12.1.0 (2022-09-09)
 
 ### Features
