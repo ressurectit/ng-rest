@@ -50,6 +50,14 @@ export class ParamsDataIterator
         return {
             next() 
             {
+                if (x >= paramData.length)
+                {
+                    return {
+                        done: true,
+                        value: undefined
+                    };
+                }
+
                 //skip optional parameters
                 while(isBlank(args[paramData[x].parameterIndex]))
                 {
@@ -58,7 +66,7 @@ export class ParamsDataIterator
                 
                 const param = paramData[x];
                 const value = args[param.parameterIndex];
-                let transformFn = transforms[param.parameterIndex];
+                let transformFn = transforms ? transforms[param.parameterIndex] : null;
 
                 if(transformFn)
                 {
@@ -82,13 +90,7 @@ export class ParamsDataIterator
                 }
         
                 return {
-                    value:
-                    {
-                        index: param.parameterIndex,
-                        key: param.key,
-                        value,
-                        transformFn,
-                    },
+                    value: undefined,
                     done: true 
                 };
             }
