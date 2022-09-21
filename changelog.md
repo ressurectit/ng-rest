@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 12.1.2 (2022-09-21)
+
+### Bug Fixes
+
+- fixed problem with `null` or `undefined` parameters at start of params array in `ParamsDataIterator`
+
 ## Version 12.1.1 (2022-09-14)
 
 ### Bug Fixes

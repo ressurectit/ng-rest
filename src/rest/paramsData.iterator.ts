@@ -50,18 +50,18 @@ export class ParamsDataIterator
         return {
             next() 
             {
+                //skip optional parameters
+                while(x < paramData.length && isBlank(args[paramData[x].parameterIndex]))
+                {
+                    x++;
+                }
+
                 if (x >= paramData.length)
                 {
                     return {
                         done: true,
                         value: undefined
                     };
-                }
-
-                //skip optional parameters
-                while(isBlank(args[paramData[x].parameterIndex]))
-                {
-                    x++;
                 }
                 
                 const param = paramData[x];
