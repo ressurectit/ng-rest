@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 12.1.3 (2022-10-10)
+
+### Bug Fixes
+
+- fixed default value for `CorrelationBodyProperty` in `WebSocketClient`
+
 ## Version 12.1.2 (2022-09-21)
 
 ### Bug Fixes
