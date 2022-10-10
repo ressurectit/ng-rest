@@ -202,7 +202,7 @@ export abstract class WebSocketClient implements OnDestroy
      */
     protected getCorrelationBodyProperty(): string
     {
-        return '';
+        return null;
     }
 
     /**
