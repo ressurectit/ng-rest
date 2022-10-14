@@ -1,5 +1,3 @@
-import {isBlank} from '@jscrpt/common';
-
 import type {ParameterTransformFunc, RESTClient} from './common';
 import {KeyIndex, ParametersTransformsObj} from './rest.interface';
 
@@ -51,7 +49,7 @@ export class ParamsDataIterator
             next() 
             {
                 //skip optional parameters
-                while(x < paramData.length && isBlank(args[paramData[x].parameterIndex]))
+                while(x < paramData.length && args[paramData[x].parameterIndex] === undefined)
                 {
                     x++;
                 }

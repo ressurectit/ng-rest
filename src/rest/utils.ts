@@ -1,5 +1,5 @@
 import {HttpParams} from '@angular/common/http';
-import {StringDictionary} from '@jscrpt/common';
+import {isPresent, StringDictionary} from '@jscrpt/common';
 
 import {ParameterTransformFunc, RESTClient} from './common';
 import {ParamsDataIteratorItem} from './paramsData.iterator';
@@ -111,7 +111,11 @@ export function handleQueryParam(data: ParamsDataIteratorItem, params: StringDic
         data.value = JSON.stringify(data.value);
     }
 
-    params[data.key] = data.value;
+    //only non null and non undefined values
+    if(isPresent(data.value))
+    {
+        params[data.key] = data.value;
+    }
 }
 
 /**
@@ -127,7 +131,11 @@ export function handleHeaderParam(data: ParamsDataIteratorItem, headers: StringD
         data.value = (data as any as RestClientWithTransform).transformFn(data.value);
     }
 
-    headers[data.key] = data.value;
+    //only non null and non undefined values
+    if(isPresent(data.value))
+    {
+        headers[data.key] = data.value;
+    }
 }
 
 /**
@@ -143,7 +151,7 @@ export function handlePathParam(data: ParamsDataIteratorItem, url: string): stri
         data.value = (data as any as RestClientWithTransform).transformFn(data.value);
     }
 
-    return url.replace('{' + data.key + '}', data.value);
+    return url.replace('{' + data.key + '}', data.value ?? '');
 }
 
 /**

@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 12.1.4 (2022-10-14)
+
+### Bug Fixes
+
+- fixed `ParamsDataIterator` optional parameters are only with `undefined` value, `null` value is not considered optional
+- fixed `handleQueryParam`, now skips optional parameters (`undefined` and `null`)
+- fixed `handleHeaderParam`, now skips optional parameters (`undefined` and `null`)
+- fixed `handlePathParam`, optional parameters (`undefined` and `null`) are replaced by empty string
+
 ## Version 12.1.3 (2022-10-10)
 
 ### Bug Fixes
