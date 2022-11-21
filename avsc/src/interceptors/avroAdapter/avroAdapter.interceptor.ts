@@ -3,8 +3,7 @@ import {HttpInterceptor, HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpRequest,
 import {IGNORED_INTERCEPTORS} from '@anglr/common';
 import {HTTP_HEADER_CONTENT_TYPE} from '@anglr/rest';
 import {StringDictionary} from '@jscrpt/common';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {Observable, map} from 'rxjs';
 import {Schema, Type} from 'avsc';
 
 import {AvroAdapterInterceptorOptions} from './avroAdapter.options';

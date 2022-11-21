@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 14.0.0 (2023-05-17)
+
+### BREAKING CHANGES
+
+- minimal supported version of `@angular` is `15.0.0`
+- minimal supported version of `rxjs` is `7.5.7`
+- minimal supported version of `@jscrpt/common` is `3.3.0`
+- minimal supported version of `@anglr/common` is `15.0.1`
+- minimal supported version of `@anglr/datetime` is `5.0.0`
+- minimal supported version of `tslib` is `2.4.1`
+- dropped support of `NodeJs` version `< 14.20.0` or version `< 16.13.0`
+
 ## Version 13.0.1 (2023-07-25)
 
 ### Bug Fixes

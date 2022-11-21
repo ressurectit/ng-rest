@@ -3,8 +3,7 @@ import {HttpHeaders, HttpErrorResponse} from '@angular/common/http';
 import {Logger, LOGGER, ProgressIndicatorService} from '@anglr/common';
 import {isPresent} from '@jscrpt/common';
 import {IMessage} from '@stomp/stompjs';
-import {map, filter} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {Observable, map, filter} from 'rxjs';
 
 import {DEFAULT_WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, ResponseType, WEB_SOCKET_HANDLE_RESULT_MIDDLEWARE, WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE, DEFAULT_WEB_SOCKET_HANDLE_STATUS_SUBSCRIBE_MIDDLEWARE} from './webSocketClient.types';
 import {SubscribeMetadataData, SubscriptionMetadataData} from './webSocketClient.interface.internal';

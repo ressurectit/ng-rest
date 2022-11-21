@@ -7,6 +7,7 @@ temp/
 package-lock.json
 tsdoc-metadata.json
 *.d.ts
+!typings/**/*.d.ts
 *.log
 *.bak
 *.orig

@@ -1,7 +1,6 @@
 import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {isPresent} from '@jscrpt/common';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {Observable, map} from 'rxjs';
 
 import {RestMiddleware, RestResponseType} from '../rest.interface';
 import {ResponseType} from '../responseType';

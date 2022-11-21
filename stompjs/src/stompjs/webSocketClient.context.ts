@@ -2,8 +2,7 @@ import {Injector} from '@angular/core';
 import {Logger} from '@anglr/common';
 import {generateId, extend, isPresent} from '@jscrpt/common';
 import {Client} from '@stomp/stompjs';
-import {tap} from 'rxjs/operators';
-import {ReplaySubject, MonoTypeOperatorFunction, Observable} from 'rxjs';
+import {ReplaySubject, MonoTypeOperatorFunction, Observable, tap} from 'rxjs';
 
 import {WebSocketClientResponse, StatusQueueResponse, WebSocketHandleResultMiddleware, WebSocketHandleStatusSubscribeMiddleware, PublishQueueOptions} from './webSocketClient.interface';
 import {WebSocketClientResponseOptions, SubscriptionMetadata, WebSocketClientOptions} from './webSocketClient.interface.internal';

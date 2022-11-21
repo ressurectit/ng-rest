@@ -1,6 +1,5 @@
 import {HttpRequest, HttpResponse} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {Observable, tap} from 'rxjs';
 
 import type {RESTClient} from '../common';
 import {RestMiddleware} from '../rest.interface';
