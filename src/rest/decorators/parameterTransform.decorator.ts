@@ -42,11 +42,11 @@ export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransform
             target.parameters[propertyKey] = target.parameters[propertyKey] ?? {};
             target.parameters[propertyKey].transforms = target.parameters[propertyKey].transforms ?? {};
             
-            target.parameters[propertyKey].transforms![parameterIndex] = function(this: RESTClient, input: any)
+            target.parameters[propertyKey].transforms[parameterIndex] = function(this: RESTClient, input: any, ...args: any[])
             {
                 for(let x = 0; x < paramFunctions.length; x++)
                 {
-                    input = paramFunctions[x].apply(this, [input]);
+                    input = paramFunctions[x].apply(this, [input, ...args]);
                 }
 
                 return input;

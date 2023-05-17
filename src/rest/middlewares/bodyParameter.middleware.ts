@@ -55,7 +55,7 @@ export class BodyParameterMiddleware implements RestMiddleware
 
             if(pTransforms && pTransforms[pBody[0].parameterIndex])
             {
-                body = pTransforms[pBody[0].parameterIndex].bind(this)(body);
+                body = pTransforms[pBody[0].parameterIndex].bind(this)(body, args);
             }
 
             request = request.clone(

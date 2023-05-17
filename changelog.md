@@ -7,13 +7,17 @@
 - updated `ParameterTransformFunc` interface
     - added new parameter `args`, used for passing all arguments from method
 - updated `HeaderParameterMiddleware` middleware
-    - updated to use new `handleHeaderParam` function
+    - updated to use new `handleHeaderParam` function and to pass parameters args to transform function
 - updated `PathParameterMiddleware` middleware
-    - updated to use new `handlePathParam` function
+    - updated to use new `handlePathParam` function and to pass parameters args to transform function
 - updated `QueryObjectParameterMiddleware` middleware
-    - updated to use new `handleQueryObjectParam` function
+    - updated to use new `handleQueryObjectParam` function and to pass parameters args to transform function
 - updated `QueryParameterMiddleware` middleware
-    - updated to use new `handleQueryParam` function
+    - updated to use new `handleQueryParam` function and to pass parameters args to transform function
+- updated `BodyParameterMiddleware` middleware
+    - updated to pass parameters args to transform function
+- updated `ParameterTransform` decorator
+    - now passes args to transform functions
 
 ### BREAKING CHANGES
 
