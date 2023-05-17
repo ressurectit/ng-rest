@@ -26,7 +26,7 @@ export interface ResponseTransformFunc<TResponse = any, TTransformedResponse = T
  */
 export interface ParameterTransformFunc<TData = any, TTransformedData = TData>
 {
-    (this: RESTClient, data: TData): TTransformedData;
+    (this: RESTClient, data: TData, ...args: any[]): TTransformedData;
 }
 
 /**

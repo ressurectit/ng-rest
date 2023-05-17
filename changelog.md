@@ -1,5 +1,31 @@
 # Changelog
 
+## Version 13.0.0 (2023-05-17)
+
+### Features
+
+- updated `ParameterTransformFunc` interface
+    - added new parameter `args`, used for passing all arguments from method
+- updated `HeaderParameterMiddleware` middleware
+    - updated to use new `handleHeaderParam` function
+- updated `PathParameterMiddleware` middleware
+    - updated to use new `handlePathParam` function
+- updated `QueryObjectParameterMiddleware` middleware
+    - updated to use new `handleQueryObjectParam` function
+- updated `QueryParameterMiddleware` middleware
+    - updated to use new `handleQueryParam` function
+
+### BREAKING CHANGES
+
+- updated `handleQueryParam` function
+    - now requires 3rd parameter `args`, which contains all arguments passed to method
+- updated `handleHeaderParam` function
+    - now requires 3rd parameter `args`, which contains all arguments passed to method
+- updated `handlePathParam` function
+    - now requires 3rd parameter `args`, which contains all arguments passed to method
+- updated `handleQueryObjectParam` function
+    - now requires 4th parameter `args`, which contains all arguments passed to method
+
 ## Version 12.1.4 (2022-10-14)
 
 ### Bug Fixes

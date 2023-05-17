@@ -58,7 +58,7 @@ export class QueryParameterMiddleware implements RestMiddleware
 
             for(const data of new ParamsDataIterator(pQuery, pTransforms, args, this))
             {
-                handleQueryParam(data, params);
+                handleQueryParam(data, params, args);
             }
 
             request = request.clone(

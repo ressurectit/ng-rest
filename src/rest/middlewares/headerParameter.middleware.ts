@@ -58,7 +58,7 @@ export class HeaderParameterMiddleware implements RestMiddleware
 
             for(const data of new ParamsDataIterator(pHeader, pTransforms, args, this))
             {
-                handleHeaderParam(data, headers);
+                handleHeaderParam(data, headers, args);
             }
 
             request = request.clone(

@@ -58,7 +58,7 @@ export class PathParameterMiddleware implements RestMiddleware
         {
             for(const data of new ParamsDataIterator(pPath, pTransforms, args, this))
             {
-                url = handlePathParam(data, url);
+                url = handlePathParam(data, url, args);
             }
 
             request = request.clone(

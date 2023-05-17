@@ -65,7 +65,7 @@ export class QueryObjectParameterMiddleware implements RestMiddleware
 
             for(const data of new ParamsDataIterator(pQueryObject, pTransforms, args, this))
             {
-                handleQueryObjectParam(data, queryStrings, $this.ɵQueryStringSerializer);
+                handleQueryObjectParam(data, queryStrings, $this.ɵQueryStringSerializer, args);
             }
 
             const requestParams: HttpParams = mergeQueryObjectParamsWithHttpParams(queryStrings, request.params);

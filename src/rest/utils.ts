@@ -96,13 +96,14 @@ export function isNotType<TType extends RestMiddleware>(type: RestMiddlewareType
  * Handles query param and fills params dictionary
  * @param data - Data for creating query param
  * @param params - Params where should be new value placed
+ * @param args - Array of all arguments passed to handled function
  */
-export function handleQueryParam(data: ParamsDataIteratorItem, params: StringDictionary): void
+export function handleQueryParam(data: ParamsDataIteratorItem, params: StringDictionary, args: any[]): void
 {
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
     }
 
     // if the value is a instance of Object, we stringify it
@@ -122,13 +123,14 @@ export function handleQueryParam(data: ParamsDataIteratorItem, params: StringDic
  * Handles header param and fills headers dictionary
  * @param data - Data for creating header param
  * @param headers - Params where should be new value placed
+ * @param args - Array of all arguments passed to handled function
  */
-export function handleHeaderParam(data: ParamsDataIteratorItem, headers: StringDictionary): void
+export function handleHeaderParam(data: ParamsDataIteratorItem, headers: StringDictionary, args: any[]): void
 {
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
     }
 
     //only non null and non undefined values
@@ -142,13 +144,14 @@ export function handleHeaderParam(data: ParamsDataIteratorItem, headers: StringD
  * Handles path param and return updated url
  * @param data - Data for creating path param
  * @param url - Current url to be updated
+ * @param args - Array of all arguments passed to handled function
  */
-export function handlePathParam(data: ParamsDataIteratorItem, url: string): string
+export function handlePathParam(data: ParamsDataIteratorItem, url: string, args: any[]): string
 {
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
     }
 
     return url.replace('{' + data.key + '}', data.value ?? '');
@@ -159,13 +162,14 @@ export function handlePathParam(data: ParamsDataIteratorItem, url: string): stri
  * @param data - Data for creating query object param
  * @param queryStrings - Array of query serialized query strings
  * @param querySerializer - Serializer for query object
+ * @param args - Array of all arguments passed to handled function
  */
-export function handleQueryObjectParam(data: ParamsDataIteratorItem, queryStrings: string[], querySerializer: QueryStringSerializer): void
+export function handleQueryObjectParam(data: ParamsDataIteratorItem, queryStrings: string[], querySerializer: QueryStringSerializer, args: any[]): void
 {
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
     }
 
     const serializedObj = querySerializer.serializeObject(data.value);
