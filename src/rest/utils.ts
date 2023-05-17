@@ -103,7 +103,7 @@ export function handleQueryParam(data: ParamsDataIteratorItem, params: StringDic
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, ...args);
     }
 
     // if the value is a instance of Object, we stringify it
@@ -130,7 +130,7 @@ export function handleHeaderParam(data: ParamsDataIteratorItem, headers: StringD
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, ...args);
     }
 
     //only non null and non undefined values
@@ -151,7 +151,7 @@ export function handlePathParam(data: ParamsDataIteratorItem, url: string, args:
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, ...args);
     }
 
     return url.replace('{' + data.key + '}', data.value ?? '');
@@ -169,7 +169,7 @@ export function handleQueryObjectParam(data: ParamsDataIteratorItem, queryString
     //apply parameter transform
     if(data.transformFn)
     {
-        data.value = (data as any as RestClientWithTransform).transformFn(data.value, args);
+        data.value = (data as any as RestClientWithTransform).transformFn(data.value, ...args);
     }
 
     const serializedObj = querySerializer.serializeObject(data.value);
