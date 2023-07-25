@@ -1,6 +1,6 @@
-import {not, RESTClient, RestMethodMiddlewares, RestMiddleware} from '@anglr/rest';
-
-import {RestMiddlewareType} from '../rest.interface';
+import {RestMethodMiddlewares, RestMiddleware, RestMiddlewareType} from '../rest.interface';
+import {RESTClient} from '../common';
+import {not} from '../utils';
 
 /**
  * Allows disabling of specified middleware

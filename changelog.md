@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 13.0.1 (2023-07-25)
+
+### Bug Fixes
+
+- fixed `DisableMiddleware` imports, which points to itself
+
 ## Version 13.0.0 (2023-05-17)
 
 ### Features
