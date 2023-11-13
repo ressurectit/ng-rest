@@ -74,7 +74,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
                 private _handleResultMiddlewares: WebSocketHandleResultMiddleware[],
                 private _handleStatusMiddlewares: WebSocketHandleStatusSubscribeMiddleware[])
     {
-        this._logger.verbose(`WebSocket: socket context "{sessionId}" correlationId "${this._correlationId}"`, this._sessionId);
+        this._logger.verbose('WebSocket: socket context "{{sessionId}}" correlationId "{{correlationId}}"', {sessionId: this._sessionId, correlationId: this._correlationId});
 
         this._initialize();
     }
@@ -140,7 +140,7 @@ export class WebSocketClientResponseContext implements WebSocketClientResponse<a
     {
         if(this._outputMetadata)
         {
-            this._logger.verbose(`WebSocket: context is being destroyed "{sessionId}" correlationId "${this._correlationId}"`, this._sessionId);
+            this._logger.verbose('WebSocket: context is being destroyed "{{sessionId}}" correlationId "{{correlationId}}"', {sessionId: this._sessionId, correlationId: this._correlationId});
 
             Object.keys(this._outputMetadata).forEach(name =>
             {

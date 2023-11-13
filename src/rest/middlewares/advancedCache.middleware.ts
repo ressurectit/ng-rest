@@ -46,20 +46,20 @@ export class AdvancedCacheMiddleware implements RestMiddleware
                next: (request: HttpRequest<unknown>) => Observable<HttpResponse<unknown>>): Observable<unknown>
     {
         const $this = this as unknown as ɵAdvancedCache;
-        $this.ɵCache ??= this.injector.get(AdvancedCacheService, null);
+        const cache = $this.ɵCache ??= this.injector.get(AdvancedCacheService, null);
 
-        if(!$this.ɵCache)
+        if(!cache)
         {
             return next(request);
         }
 
-        const cachedResponse: HttpResponse<unknown>|null = $this.ɵCache.get(descriptor.key, request);
+        const cachedResponse: HttpResponse<unknown>|null = cache.get(descriptor.key, request);
 
         if (isPresent(cachedResponse))
         {
             return of(cachedResponse);
         }
 
-        return next(request).pipe(map(response => $this.ɵCache.add(descriptor.key, request, response, {validUntil: null})));
+        return next(request).pipe(map(response => cache.add(descriptor.key, request, response, {validUntil: null})));
     }
 }

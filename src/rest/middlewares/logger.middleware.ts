@@ -52,20 +52,26 @@ export class LoggerMiddleware implements RestMiddleware
             return next(request);
         }
 
-        $this.ɵLogger.verbose(`RESTClient ${methodName}: Request {@request}`, 
+        $this.ɵLogger.verbose(`RESTClient ${methodName}: Request {{@request}}`, 
         {
-            args,
-            request
+            request:
+            {
+                args,
+                request,
+            }
         });
 
         return next(request)
-            .pipe(tap(response =>
-                      {
-                          $this.ɵLogger?.verbose(`RESTClient ${methodName}: Response {@response}`, response);
-                      },
-                      error =>
-                      {
-                          $this.ɵLogger?.verbose(`RESTClient ${methodName}: ErrorResponse {@error}`, error);
-                      }));
+            .pipe(tap(
+            {
+                next: response =>
+                {
+                    $this.ɵLogger?.verbose(`RESTClient ${methodName}: Response {{@response}}`, {response});
+                },
+                error: error =>
+                {
+                    $this.ɵLogger?.verbose(`RESTClient ${methodName}: ErrorResponse {{@error}}`, {error});
+                }
+            }));
     }
 }

@@ -2,14 +2,17 @@ import {Inject, Injectable} from '@angular/core';
 import {RestDateApi} from '@anglr/rest';
 import {DateApi, DATE_API} from '@anglr/datetime';
 
+import {DATETIME_STRING_FORMAT} from '../misc/tokens';
+
 /**
  * RestDateApi implementation using `@anglr/datetime`
  */
 @Injectable()
-export class DatetimeRestDateApi<TDate = any> implements RestDateApi<TDate>
+export class DatetimeRestDateApi<TDate = unknown> implements RestDateApi<TDate>
 {
     //######################### constructor #########################
-    constructor(@Inject(DATE_API) protected _dateApi: DateApi<TDate>)
+    constructor(@Inject(DATE_API) protected dateApi: DateApi<TDate>,
+                @Inject(DATETIME_STRING_FORMAT) protected stringFormat: string,)
     {
     }
 
@@ -18,9 +21,9 @@ export class DatetimeRestDateApi<TDate = any> implements RestDateApi<TDate>
     /**
      * @inheritdoc
      */
-    public isDate(value: any): value is TDate|Date
+    public isDate(value: unknown): value is TDate|Date
     {
-        return this._dateApi.isDate(value);
+        return this.dateApi.isDate(value);
     }
 
     /**
@@ -28,7 +31,7 @@ export class DatetimeRestDateApi<TDate = any> implements RestDateApi<TDate>
      */
     public toString(value: TDate|Date): string
     {
-        return this._dateApi.getValue(value).format('yyyy-MM-dd');
+        return this.dateApi.getValue(value).format(this.stringFormat);
     }
 
     /**
@@ -36,6 +39,6 @@ export class DatetimeRestDateApi<TDate = any> implements RestDateApi<TDate>
      */
     public isBeforeNow(tested: TDate): boolean
     {
-        return this._dateApi.now().isAfter(tested);
+        return this.dateApi.now().isAfter(tested);
     }
 }

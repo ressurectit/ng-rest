@@ -9,7 +9,6 @@ import {buildMiddlewares} from './utils';
 import {REST_MIDDLEWARES_ORDER, REST_METHOD_MIDDLEWARES} from './tokens';
 
 //TODO
-// @Optional() protected transferState?: RestTransferStateService,
 // @Optional() @Inject(SERVER_COOKIE_HEADER) protected serverCookieHeader?: string,
 // @Optional() @Inject(SERVER_AUTH_HEADER) protected serverAuthHeader?: string,
 

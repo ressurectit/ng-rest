@@ -79,7 +79,7 @@ export class MockLoggerMiddleware implements RestMiddleware
             }
     
             return next(request)
-                .pipe(tap(response => $this.ɵMockLogger.logResponse(request, response as any)));
+                .pipe(tap(response => $this.ɵMockLogger?.logResponse(request, response as any)));
         }
     }
 }

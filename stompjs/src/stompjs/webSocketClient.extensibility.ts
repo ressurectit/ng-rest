@@ -154,7 +154,7 @@ export function WebSocketHandleStatusErrorComplete(status: StatusQueueResponse, 
     {
         if(status.httpStatus! >= 400)
         {
-            logger.error(`WebSocket: error status code '${status.httpStatus}', response {@status}`, status);
+            logger.error(`WebSocket: error status code '${status.httpStatus}', response {{@status}}`, {status});
 
             jsDevMode && console.error(`Queue received failure response ${status.queue}`, status);
 

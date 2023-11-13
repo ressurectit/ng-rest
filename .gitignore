@@ -1,6 +1,5 @@
 /node_modules
-/es2015
-/es2020
+/es2022
 /docs
 temp/
 

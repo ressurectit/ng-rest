@@ -72,7 +72,7 @@ export abstract class WebSocketClient implements OnDestroy
                                                    },
                                                    onStompError: error =>
                                                    {
-                                                       this.logger.error('WebSocket: client onStompError called, \'{@error}\'', error);
+                                                       this.logger.error('WebSocket: client onStompError called, \'{{@error}}\'', {error});
 
                                                        this._resetConnection();
 
@@ -84,7 +84,7 @@ export abstract class WebSocketClient implements OnDestroy
                                                    },
                                                    onWebSocketClose: close =>
                                                    {
-                                                       this.logger.warn('WebSocket: client onWebSocketClose called, \'{@close}\'', close);
+                                                       this.logger.warn('WebSocket: client onWebSocketClose called, \'{{@close}}\'', {close});
 
                                                        this._resetConnection();
 
@@ -92,7 +92,7 @@ export abstract class WebSocketClient implements OnDestroy
                                                    },
                                                    onWebSocketError: error =>
                                                    {
-                                                       this.logger.error('WebSocket: client onWebSocketError called, \'{@error}\'', error);
+                                                       this.logger.error('WebSocket: client onWebSocketError called, \'{{@error}}\'', {error});
 
                                                        this._resetConnection();
 

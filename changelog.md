@@ -1,16 +1,24 @@
 # Changelog
 
-## Version 14.0.0 (2023-05-17)
+## Version 14.0.0 (2023-11-13)
+
+### Features
+
+- subpackage `@anglr/rest/datetime`
+    - new `provideRestDateTime` function, that provides rest date api using `@anglr/datetime`
+    - new `provideRestDateTimeStringFormat` function, that provides rest date time string format
+    - new `DATETIME_STRING_FORMAT` injection token for datetime string format
 
 ### BREAKING CHANGES
 
-- minimal supported version of `@angular` is `15.0.0`
+- minimal supported version of `NodeJs` is `18`
+- minimal supported version of `@angular` is `17.0.1`
 - minimal supported version of `rxjs` is `7.5.7`
-- minimal supported version of `@jscrpt/common` is `3.3.0`
-- minimal supported version of `@anglr/common` is `15.0.1`
-- minimal supported version of `@anglr/datetime` is `5.0.0`
-- minimal supported version of `tslib` is `2.4.1`
-- dropped support of `NodeJs` version `< 14.20.0` or version `< 16.13.0`
+- minimal supported version of `@jscrpt/common` is `5.0.0`
+- minimal supported version of `@anglr/common` is `19.0.0`
+- minimal supported version of `@anglr/datetime` is `7.0.0`
+- minimal supported version of `tslib` is `2.6.3`
+- removed `RestTransferStateService` service, Angular has native support for this
 
 ## Version 13.0.1 (2023-07-25)
 
