@@ -200,7 +200,7 @@ export abstract class WebSocketClient implements OnDestroy
     /**
      * Returns name of property storing correlation id in body
      */
-    protected getCorrelationBodyProperty(): string
+    protected getCorrelationBodyProperty(): string|undefined|null
     {
         return null;
     }

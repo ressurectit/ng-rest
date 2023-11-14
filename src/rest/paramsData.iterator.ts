@@ -4,7 +4,7 @@ import {KeyIndex, ParametersTransformsObj} from './rest.interface';
 /**
  * Data that represents item during iteration of params data
  */
-export interface ParamsDataIteratorItem<TData = any>
+export interface ParamsDataIteratorItem<TData = unknown>
 {
     /**
      * Bound Parameter transformation function
@@ -41,7 +41,7 @@ export class ParamsDataIterator
     {
         let x = 0;
         const args = this.args;
-        const paramData = this.paramData;
+        const paramData = this.paramData ?? [];
         const transforms = this.transforms;
         const restClient = this.restClient;
 
@@ -98,7 +98,7 @@ export class ParamsDataIterator
     //######################### constructor #########################
     constructor(protected paramData: KeyIndex[]|undefined,
                 protected transforms: ParametersTransformsObj|undefined,
-                protected args: any[],
+                protected args: unknown[],
                 protected restClient: RESTClient,)
     {
     }

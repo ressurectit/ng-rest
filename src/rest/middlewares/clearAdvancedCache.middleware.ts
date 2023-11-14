@@ -52,6 +52,6 @@ export class ClearAdvancedCacheMiddleware implements RestMiddleware
             return next(request);
         }
 
-        return next(request).pipe(tap(() => $this.ɵCache.clearCache(descriptor.key)));
+        return next(request).pipe(tap(() => $this.ɵCache?.clearCache(descriptor.key)));
     }
 }

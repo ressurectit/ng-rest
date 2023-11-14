@@ -40,9 +40,9 @@ export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransform
         {
             target.parameters = target.parameters ?? {};
             target.parameters[propertyKey] = target.parameters[propertyKey] ?? {};
-            target.parameters[propertyKey].transforms = target.parameters[propertyKey].transforms ?? {};
+            const transforms = target.parameters[propertyKey].transforms = target.parameters[propertyKey].transforms ?? {};
             
-            target.parameters[propertyKey].transforms[parameterIndex] = function(this: RESTClient, input: any, ...args: any[])
+            transforms[parameterIndex] = function(this: RESTClient, input: any, ...args: any[])
             {
                 for(let x = 0; x < paramFunctions.length; x++)
                 {

@@ -115,7 +115,7 @@ export function handleQueryParam(data: ParamsDataIteratorItem, params: StringDic
     //only non null and non undefined values
     if(isPresent(data.value))
     {
-        params[data.key] = data.value;
+        params[data.key] = data.value as string;
     }
 }
 
@@ -136,7 +136,7 @@ export function handleHeaderParam(data: ParamsDataIteratorItem, headers: StringD
     //only non null and non undefined values
     if(isPresent(data.value))
     {
-        headers[data.key] = data.value;
+        headers[data.key] = data.value as string;
     }
 }
 
@@ -154,7 +154,7 @@ export function handlePathParam(data: ParamsDataIteratorItem, url: string, args:
         data.value = (data as any as RestClientWithTransform).transformFn(data.value, ...args);
     }
 
-    return url.replace('{' + data.key + '}', data.value ?? '');
+    return url.replace('{' + data.key + '}', (data.value as string) ?? '');
 }
 
 /**
@@ -172,7 +172,7 @@ export function handleQueryObjectParam(data: ParamsDataIteratorItem, queryString
         data.value = (data as any as RestClientWithTransform).transformFn(data.value, ...args);
     }
 
-    const serializedObj = querySerializer.serializeObject(data.value);
+    const serializedObj = querySerializer.serializeObject((data.value as object));
 
     if(serializedObj)
     {
