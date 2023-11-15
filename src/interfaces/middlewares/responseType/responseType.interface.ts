@@ -8,5 +8,5 @@ export interface RestResponseType extends TypedPropertyDescriptor<unknown>
     /**
      * Response type to be set
      */
-    responseType?: ResponseType;
+    responseType: ResponseType|undefined|null;
 }

@@ -7,7 +7,7 @@ import type {RESTClientBase} from '../misc/classes/restClientBase';
 /**
  * Middleware that is used for handling report progress setting, if not set returns only final http response with data
  */
-export class ReportProgressMiddleware implements RestMiddleware<unknown, unknown, RestReportProgress>
+export class ReportProgressMiddleware implements RestMiddleware<unknown, unknown, RestReportProgress, unknown, HttpResponse<unknown>>
 {
     //######################### public static properties #########################
 

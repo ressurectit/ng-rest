@@ -8,5 +8,5 @@ export interface RestHttpMethod extends TypedPropertyDescriptor<unknown>
     /**
      * Array of middlewares that are executed for each request
      */
-    middlewares?: RestMiddlewareRunMethod[];
+    middlewares: RestMiddlewareRunMethod[];
 }

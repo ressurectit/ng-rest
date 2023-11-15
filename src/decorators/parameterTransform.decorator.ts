@@ -1,7 +1,7 @@
 import {isBlank, isPresent, isFunction, isString, Dictionary} from '@jscrpt/common';
 
-import {RestParameters} from '../rest/rest.interface';
-import type {ParameterTransformFunc, RESTClient} from '../rest/common';
+import {ParameterTransformFunc, RestParameters} from '../interfaces';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
 
 /**
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization
@@ -9,7 +9,7 @@ import type {ParameterTransformFunc, RESTClient} from '../rest/common';
  */
 export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransformFunc|ParameterTransformFunc[])
 {
-    return function(target: RESTClient & RestParameters, propertyKey: string, parameterIndex: number): void
+    return function(target: RESTClientBase & RestParameters, propertyKey: string, parameterIndex: number): void
     {
         if(isBlank(methodNameOrFuncs))
         {
@@ -36,17 +36,17 @@ export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransform
             paramFunctions = methodNameOrFuncs.filter(itm => isFunction(itm));
         }
 
-        if(paramFunctions?.length)
+        if(paramFunctions.length)
         {
             target.parameters = target.parameters ?? {};
             target.parameters[propertyKey] = target.parameters[propertyKey] ?? {};
             const transforms = target.parameters[propertyKey].transforms = target.parameters[propertyKey].transforms ?? {};
             
-            transforms[parameterIndex] = function(this: RESTClient, input: any, ...args: any[])
+            transforms[parameterIndex] = async function(this: RESTClientBase, input: unknown, ...args: unknown[])
             {
                 for(let x = 0; x < paramFunctions.length; x++)
                 {
-                    input = paramFunctions[x].apply(this, [input, ...args]);
+                    input = await paramFunctions[x].apply(this, [input, ...args]);
                 }
 
                 return input;

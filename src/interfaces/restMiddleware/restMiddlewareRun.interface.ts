@@ -2,11 +2,12 @@ import {HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 import type {RESTClientBase} from '../../misc/classes/restClientBase';
+import {RestMiddlewareRunNextMethod} from './restMiddlewareRunNext.interface';
 
 /**
  * Definition of method that is used for running middleware code
  */
-export interface RestMiddlewareRunMethod<TRequestBody = unknown, TResponseBody = unknown, TDescriptor = unknown, TTarget = unknown>
+export interface RestMiddlewareRunMethod<TRequestBody = unknown, TResponseBody = unknown, TDescriptor = unknown, TTarget = unknown, TNextResponse = unknown>
 {
     /**
      * Runs code that is defined for this rest middleware, in this method you can modify request and response
@@ -26,5 +27,5 @@ export interface RestMiddlewareRunMethod<TRequestBody = unknown, TResponseBody =
      descriptor: TDescriptor,
      args: unknown[],
      request: HttpRequest<TRequestBody>,
-     next: <TNextRequestBody = unknown, TNextResponseBody = unknown>(request: HttpRequest<TNextRequestBody>) => Observable<TNextResponseBody>): Observable<TResponseBody>;
+     next: RestMiddlewareRunNextMethod<TRequestBody, TNextResponse>): Observable<TResponseBody>;
 }

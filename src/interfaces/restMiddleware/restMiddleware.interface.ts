@@ -3,7 +3,7 @@ import {RestMiddlewareRunMethod} from './restMiddlewareRun.interface';
 /**
  * Definition of rest middleware that will be pluged in to processing of request and response
  */
-export interface RestMiddleware<TRequestBody = unknown, TResponseBody = unknown, TDescriptor = unknown, TTarget = unknown>
+export interface RestMiddleware<TRequestBody = unknown, TResponseBody = unknown, TDescriptor = unknown, TTarget = unknown, TNextResponse = unknown>
 {
     /**
      * Runs code that is defined for this rest middleware, in this method you can modify request and response
@@ -14,5 +14,5 @@ export interface RestMiddleware<TRequestBody = unknown, TResponseBody = unknown,
      * @param request - Http request that you can modify
      * @param next - Used for calling next middleware with modified request
      */
-    run: RestMiddlewareRunMethod<TRequestBody, TResponseBody, TDescriptor, TTarget>;
+    run: RestMiddlewareRunMethod<TRequestBody, TResponseBody, TDescriptor, TTarget, TNextResponse>;
 }

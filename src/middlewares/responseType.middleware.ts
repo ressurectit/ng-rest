@@ -2,14 +2,14 @@ import {HttpRequest, HttpResponse} from '@angular/common/http';
 import {isPresent} from '@jscrpt/common';
 import {Observable, map} from 'rxjs';
 
-import {RestMiddleware, RestResponseType} from '../interfaces';
+import {BlobAndFilenameResponse, LocationHeaderAndJsonResponse, LocationHeaderResponse, RestMiddleware, RestResponseType} from '../interfaces';
 import type {RESTClientBase} from '../misc/classes/restClientBase';
 import {ResponseType} from '../misc/enums';
 
 /**
  * Middleware that is used for extracting http body and transforming it according to specified response type
  */
-export class ResponseTypeMiddleware implements RestMiddleware<unknown, unknown, RestResponseType>
+export class ResponseTypeMiddleware implements RestMiddleware<unknown, unknown, RestResponseType, unknown, HttpResponse<unknown>>
 {
     //######################### public static properties #########################
 
@@ -41,10 +41,10 @@ export class ResponseTypeMiddleware implements RestMiddleware<unknown, unknown, 
                next: (request: HttpRequest<unknown>) => Observable<HttpResponse<unknown>>): Observable<unknown>
     {
         const responseType = descriptor.responseType ?? ResponseType.Json;
-        let observable = next(request);
+        const origialObservable = next(request);
+        let observable: Observable<unknown> = origialObservable;
 
         // transform the obserable in accordance to the @Produces decorator
-        // TODO: if (!fromState)
         if (isPresent(responseType))
         {
             switch(responseType)
@@ -55,18 +55,18 @@ export class ResponseTypeMiddleware implements RestMiddleware<unknown, unknown, 
                 case ResponseType.Blob:
                 case ResponseType.ArrayBuffer:
                 {
-                    observable = observable.pipe(map((res: HttpResponse<any>) => res.body));
+                    observable = origialObservable.pipe(map(res => res.body));
 
                     break;
                 }
                 case ResponseType.BlobAndFilename:
                 {
-                    observable = observable.pipe(map((res: HttpResponse<any>) =>
+                    observable = origialObservable.pipe(map(res =>
                     {
                         const contentDisposition = res.headers.get('content-disposition');
-                        const filename = contentDisposition ? contentDisposition.replace(/.*filename="(.+)"/, '$1') : '';
+                        const filename = contentDisposition?.replace(/.*filename="(.+)"/, '$1') ?? '';
 
-                        return <any>{
+                        return <BlobAndFilenameResponse>{
                             filename: filename,
                             blob: res.body
                         };
@@ -76,29 +76,29 @@ export class ResponseTypeMiddleware implements RestMiddleware<unknown, unknown, 
                 }
                 case ResponseType.LocationHeader:
                 {
-                    observable = observable.pipe(map((res: HttpResponse<any>) =>
+                    observable = origialObservable.pipe(map(res =>
                     {
                         const headerValue = res.headers.get('location');
                         const baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
                         const url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
-                        return {
+                        return <LocationHeaderResponse>{
                             location: headerValue,
                             id: isPresent(headerValue) ? headerValue.replace(url, '') : null
-                        } as any;
+                        };
                     }));
 
                     break;
                 }
                 case ResponseType.LocationHeaderAndJson:
                 {
-                    observable = observable.pipe(map((res: HttpResponse<any>) =>
+                    observable = origialObservable.pipe(map(res =>
                     {
                         const headerValue = res.headers.get('location');
                         const baseUrl = res.url!.replace(/^http(?:s)?:\/\/.*?\//, '/');
                         const url = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
-                        return <any>{
+                        return <LocationHeaderAndJsonResponse>{
                             location: headerValue,
                             id: isPresent(headerValue) ? headerValue.replace(url, '') : null,
                             data: res.body
@@ -110,6 +110,6 @@ export class ResponseTypeMiddleware implements RestMiddleware<unknown, unknown, 
             }
         }
 
-        return observable;
+        return origialObservable;
     }
 }

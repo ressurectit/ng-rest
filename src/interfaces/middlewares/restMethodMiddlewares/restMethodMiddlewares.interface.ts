@@ -9,5 +9,6 @@ export interface RestMethodMiddlewares extends TypedPropertyDescriptor<unknown>
     /**
      * Array of rest middleware types that will be used
      */
-    middlewareTypes?: RestMiddlewareType<RestMiddleware>[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    middlewareTypes: RestMiddlewareType<RestMiddleware<any, any, any, any, any>>[];
 }

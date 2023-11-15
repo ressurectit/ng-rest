@@ -32,7 +32,7 @@ interface ɵMockLogger
  *  },
  * ```
  */
-export class MockLoggerMiddleware implements RestMiddleware
+export class MockLoggerMiddleware implements RestMiddleware<unknown, unknown, unknown, unknown, HttpResponse<string|ArrayBuffer|Blob|object>>
 {
     //######################### public static properties #########################
 

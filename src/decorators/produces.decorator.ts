@@ -1,7 +1,7 @@
-import type {RESTClient} from '../rest/common';
-import {RestResponseType, RestMethodMiddlewares} from '../rest/rest.interface';
-import {ResponseType} from '../rest/responseType';
+import {RestMethodMiddlewares, RestResponseType} from '../interfaces';
 import {ProducesMiddleware} from '../middlewares';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
+import {ResponseType} from '../misc/enums';
 
 /**
  * Defines the response type(s) that the methods can produce or tzpe of body id full request or events are requested
@@ -9,15 +9,15 @@ import {ProducesMiddleware} from '../middlewares';
  */
 export function Produces(producesDef: ResponseType)
 {
-    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestResponseType &
-                                                                                       RestMethodMiddlewares |
-                                                                                       TDecorated): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClientBase, _propertyKey: string, descriptor: RestResponseType &
+                                                                                           RestMethodMiddlewares |
+                                                                                           TDecorated): TDecorated
     {
         const descr = descriptor as RestResponseType & RestMethodMiddlewares;
 
         descr.responseType = producesDef;
-        descr.middlewareTypes?.push(ProducesMiddleware);
+        descr.middlewareTypes.push(ProducesMiddleware);
 
-        return descr;
+        return descr as TDecorated;
     };
 }

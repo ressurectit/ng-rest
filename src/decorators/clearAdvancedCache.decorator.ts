@@ -1,6 +1,6 @@
-import {RestClearAdvancedCaching, RestMethodMiddlewares} from '../rest/rest.interface';
-import type {RESTClient} from '../rest/common';
+import {RestClearAdvancedCaching, RestMethodMiddlewares} from '../interfaces';
 import {ClearAdvancedCacheMiddleware} from '../middlewares';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
 
 /**
  * Clears advanced cache for key when call is successful
@@ -8,15 +8,15 @@ import {ClearAdvancedCacheMiddleware} from '../middlewares';
  */
 export function ClearAdvancedCache(key: string)
 {
-    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestClearAdvancedCaching &
-                                                                                       RestMethodMiddlewares |
-                                                                                       TDecorated): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClientBase, _propertyKey: string, descriptor: RestClearAdvancedCaching &
+                                                                                           RestMethodMiddlewares |
+                                                                                           TDecorated): TDecorated
     {
         const descr = descriptor as RestClearAdvancedCaching & RestMethodMiddlewares;
 
         descr.key = key;
-        descr.middlewareTypes?.push(ClearAdvancedCacheMiddleware);
+        descr.middlewareTypes.push(ClearAdvancedCacheMiddleware);
 
-        return descr;
+        return descr as TDecorated;
     };
 }

@@ -21,6 +21,7 @@
         - `requestInterceptor` request interceptor for all methods, must return new HttpRequest since object is immutable
         - `responseInterceptor` allows to intercept all responses for all methods in class
 - new `RestHttpMethod` interface, that contains data that are stored when REST method is set
+- new `RestMiddlewareRunNextMethod` interface, that is definition of method that is used for passing execution to the next middleware
 - updated `ParameterTransformFunc` interface, now supports async parameter transformation
 - updated `handleQueryParam` function
     - is now `async`

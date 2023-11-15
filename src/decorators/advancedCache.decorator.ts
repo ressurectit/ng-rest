@@ -1,6 +1,6 @@
-import {RestAdvancedCaching, RestMethodMiddlewares} from '../rest/rest.interface';
-import type {RESTClient} from '../rest/common';
+import {RestAdvancedCaching, RestMethodMiddlewares} from '../interfaces';
 import {AdvancedCacheMiddleware} from '../middlewares';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
 
 /**
  * Name of default key if not specified custom one
@@ -12,18 +12,18 @@ const DEFAULT_KEY = 'ɵDEFAULTɵ';
  * @param key - Optional key for cached data
  * @param validUntil - Relative definition of 'date' for setting validity of cache, example +2d, +12h
  */
-export function AdvancedCache(key?: string|null, validUntil?: string)
+export function AdvancedCache(key?: string|null, validUntil?: string|null)
 {
-    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestAdvancedCaching &
-                                                                                       RestMethodMiddlewares |
-                                                                                       TDecorated): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClientBase, _propertyKey: string, descriptor: RestAdvancedCaching &
+                                                                                           RestMethodMiddlewares |
+                                                                                           TDecorated): TDecorated
     {
         const descr = descriptor as RestMethodMiddlewares & RestAdvancedCaching;
         descr.key = key ?? DEFAULT_KEY;
         descr.validUntil = validUntil;
 
-        descr.middlewareTypes?.push(AdvancedCacheMiddleware);
+        descr.middlewareTypes.push(AdvancedCacheMiddleware);
         
-        return descr;
+        return descr as TDecorated;
     };
 }

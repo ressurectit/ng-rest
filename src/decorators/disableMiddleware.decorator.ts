@@ -1,5 +1,6 @@
-import {RestMethodMiddlewares, RestMiddleware, RestMiddlewareType} from '../rest/rest.interface';
-import {RESTClient} from '../rest/common';
+import {RestMethodMiddlewares, RestMiddleware} from '../interfaces';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
+import {RestMiddlewareType} from '../misc/types';
 import {not} from '../misc/utils';
 
 /**
@@ -8,13 +9,13 @@ import {not} from '../misc/utils';
  */
 export function DisableMiddleware(middleware: RestMiddlewareType<RestMiddleware>)
 {
-    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: RestMethodMiddlewares |
-                                                                                       TDecorated): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClientBase, _propertyKey: string, descriptor: RestMethodMiddlewares |
+                                                                                           TDecorated): TDecorated
     {
         const descr = descriptor as RestMethodMiddlewares;
         
-        descr.middlewareTypes?.push(not(middleware));
+        descr.middlewareTypes.push(not(middleware));
 
-        return descr;
+        return descr as TDecorated;
     };
 }

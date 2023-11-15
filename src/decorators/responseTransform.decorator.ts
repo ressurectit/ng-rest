@@ -1,8 +1,9 @@
 import {isBlank, isPresent, isFunction, isString, Dictionary} from '@jscrpt/common';
+import {Observable} from 'rxjs';
 
-import type {RESTClient, ResponseTransformFunc} from '../rest/common';
-import {RestResponseTransform, RestMethodMiddlewares} from '../rest/rest.interface';
 import {ResponseTransformMiddleware} from '../middlewares';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
+import {ResponseTransformFunc, RestMethodMiddlewares, RestResponseTransform} from '../interfaces';
 
 /**
  * Defines method name that will be called and modifies response
@@ -10,9 +11,9 @@ import {ResponseTransformMiddleware} from '../middlewares';
  */
 export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFunc|ResponseTransformFunc[])
 {
-    return function<TDecorated>(target: RESTClient, propertyKey: string, descriptor: RestResponseTransform &
-                                                                                     RestMethodMiddlewares |
-                                                                                     TDecorated): TypedPropertyDescriptor<any>
+    return function<TDecorated>(target: RESTClientBase, propertyKey: string, descriptor: RestResponseTransform &
+                                                                                         RestMethodMiddlewares |
+                                                                                         TDecorated): TDecorated
     {
         const descr = descriptor as RestResponseTransform & RestMethodMiddlewares;
 
@@ -43,8 +44,8 @@ export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFu
 
         if(responseFunctions?.length)
         {
-            descr.middlewareTypes?.push(ResponseTransformMiddleware);
-            descr.responseTransform = function(this: RESTClient, observable: any, ...args)
+            descr.middlewareTypes.push(ResponseTransformMiddleware);
+            descr.responseTransform = function(this: RESTClientBase, observable: Observable<unknown>, ...args)
             {
                 for(let x = 0; x < responseFunctions.length; x++)
                 {
@@ -55,6 +56,6 @@ export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFu
             };
         }
 
-        return descr;
+        return descr as TDecorated;
     };
 }

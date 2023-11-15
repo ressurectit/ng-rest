@@ -1,8 +1,8 @@
 import {isPresent} from '@jscrpt/common';
 
-import type {RESTClient} from '../rest/common';
 import {ProgressIndicatorGroupMiddleware} from '../middlewares';
-import {RestMethodMiddlewares, RestProgressIndicatorGroup} from '../rest/rest.interface';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
+import {RestMethodMiddlewares, RestProgressIndicatorGroup} from '../interfaces';
 
 /**
  * Allows to specify progress indicator group for displaying local progress indicator
@@ -10,18 +10,18 @@ import {RestMethodMiddlewares, RestProgressIndicatorGroup} from '../rest/rest.in
  */
 export function ProgressIndicatorGroup(name: string)
 {
-    return function<TDecorated>(_target: RESTClient, _propertyKey: string, descriptor: Partial<RestProgressIndicatorGroup> &
-                                                                                       RestMethodMiddlewares |
-                                                                                       TDecorated): TypedPropertyDescriptor<any>
+    return function<TDecorated>(_target: RESTClientBase, _propertyKey: string, descriptor: RestProgressIndicatorGroup &
+                                                                                           RestMethodMiddlewares |
+                                                                                           TDecorated): TDecorated
     {
-        const descr = descriptor as Partial<RestProgressIndicatorGroup> & RestMethodMiddlewares;
+        const descr = descriptor as RestProgressIndicatorGroup & RestMethodMiddlewares;
 
         if(isPresent(name))
         {
-            descr.middlewareTypes?.push(ProgressIndicatorGroupMiddleware);
+            descr.middlewareTypes.push(ProgressIndicatorGroupMiddleware);
             descr.groupName = name;
         }
 
-        return descr;
+        return descr as TDecorated;
     };
 }

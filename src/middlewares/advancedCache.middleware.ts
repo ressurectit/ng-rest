@@ -14,7 +14,7 @@ interface ɵAdvancedCache
 /**
  * Middleware that is used for storing and restoring response from advanced cache service
  */
-export class AdvancedCacheMiddleware implements RestMiddleware<unknown, unknown, RestAdvancedCaching>
+export class AdvancedCacheMiddleware implements RestMiddleware<unknown, unknown, RestAdvancedCaching, unknown, HttpResponse<unknown>>
 {
     //######################### public static properties #########################
 

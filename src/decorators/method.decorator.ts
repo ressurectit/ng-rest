@@ -1,4 +1,11 @@
-import {RESTClientBase} from '../misc/classes/restClientBase';
+import {HttpHeaders, HttpRequest} from '@angular/common/http';
+import {generateId, isFunction} from '@jscrpt/common';
+import {Observable} from 'rxjs';
+
+import {RestHttpMethod, RestMethod, RestMethodMiddlewares, RestMiddleware, RestParameters} from '../interfaces';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
+import {RestMiddlewareType} from '../misc/types';
+import {buildMiddlewares} from '../misc/utils';
 
 /**
  * Method builder used for building decorators for http methods
@@ -9,9 +16,9 @@ function methodBuilder(method: string)
     return function(url: string)
     {
         return function<TDecorated>(target: RESTClientBase & RestParameters, propertyKey: string, descriptor: RestMethod &
-                                                                                                          RestHttpMethod &
-                                                                                                          RestMethodMiddlewares |
-                                                                                                          TDecorated)
+                                                                                                              RestHttpMethod &
+                                                                                                              RestMethodMiddlewares |
+                                                                                                              TDecorated): TDecorated
         {
             const descr = descriptor as RestMethod & RestHttpMethod & RestMethodMiddlewares;
 
@@ -31,7 +38,7 @@ function methodBuilder(method: string)
                 parametersMiddlewares = parameters[propertyKey]?.middlewareTypes ?? [];
             }
 
-            descr.value = function(this: RESTClient, ...args: any[])
+            descr.value = function(this: RESTClientBase, ...args: unknown[])
             {
                 //get middlewares definition only during first call
                 if(!descr.middlewares)
@@ -46,17 +53,17 @@ function methodBuilder(method: string)
 
                 const reqId = `${id}-${generateId(6)}`;
  
-                const httpRequest = new HttpRequest<any>(method,
-                                                         this.baseUrl + this.getBaseUrl() + url,
-                                                         null,
-                                                         {
-                                                              headers: new HttpHeaders(this.getDefaultHeaders()),
-                                                              responseType: 'json',
-                                                              reportProgress: false
-                                                         });
+                const httpRequest = new HttpRequest<unknown>(method,
+                                                             this.baseUrl + this.getBaseUrl() + url,
+                                                             null,
+                                                             {
+                                                                  headers: new HttpHeaders(this.getDefaultHeaders()),
+                                                                  responseType: 'json',
+                                                                  reportProgress: false,
+                                                             });
 
                 //run all middlewares
-                const call = (httpReq: HttpRequest<any>, index: number): Observable<any> =>
+                const call = (httpReq: HttpRequest<unknown>, index: number): Observable<unknown> =>
                 {
                     if(!descr.middlewares[index])
                     {
@@ -84,7 +91,7 @@ function methodBuilder(method: string)
                 return call(httpRequest, 0);
             };
 
-            return descr;
+            return descr as TDecorated;
         };
     };
 }

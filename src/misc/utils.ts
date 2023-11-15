@@ -65,7 +65,8 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(mi
  * Creates NotType from Type, this type will be removed from middlewares
  * @param type - Type that will be set as NotType
  */
-export function not(type: RestMiddlewareType<RestMiddleware>): RestMiddlewareType<RestMiddleware>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function not(type: RestMiddlewareType<RestMiddleware<any, any, any, any, any>>): RestMiddlewareType<RestMiddleware>
 {
     return new NotType<RestMiddleware>(type) as unknown as RestMiddlewareType<RestMiddleware>;
 }

@@ -8,7 +8,7 @@ import type {RESTClientBase} from '../misc/classes/restClientBase';
 /**
  * Middleware that is used for storing and restoring response from cache
  */
-export class CacheMiddleware implements RestMiddleware<unknown, unknown, RestCaching>
+export class CacheMiddleware implements RestMiddleware<unknown, unknown, RestCaching, unknown, HttpResponse<unknown>>
 {
     //######################### public static properties #########################
 

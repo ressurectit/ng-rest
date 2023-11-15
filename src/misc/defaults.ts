@@ -29,7 +29,8 @@ export const BASIC_DEFAULT_REST_MIDDLEWARES_ORDER: RestMiddlewareOrderType<middl
 /**
  * Definition of basic defaut array of rest middlewares used for each rest method
  */
-export const BASIC_DEFAULT_REST_METHOD_MIDDLEWARES: RestMiddlewareType<RestMiddleware>[] =
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const BASIC_DEFAULT_REST_METHOD_MIDDLEWARES: RestMiddlewareType<RestMiddleware<any, any, any, any, any>>[] =
 [
     LoggerMiddleware,
     ResponseTypeMiddleware,

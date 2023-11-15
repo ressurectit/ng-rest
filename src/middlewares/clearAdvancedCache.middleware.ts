@@ -1,4 +1,4 @@
-import {HttpRequest, HttpResponse} from '@angular/common/http';
+import {HttpRequest} from '@angular/common/http';
 import {Observable, tap} from 'rxjs';
 
 import {AdvancedCacheService} from '../services';
@@ -42,7 +42,7 @@ export class ClearAdvancedCacheMiddleware implements RestMiddleware<unknown, unk
                descriptor: RestClearAdvancedCaching,
                _args: unknown[],
                request: HttpRequest<unknown>,
-               next: (request: HttpRequest<unknown>) => Observable<HttpResponse<unknown>>): Observable<unknown>
+               next: (request: HttpRequest<unknown>) => Observable<unknown>): Observable<unknown>
     {
         const $this = this as unknown as ɵAdvancedCache;
         $this.ɵCache ??= this.injector.get(AdvancedCacheService, null);

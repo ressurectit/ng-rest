@@ -6,5 +6,5 @@ export interface RestReportProgress extends TypedPropertyDescriptor<unknown>
     /**
      * Indication whether report progress
      */
-    reportProgress?: boolean;
+    reportProgress: boolean;
 }

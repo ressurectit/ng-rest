@@ -1,14 +1,16 @@
 import {isPresent} from '@jscrpt/common';
 
-import {ParametersMetadata, RestParameters, KeyIndex, RestMiddleware, RestMiddlewareType} from '../rest/rest.interface';
-import type {RESTClient} from '../rest/common';
 import {BodyParameterMiddleware, PathParameterMiddleware, QueryParameterMiddleware, QueryObjectParameterMiddleware, HeaderParameterMiddleware} from '../middlewares';
+import {KeyIndex, ParametersMetadata, RestMiddleware, RestParameters} from '../interfaces';
+import {RestMiddlewareType} from '../misc/types';
+import type {RESTClientBase} from '../misc/classes/restClientBase';
 
-function paramBuilder(paramName: keyof ParametersMetadata, middleware: RestMiddlewareType<RestMiddleware>)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function paramBuilder(paramName: keyof ParametersMetadata, middleware: RestMiddlewareType<RestMiddleware<any, any, any, any, any>>)
 {
     return function(key: string)
     {
-        return function(target: RESTClient & RestParameters, propertyKey: string, parameterIndex: number): void
+        return function(target: RESTClientBase & RestParameters, propertyKey: string, parameterIndex: number): void
         {
             const paramObj: KeyIndex =
             {

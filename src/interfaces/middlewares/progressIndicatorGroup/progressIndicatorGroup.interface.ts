@@ -6,5 +6,5 @@ export interface RestProgressIndicatorGroup extends TypedPropertyDescriptor<unkn
     /**
      * Name of progress indicator group
      */
-    groupName?: string;
+    groupName: string;
 }

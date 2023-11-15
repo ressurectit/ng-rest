@@ -8,5 +8,5 @@ export interface RestResponseTransform extends TypedPropertyDescriptor<unknown>
     /**
      * Response transform function
      */
-    responseTransform?: ResponseTransformFunc;
+    responseTransform: ResponseTransformFunc;
 }
