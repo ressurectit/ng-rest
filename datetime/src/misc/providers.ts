@@ -1,4 +1,4 @@
-import {ClassProvider, EnvironmentProviders, Provider, ValueProvider, makeEnvironmentProviders} from '@angular/core';
+import {ClassProvider, Provider, ValueProvider} from '@angular/core';
 import {REST_DATE_API} from '@anglr/rest';
 
 import {DatetimeRestDateApi} from '../services/datetimeRestDateApi.service';
@@ -7,17 +7,16 @@ import {DATETIME_STRING_FORMAT} from './tokens';
 /**
  * Provides rest date api using `@anglr/datetime`
  */
-export function provideRestDateTime(): EnvironmentProviders
+export function provideRestDateTime(): Provider[]
 {
-    return makeEnvironmentProviders(
-    [
+    return [
         <ClassProvider>
         {
             provide: REST_DATE_API,
             useClass: DatetimeRestDateApi,
         },
         provideRestDateTimeStringFormat('yyyy-MM-dd')
-    ]);
+    ];
 }
 
 /**

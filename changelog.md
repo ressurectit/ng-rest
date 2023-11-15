@@ -1,9 +1,35 @@
 # Changelog
 
-## Version 14.0.0 (2023-11-13)
+## Version 14.0.0 (2023-11-15)
 
 ### Features
 
+- new `provideRestMiddlewaresOrder` function, that provides rest middlewares execution order
+- new `provideRestMethodMiddlewares` function, that provides middleware types for rest http method, executed each time
+- new `provideRestDateApi` function, that provides rest date api type
+- new `provideMockLogger` function, that provides mock logger
+- new `RESTClientBase` class, that is base class for RESTClient class
+    - **properties**
+        - `http` instance of http client
+        - `injector` instance of injector used for obtaining DI
+        - `middlewaresOrder` array of rest middlewares in specific order in which will be middlewares executed
+        - `methodMiddlewares` array of middlewares that are executed for each http method
+        - `baseUrl` base path that is prepended to request URL
+    - **methods**
+        - `getBaseUrl` returns the base url of RESTClient
+        - `getDefaultHeaders` returns the default headers of RESTClient in a key-value
+        - `requestInterceptor` request interceptor for all methods, must return new HttpRequest since object is immutable
+        - `responseInterceptor` allows to intercept all responses for all methods in class
+- new `RestHttpMethod` interface, that contains data that are stored when REST method is set
+- updated `ParameterTransformFunc` interface, now supports async parameter transformation
+- updated `handleQueryParam` function
+    - is now `async`
+- updated `handleHeaderParam` function
+    - is now `async`
+- updated `handlePathParam` function
+    - is now `async`
+- updated `handleQueryObjectParam` function
+    - is now `async`
 - subpackage `@anglr/rest/datetime`
     - new `provideRestDateTime` function, that provides rest date api using `@anglr/datetime`
     - new `provideRestDateTimeStringFormat` function, that provides rest date time string format
