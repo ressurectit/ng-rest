@@ -7,7 +7,8 @@ import {not} from '../misc/utils';
  * Allows disabling of specified middleware
  * @param middleware - Middleware that will be disabled
  */
-export function DisableMiddleware(middleware: RestMiddlewareType<RestMiddleware>)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function DisableMiddleware(middleware: RestMiddlewareType<RestMiddleware<any, any, any, any, any>>)
 {
     return function<TDecorated>(_target: RESTClientBase, _propertyKey: string, descriptor: RestMethodMiddlewares |
                                                                                            TDecorated): TDecorated

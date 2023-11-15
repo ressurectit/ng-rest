@@ -110,6 +110,6 @@ export class ResponseTypeMiddleware implements RestMiddleware<unknown, unknown, 
             }
         }
 
-        return origialObservable;
+        return observable;
     }
 }
