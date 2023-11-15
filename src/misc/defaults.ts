@@ -1,5 +1,7 @@
 import {RestMiddleware} from '../interfaces';
-import {ReportProgressMiddleware, ResponseTypeMiddleware, LoggerMiddleware} from '../middlewares';
+import {LoggerMiddleware} from '../middlewares/logger.middleware';
+import {ReportProgressMiddleware} from '../middlewares/reportProgress.middleware';
+import {ResponseTypeMiddleware} from '../middlewares/responseType.middleware';
 import {RestMiddlewareOrderType, RestMiddlewareType, middlewareTypes} from './types';
 
 /**

@@ -9,7 +9,8 @@ import {ResponseTransformFunc, RestMethodMiddlewares, RestResponseTransform} fro
  * Defines method name that will be called and modifies response
  * @param methodNameOrFuncs - Name of method that will be called to modify response, method takes Observable and returns required type, or method directly or array of methods that will be called sequentialy
  */
-export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFunc|ResponseTransformFunc[])
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function ResponseTransform(methodNameOrFuncs?: string|ResponseTransformFunc<any, any>|ResponseTransformFunc<any, any>[])
 {
     return function<TDecorated>(target: RESTClientBase, propertyKey: string, descriptor: RestResponseTransform &
                                                                                          RestMethodMiddlewares |

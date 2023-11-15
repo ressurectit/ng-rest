@@ -46,6 +46,8 @@
 - minimal supported version of `@anglr/datetime` is `7.0.0`
 - minimal supported version of `tslib` is `2.6.3`
 - removed `RestTransferStateService` service, Angular has native support for this
+- updated `RESTClient` service,
+    - now has constructor with no parameters
 
 ## Version 13.0.1 (2023-07-25)
 

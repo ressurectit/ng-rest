@@ -7,7 +7,8 @@ import type {RESTClientBase} from '../misc/classes/restClientBase';
  * Parameter descriptor that is used for transforming parameter before QueryObject serialization
  * @param methodNameOrFuncs - Name of method that will be called to modify parameter, method takes any type of object and returns transformed object, or method directly or array of methods that will be called sequentialy
  */
-export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransformFunc|ParameterTransformFunc[])
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function ParameterTransform(methodNameOrFuncs?: string|ParameterTransformFunc<any, any>|ParameterTransformFunc<any, any>[])
 {
     return function(target: RESTClientBase & RestParameters, propertyKey: string, parameterIndex: number): void
     {
