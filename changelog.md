@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 14.0.0 (2023-11-15)
+## Version 14.0.0 (2023-11-17)
 
 ### Features
 
@@ -48,6 +48,8 @@
 - removed `RestTransferStateService` service, Angular has native support for this
 - updated `RESTClient` service,
     - now has constructor with no parameters
+- subpackage `@anglr/rest/datetime`
+    - removed `DATETIME_REST_DATE_API` injection token, use `provideRestDateTime`
 
 ## Version 13.0.1 (2023-07-25)
 
