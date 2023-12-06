@@ -17,7 +17,7 @@ type RestClientWithTransform = RESTClientBase&{transformFn: ParameterTransformFu
 export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(middlewares: RestMiddlewareType<RestMiddleware>[],
                                                                               middlewaresOrder: RestMiddlewareOrderType<string>[]): RestMiddlewareRunMethod[]
 {
-    const usedMiddlewares: RestMiddlewareType<RestMiddleware>[] = [];
+    const usedMiddlewares: Array<RestMiddlewareType<RestMiddleware>|undefined> = [];
 
     middlewares
         .filter(middleware => !isNotType(middleware))
@@ -48,14 +48,17 @@ export const buildMiddlewares: BuildMiddlewaresFn = function buildMiddlewares(mi
                 return;
             }
 
-            usedMiddlewares.splice(index, 1);
+            usedMiddlewares.splice(index, 1, undefined);
         });
 
     const runMethods: RestMiddlewareRunMethod[] = [];
 
     usedMiddlewares.forEach(middleware =>
     {
-        runMethods.push(new middleware().run);
+        if(middleware)
+        {
+            runMethods.push(new middleware().run);
+        }
     });
 
     return runMethods;

@@ -1,6 +1,10 @@
 # Changelog
 
-## Version 14.0.0 (2023-11-17)
+## Version 14.0.0 (2023-12-06)
+
+### Bug Fixes
+
+- fixed `buildMiddlewares`, now correctly removes middlewares in case of multiple ignored middlewares (worked only with 1 ignored middleware before)
 
 ### Features
 
