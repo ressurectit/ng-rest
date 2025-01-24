@@ -19,13 +19,15 @@
         "strictNullChecks": true,
         "esModuleInterop": true,
         "importHelpers": true,
+        "useDefineForClassFields": false,
+        "skipLibCheck": false,
+        "forceConsistentCasingInFileNames": true,
         "newLine": "lf",
         "rootDir": ".",
         "outDir": "es2022",
-        "baseUrl": "src",
         "paths": 
         {
-            "@anglr/rest": ["index.ts"]
+            "@anglr/rest": ["./src/index.ts"]
         },
         "lib":
         [
@@ -41,13 +43,26 @@
     },
     "exclude":
     [
-        "node_modules"
+        "node_modules",
+        "demo"
     ],
     "angularCompilerOptions":
     {
-        "strictTemplates": true,
         "compilationMode": "partial",
         "enableResourceInlining": true,
-        "strictInjectionParameters": true
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true,
+        "strictTemplates": true,
+        "strictStandalone": true,
+        "extendedDiagnostics":
+        {
+            "checks":
+            {
+                "interpolatedSignalNotInvoked": "error",
+                "unusedStandaloneImports": "error",
+                "uninvokedFunctionInEventBinding": "error",
+                "missingControlFlowDirective": "error"
+            }
+        }
     }
 }

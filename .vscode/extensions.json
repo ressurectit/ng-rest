@@ -5,6 +5,7 @@
 		"angular.ng-template",
 		"eamodio.gitlens",
 		"ecmel.vscode-html-css",
+		"gruntfuggly.todo-tree",
 		"vscode-icons-team.vscode-icons",
 		"dbaeumer.vscode-eslint"
 	]

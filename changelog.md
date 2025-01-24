@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 14.0.0 (2023-12-06)
+## Version 14.0.0 (2025-01-24)
 
 ### Bug Fixes
 
@@ -43,12 +43,12 @@
 ### BREAKING CHANGES
 
 - minimal supported version of `NodeJs` is `18`
-- minimal supported version of `@angular` is `17.0.1`
+- minimal supported version of `@angular` is `19.1.0`
 - minimal supported version of `rxjs` is `7.5.7`
-- minimal supported version of `@jscrpt/common` is `5.0.0`
-- minimal supported version of `@anglr/common` is `19.0.0`
-- minimal supported version of `@anglr/datetime` is `7.0.0`
-- minimal supported version of `tslib` is `2.6.3`
+- minimal supported version of `@jscrpt/common` is `7.0.0`
+- minimal supported version of `@anglr/common` is `22.0.0`
+- minimal supported version of `@anglr/datetime` is `9.0.0`
+- minimal supported version of `tslib` is `2.8.1`
 - removed `RestTransferStateService` service, Angular has native support for this
 - updated `RESTClient` service,
     - now has constructor with no parameters

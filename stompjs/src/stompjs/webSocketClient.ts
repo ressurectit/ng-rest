@@ -1,6 +1,7 @@
 import {Injectable, Injector, Inject, OnDestroy} from '@angular/core';
 import {Logger, LOGGER} from '@anglr/common';
-import {generateId, extend} from '@jscrpt/common';
+import {generateId} from '@jscrpt/common';
+import {extend} from '@jscrpt/common/extend';
 import {Client, StompConfig} from '@stomp/stompjs';
 import {ReplaySubject, Observable} from 'rxjs';
 import SockJS from 'sockjs-client';

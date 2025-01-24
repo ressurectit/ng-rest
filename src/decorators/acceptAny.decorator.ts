@@ -1,4 +1,4 @@
-import {extend} from '@jscrpt/common';
+import {extend} from '@jscrpt/common/extend';
 
 import {HeadersMiddleware} from '../middlewares';
 import type {RESTClientBase} from '../misc/classes/restClientBase';
@@ -15,7 +15,7 @@ export function AcceptAny()
     {
         const descr = descriptor as RestHttpHeaders & RestMethodMiddlewares;
 
-        descr.headers = extend(descr.headers ?? {}, {'accept': '*/*'});
+        descr.headers = extend(descr.headers ?? {}, {accept: '*/*'});
         descr.middlewareTypes.push(HeadersMiddleware);
 
         return descr as TDecorated;

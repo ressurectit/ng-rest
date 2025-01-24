@@ -1,6 +1,7 @@
 import {Injector} from '@angular/core';
 import {Logger} from '@anglr/common';
-import {generateId, extend, isPresent} from '@jscrpt/common';
+import {generateId, isPresent} from '@jscrpt/common';
+import {extend} from '@jscrpt/common/extend';
 import {Client} from '@stomp/stompjs';
 import {ReplaySubject, MonoTypeOperatorFunction, Observable, tap} from 'rxjs';
 

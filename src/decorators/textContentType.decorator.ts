@@ -1,4 +1,4 @@
-import {extend} from '@jscrpt/common';
+import {extend} from '@jscrpt/common/extend';
 
 import {HeadersMiddleware} from '../middlewares';
 import type {RESTClientBase} from '../misc/classes/restClientBase';

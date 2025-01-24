@@ -1,4 +1,5 @@
-import {isBlank, isPresent, isFunction, extend, isJsObject, Dictionary} from '@jscrpt/common';
+import {isBlank, isPresent, isFunction, isJsObject, Dictionary} from '@jscrpt/common';
+import {extend} from '@jscrpt/common/extend';
 import {StompConfig} from '@stomp/stompjs';
 
 import {WebSocketClient} from './webSocketClient';
@@ -282,17 +283,17 @@ export function ParameterTransform(methodName?: string)
         }
 
         const trgt = target as unknown as Dictionary<any>;
-        
+
         if(isPresent(trgt[methodName]) && isFunction(trgt[methodName]))
         {
             const func = trgt[methodName];
             const metadataKey = `${propertyKey}_ParameterTransforms`;
-            
+
             if (!isPresent(trgt[metadataKey]) || !isJsObject(trgt[metadataKey]))
             {
                 trgt[metadataKey] = {};
             }
-            
+
             trgt[metadataKey][parameterIndex] = func;
         }
     };

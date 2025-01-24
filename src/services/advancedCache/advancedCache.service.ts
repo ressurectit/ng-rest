@@ -1,6 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpRequest, HttpResponse} from '@angular/common/http';
-import {Dictionary, extend, isBlank} from '@jscrpt/common';
+import {Dictionary, isBlank} from '@jscrpt/common';
+import {extend} from '@jscrpt/common/extend';
 
 import {REST_DATE_API} from '../../misc/tokens';
 import {AdvancedCacheItem, RestDateApi} from '../../interfaces';
